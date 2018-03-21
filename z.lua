@@ -779,6 +779,16 @@ function z_print(M, number)
 	for i = #N, 1, -1 do
 		local record = N[i]
 		local line = record.score
+		while true do
+			local tail = line:sub(-1, -1)
+			if tail ~= '0' and tail ~= '.' then 
+				break 
+			end
+			line = line:sub(1, -2)
+			if tail == '.' then
+				break
+			end
+		end
 		local dx = maxsize - line:len()
 		if dx > 0 then
 			line = line .. string.rep(' ', dx)
@@ -811,7 +821,9 @@ function z_cd(patterns)
 		return nil
 	end
 	local last = patterns[#patterns]
-	if last == '~' then
+	if last == '~' or last == '~/' then
+		return os.path.expand('~')
+	elseif windows and last == '~\\' then
 		return os.path.expand('~')
 	end
 	if os.path.isabs(last) and os.path.isdir(last) then
