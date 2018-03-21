@@ -815,7 +815,7 @@ function z_cd(patterns)
 		return os.path.expand('~')
 	end
 	if os.path.isabs(last) and os.path.isdir(last) then
-		return last
+		return os.path.norm(last)
 	end
 	local M = z_match(patterns, Z_METHOD, Z_SUBDIR)
 	if M == nil then
@@ -931,7 +931,7 @@ end
 if not pcall(debug.getlocal, 4, 1) then
 	-- main script
 	z_init()
-	if clink ~= nil and type(clink) == 'table' and clink.prompt ~= nil then
+	if windows and type(clink) == 'table' and clink.prompt ~= nil then
 		z_clink_init()
 	else
 		main()
