@@ -3,8 +3,7 @@ set "HomeDir=%~dp0"
 set "PathSave=%PATH%"
 set "LuaExe=lua"
 set "LuaScript=%HomeDir%z.lua"
-set "MatchRank=-n"
-set "MatchTime=-n"
+set "MatchType=-n"
 set "StrictSub=-n"
 set "ListOnly=-n"
 set "HelpMode=-n"
@@ -17,13 +16,13 @@ if /i not "%_ZL_LUA_EXE%"=="" (
 :parse
 
 if /i "%1"=="-r" (
-	set "MatchRank=-r"
+	set "MatchType=-r"
 	shift /1
 	goto parse
 )
 
 if /i "%1"=="-t" (
-	set "MatchTime=-t"
+	set "MatchType=-t"
 	shift /1
 	goto parse
 )
@@ -56,7 +55,7 @@ for /f "delims=" %%i in ('cd') do set "PWD=%%i"
 
 if /i "%ListOnly%"=="-n" (
 	setlocal EnableDelayedExpansion
-	for /f "delims=" %%i in ('call "%LuaExe%" "%LuaScript%" --cd %MatchRank% %MatchTime% %StrictSub% %*') do set "NewPath=%%i"
+	for /f "delims=" %%i in ('call "%LuaExe%" "%LuaScript%" --cd %MatchType% %StrictSub% %*') do set "NewPath=%%i"
 	if not "!NewPath!"=="" (
 		if exist !NewPath!\nul (
 			pushd !NewPath!
@@ -66,9 +65,17 @@ if /i "%ListOnly%"=="-n" (
 		)
 	)
 )	else (
-	call "%LuaExe%" "%LuaScript%" -l %MatchRank% %MatchTime% %StrictSub% %*
+	call "%LuaExe%" "%LuaScript%" -l %MatchType% %StrictSub% %*
 )
 
 :end
+
+set "LuaExe="
+set "LuaScript="
+set "MatchType="
+set "StrictSub="
+set "NewPath="
+set "ListOnly="
+set "PWD="
 
 
