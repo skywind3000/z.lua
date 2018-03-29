@@ -1,3 +1,4 @@
+#! /usr/bin/env lua
 --=====================================================================
 --
 -- zm.lua - z.sh implementation for lua
@@ -880,6 +881,7 @@ function main(argv)
 			io.write(path)
 		end
 	elseif options['--add'] ~= nil then
+		-- print('data: ' .. DATA_FILE)
 		z_add(args)
 	elseif options['-l'] ~= nil then
 		local M = z_match(args ~= nil and args or {}, Z_METHOD, Z_SUBDIR)
@@ -901,16 +903,16 @@ function z_init()
 	local _zl_data = os.getenv('_ZL_DATA')
 	local _zl_maxage = os.getenv('_ZL_MAXAGE')
 	local _zl_exclude = os.getenv('_ZL_EXCLUDE')
-	if _zl_data ~= nil then
+	if _zl_data ~= nil and _zl_data ~= "" then
 		DATA_FILE = _zl_data
 	end
-	if _zl_maxage ~= nil then
+	if _zl_maxage ~= nil and _zl_maxage ~= "" then
 		_zl_maxage = tonumber(_zl_maxage)
-		if _zl_maxage ~= nil then
+		if _zl_maxage ~= nil and _zl_maxage > 0 then
 			MAX_AGE = _zl_maxage
 		end
 	end
-	if _zl_exclude ~= nil then
+	if _zl_exclude ~= nil and _zl_exclude ~= "" then
 		local part = _zl_exclude:split(windows and ';' or ':')
 		local insensitive = path_case_insensitive()
 		for _, name in ipairs(part) do
