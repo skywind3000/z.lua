@@ -936,6 +936,16 @@ function z_clink_init()
 		z_add(clink.get_cwd())
 	end
 	clink.prompt.register_filter(z_add_to_database, 99)
+	function z_match_completion(word)
+		local M = z_match({word}, Z_METHOD, Z_SUBDIR)
+		for _, item in pairs(M) do
+			clink.add_match(item.name)
+		end
+		return {}
+	end
+	local z_parser = clink.arg.new_parser()
+	z_parser:set_arguments({ z_match_completion })
+	clink.arg.register_parser("z", z_parser)
 end
 
 
