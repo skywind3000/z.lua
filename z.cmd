@@ -7,6 +7,7 @@ set "MatchType=-n"
 set "StrictSub=-n"
 set "ListOnly=-n"
 set "HelpMode=-n"
+set "EchoPath=-n"
 
 if /i not "%_ZL_LUA_EXE%"=="" (
 	set "LuaExe=%_ZL_LUA_EXE%"
@@ -39,11 +40,18 @@ if /i "%1"=="-l" (
 	goto parse
 )
 
+if /i "%1"=="-e" (
+	set "EchoPath=-e"
+	shift /1
+	goto parse
+)
+
 if /i "%1"=="-h" (
 	call "%LuaExe%" "%LuaScript%" -h
 	shift /1
 	goto end
 )
+
 
 :check
 
@@ -58,6 +66,9 @@ if /i "%ListOnly%"=="-n" (
 	for /f "delims=" %%i in ('call "%LuaExe%" "%LuaScript%" --cd %MatchType% %StrictSub% %*') do set "NewPath=%%i"
 	if not "!NewPath!"=="" (
 		if exist !NewPath!\nul (
+			if /i "%EchoPath%"=="-e" (
+				echo !NewPath!
+			)
 			pushd !NewPath!
 			pushd !NewPath!
 			endlocal
