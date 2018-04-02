@@ -452,7 +452,7 @@ function math.random_init()
 	local number = 0
 	for i = 1, seed:len() do
 		local k = string.byte(seed:sub(i, i))
-		number = ((number * 257) % 0x7fffffff) + k
+		number = ((number * 127) % 0x7fffffff) + k
 	end
 	math.randomseed(number)
 end
