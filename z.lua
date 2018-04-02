@@ -441,6 +441,11 @@ function math.random_init()
 	if status then
 		seed = seed .. tostring(socket.gettime())
 	end
+	-- random seed from _ZL_RANDOM
+	local rnd = os.getenv('_ZL_RANDOM')
+	if rnd ~= nil then
+		seed = seed .. rnd
+	end
 	local number = 0
 	for i = 1, seed:len() do
 		local k = string.byte(seed:sub(i, i))
