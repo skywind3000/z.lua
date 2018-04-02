@@ -426,7 +426,7 @@ end
 
 
 -----------------------------------------------------------------------
--- initialize random seed
+-- generate random seed
 -----------------------------------------------------------------------
 function math.random_init()
 	-- random seed from os.time()
