@@ -1,7 +1,7 @@
 #! /usr/bin/env lua
 --=====================================================================
 --
--- z.lua - z.sh implementation for lua
+-- z.lua - z.sh implementation in lua
 --
 -- Created by skywind on 2018/03/19
 -- Last Modified: 2018/04/02 19:37
@@ -1125,7 +1125,7 @@ function z_shell_init(opts)
 	print(script_zlua)
 
 	if opts.bash ~= nil then
-		if os.getenv("_Z_NO_PROMPT_COMMAND") == nil then
+		if os.getenv("_ZL_NO_PROMPT_COMMAND") == nil then
 			if opts.fast == nil then
 				print(script_init_bash)
 			else
@@ -1134,7 +1134,7 @@ function z_shell_init(opts)
 		end
 		print(script_complete_bash)
 	elseif opts.zsh ~= nil then
-		if os.getenv("_Z_NO_PROMPT_COMMAND") == nil then
+		if os.getenv("_ZL_NO_PROMPT_COMMAND") == nil then
 			print(script_init_zsh)
 		end
 		print(script_complete_zsh)
