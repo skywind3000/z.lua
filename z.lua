@@ -30,6 +30,7 @@ end
 -----------------------------------------------------------------------
 local windows = package.config:sub(1, 1) ~= '/' and true or false
 local in_module = pcall(debug.getlocal, 4, 1) and true or false
+local utils = {}
 os.path = {}
 os.argv = arg ~= nil and arg or {}
 
@@ -425,6 +426,59 @@ end
 
 
 -----------------------------------------------------------------------
+-- initialize random seed
+-----------------------------------------------------------------------
+function math.random_init()
+	-- init random seed
+	local seed = tostring(os.time()):reverse()
+	for _, key in ipairs(os.argv) do
+		seed = seed .. '/' .. key
+	end
+	local ppid = os.getenv('PPID')
+	seed = (ppid ~= nil) and (seed .. '/' .. ppid) or seed
+	if not windows then
+		local fp = io.open('/dev/random', 'rb')
+		if fp == nil then
+			fp = io.open('/dev/urandom', 'rb')
+		end
+		if fp ~= nil then
+			local data = fp:read(32)
+			fp:close()
+			for i = 1, data:len() do
+				seed = seed .. tostring(string.byte(data:sub(i, i)))
+			end
+		end
+	end
+	local number = 0
+	for i = 1, seed:len() do
+		local k = string.byte(seed:sub(i, i))
+		number = ((number * 257) % 0x7fffffff) + k
+	end
+	math.randomseed(number)
+end
+
+
+-----------------------------------------------------------------------
+-- math random string
+-----------------------------------------------------------------------
+function math.random_string(N)
+	local text = ''
+	for i = 1, N do
+		local k = math.random(0, 26 * 2 + 10 - 1)
+		if k < 26 then
+			text = text .. string.char(0x41 + k)
+		elseif k < 26 * 2 then
+			text = text .. string.char(0x61 + k - 26)
+		elseif k < 26 * 2 + 10 then
+			text = text .. string.char(0x30 + k - 26 * 2)
+		else
+		end
+	end
+	return text
+end
+
+
+-----------------------------------------------------------------------
 -- returns true for path is insensitive
 -----------------------------------------------------------------------
 function path_case_insensitive()
@@ -487,7 +541,9 @@ function data_save(filename, M)
 	if windows then
 		fp = io.open(filename, 'w')
 	else
-		tmpname = os.tmpname()
+		math.random_init()
+		tmpname = filename .. '.' .. math.random_string(8)
+		tmpname = tmpname .. tostring(os.time())
 		fp = io.open(tmpname, 'w')
 	end
 	if fp == nil then
