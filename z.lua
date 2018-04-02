@@ -443,10 +443,8 @@ function math.random_init()
 		end
 		if fp ~= nil then
 			local data = fp:read(32)
+			seed = seed .. '/' .. data
 			fp:close()
-			for i = 1, data:len() do
-				seed = seed .. tostring(string.byte(data:sub(i, i)))
-			end
 		end
 	end
 	local number = 0
