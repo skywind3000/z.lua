@@ -536,6 +536,10 @@ function data_save(filename, M)
 		math.random_init()
 		tmpname = filename .. '.' .. math.random_string(8)
 		tmpname = tmpname .. tostring(os.time())
+		local rnd = os.getenv('_ZL_RANDOM')
+		if rnd ~= nil then
+			tmpname = tmpname .. '' ..rnd
+		end
 		fp = io.open(tmpname, 'w')
 	end
 	if fp == nil then
@@ -1025,7 +1029,7 @@ function _zlua() {
 	local arg_echo=""
 	local arg_help=""
 	if [ "$1" = "--add" ]; then
-		"$ZLUA_LUAEXE" "$ZLUA_SCRIPT" --add "$@"
+		_ZL_RANDOM="$RANDOM" "$ZLUA_LUAEXE" "$ZLUA_SCRIPT" --add "$@"
 		return
 	fi
 	if [ "$1" = "--complete" ]; then
@@ -1067,14 +1071,14 @@ alias ${_ZL_CMD:-z}='_zlua'
 local script_init_bash = [[
 case "$PROMPT_COMMAND" in 
 	*_zlua?--add*) ;;
-	*) PROMPT_COMMAND="_zlua --add \"\$(command pwd 2>/dev/null)\";$PROMPT_COMMAND" ;;
+	*) PROMPT_COMMAND="(_zlua --add \"\$(command pwd 2>/dev/null)\" &);$PROMPT_COMMAND" ;;
 esac
 ]]
 
 local script_init_bash_fast = [[
 case "$PROMPT_COMMAND" in 
 	*_zlua?--add*) ;;
-	*) PROMPT_COMMAND="_zlua --add \"\$PWD\";$PROMPT_COMMAND" ;;
+	*) PROMPT_COMMAND="(_zlua --add \"\$PWD\" &);$PROMPT_COMMAND" ;;
 esac
 ]]
 
