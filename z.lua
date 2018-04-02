@@ -429,13 +429,18 @@ end
 -- initialize random seed
 -----------------------------------------------------------------------
 function math.random_init()
-	-- init random seed
+	-- random seed from os.time()
 	local seed = tostring(os.time()):reverse()
 	for _, key in ipairs(os.argv) do
 		seed = seed .. '/' .. key
 	end
 	local ppid = os.getenv('PPID')
 	seed = (ppid ~= nil) and (seed .. '/' .. ppid) or seed
+	-- random seed from socket.gettime()
+	local status, socket = pcall(require, 'socket')
+	if status then
+		seed = seed .. tostring(socket.gettime())
+	end
 	local number = 0
 	for i = 1, seed:len() do
 		local k = string.byte(seed:sub(i, i))
