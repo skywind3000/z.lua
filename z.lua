@@ -1047,7 +1047,7 @@ function _zlua() {
 	if [ -n "$arg_help" ]; then
 		"$ZLUA_LUAEXE" "$ZLUA_SCRIPT" -h
 	elif [ -n "$arg_list" ] || [ "$#" -eq 0 ]; then
-		"$ZLUA_LUAEXE" "$ZLUA_SCRIPT" -l "$@"
+		"$ZLUA_LUAEXE" "$ZLUA_SCRIPT" -l $arg_subdir "$@"
 	else
 		local dest=$("$ZLUA_LUAEXE" "$ZLUA_SCRIPT" --cd $arg_type $arg_subdir "$@")
 		if [ "$dest" ] && [ -d "$dest" ]; then
