@@ -883,6 +883,12 @@ function main(argv)
 	elseif options['--add'] ~= nil then
 		-- print('data: ' .. DATA_FILE)
 		z_add(args)
+	elseif options['--init'] ~= nil then
+		local opts = {}
+		for _, key in ipairs(args) do
+			opts[key] = 1
+		end
+		z_shell_init(opts)
 	elseif options['-l'] ~= nil then
 		local M = z_match(args ~= nil and args or {}, Z_METHOD, Z_SUBDIR)
 		z_print(M)
@@ -904,7 +910,17 @@ function z_init()
 	local _zl_maxage = os.getenv('_ZL_MAXAGE')
 	local _zl_exclude = os.getenv('_ZL_EXCLUDE')
 	if _zl_data ~= nil and _zl_data ~= "" then
-		DATA_FILE = _zl_data
+		if windows then
+			DATA_FILE = _zl_data
+		else
+			-- avoid windows environments affect cygwin & msys
+			if _zl_data:sub(2, 2) ~= ':' then
+				local t = _zl_data:sub(3, 3)
+				if t ~= '/' and t ~= "\\" then
+					DATA_FILE = _zl_data
+				end
+			end
+		end
 	end
 	if _zl_maxage ~= nil and _zl_maxage ~= "" then
 		_zl_maxage = tonumber(_zl_maxage)
@@ -946,6 +962,122 @@ function z_clink_init()
 	local z_parser = clink.arg.new_parser()
 	z_parser:set_arguments({ z_match_completion })
 	clink.arg.register_parser("z", z_parser)
+end
+
+
+-----------------------------------------------------------------------
+-- shell scripts
+-----------------------------------------------------------------------
+local script_zlua = [[
+function _zlua() {
+	local arg_list=""
+	local arg_type=""
+	local arg_subdir=""
+	local arg_loop="1"
+	local arg_echo=""
+	local arg_help=""
+	if [ "$1" = "--add" ]; then
+		"$ZLUA_LUAEXE" "$ZLUA_SCRIPT" --add "$@"
+		return
+	fi
+	if [ "$1" = "--complete" ]; then
+		"$ZLUA_LUAEXE" "$ZLUA_SCRIPT" --complete "$@"
+		return 
+	fi
+	while [ "$1" ]; do
+		case "$1" in 
+			-l) local arg_list="-l" ;;
+			-t) local arg_type="-t" ;;
+			-r) local arg_type="-r" ;;
+			-c) local arg_subdir="-c" ;;
+			-e) local arg_echo="1" ;;
+			-h) local arg_help="-h" ;;
+			*) break ;;
+		esac
+		shift
+	done
+	if [ -n "$arg_help" ]; then
+		"$ZLUA_LUAEXE" "$ZLUA_SCRIPT" -h
+	elif [ -n "$arg_list" ] || [ "$#" -eq 0 ]; then
+		"$ZLUA_LUAEXE" "$ZLUA_SCRIPT" -l "$@"
+	else
+		local dest=$("$ZLUA_LUAEXE" "$ZLUA_SCRIPT" --cd $arg_type $arg_subdir "$@")
+		if [ "$dest" ] && [ -d "$dest" ]; then
+			[ -n "$arg_echo" ] && echo "$dest"
+			if [ -z "$_ZL_NOBUILTIN" ]; then
+				builtin cd "$dest"
+			else
+				cd "$dest"
+			fi
+		fi
+	fi
+}
+# alias ${_ZL_CMD:-z}='_zlua 2>&1'
+alias ${_ZL_CMD:-z}='_zlua'
+]]
+
+local script_init_bash = [[
+case "$PROMPT_COMMAND" in 
+	*_zlua?--add*) ;;
+	*) PROMPT_COMMAND="_zlua --add \"\$(command pwd 2>/dev/null)\";$PROMPT_COMMAND" ;;
+esac
+]]
+
+local script_init_bash_fast = [[
+case "$PROMPT_COMMAND" in 
+	*_zlua?--add*) ;;
+	*) PROMPT_COMMAND="_zlua --add \"\$PWD\";$PROMPT_COMMAND" ;;
+esac
+]]
+
+local script_init_zsh = [[
+_zlua_precmd() {
+	(_zlua --add "${PWD:a}" &)
+}
+[ -n "${precmd_functions[(r)_zlua_precmd]}" ] || {
+	precmd_functions[$(($#precmd_functions+1))]=_zlua_precmd
+}
+]]
+
+local script_complete_bash = [[
+complete -o filenames -C '_zlua --complete "$COMP_LINE"' ${_ZL_CMD:-z}
+]]
+
+local script_complete_zsh = [[
+_zlua_zsh_tab_completion() {
+	# tab completion
+	local compl
+	read -l compl
+	reply=(${(f)"$(_zlua --complete "$compl")"})
+}
+compctl -U -K _zlua_zsh_tab_completion _zlua
+]]
+
+
+-----------------------------------------------------------------------
+-- initialize bash/zsh
+----------------------------------------------------------------------
+function z_shell_init(opts)
+	print('ZLUA_SCRIPT="' .. os.scriptname() .. '"')
+	print('ZLUA_LUAEXE="' .. os.interpreter() .. '"')
+	print('')
+	print(script_zlua)
+
+	if opts.bash ~= nil then
+		if os.getenv("_Z_NO_PROMPT_COMMAND") == nil then
+			if opts.fast == nil then
+				print(script_init_bash)
+			else
+				print(script_init_bash_fast)
+			end
+		end
+		print(script_complete_bash)
+	elseif opts.zsh ~= nil then
+		if os.getenv("_Z_NO_PROMPT_COMMAND") == nil then
+			print(script_init_zsh)
+		end
+		print(script_complete_zsh)
+	end
 end
 
 
