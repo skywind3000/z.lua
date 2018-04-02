@@ -945,7 +945,11 @@ function main(argv)
 		for _, key in ipairs(args) do
 			opts[key] = 1
 		end
-		z_shell_init(opts)
+		if windows then
+			z_windows_init(opts)
+		else
+			z_shell_init(opts)
+		end
 	elseif options['-l'] ~= nil then
 		local M = z_match(args ~= nil and args or {}, Z_METHOD, Z_SUBDIR)
 		z_print(M)
@@ -1135,6 +1139,93 @@ function z_shell_init(opts)
 		end
 		print(script_complete_zsh)
 	end
+end
+
+
+-----------------------------------------------------------------------
+-- windows .cmd script
+-----------------------------------------------------------------------
+local script_init_cmd = [[
+set "MatchType=-n"
+set "StrictSub=-n"
+set "ListOnly=-n"
+set "HelpMode=-n"
+set "EchoPath=-n"
+if /i not "%_ZL_LUA_EXE%"=="" (
+	set "LuaExe=%_ZL_LUA_EXE%"
+)
+:parse
+if /i "%1"=="-r" (
+	set "MatchType=-r"
+	shift /1
+	goto parse
+)
+if /i "%1"=="-t" (
+	set "MatchType=-t"
+	shift /1
+	goto parse
+)
+if /i "%1"=="-c" (
+	set "StrictSub=-c"
+	shift /1
+	goto parse
+)
+if /i "%1"=="-l" (
+	set "ListOnly=-l"
+	shift /1
+	goto parse
+)
+if /i "%1"=="-e" (
+	set "EchoPath=-e"
+	shift /1
+	goto parse
+)
+if /i "%1"=="-h" (
+	call "%LuaExe%" "%LuaScript%" -h
+	shift /1
+	goto end
+)
+:check
+if /i "%1"=="" (
+	set "ListOnly=-l"
+)
+for /f "delims=" %%i in ('cd') do set "PWD=%%i"
+if /i "%ListOnly%"=="-n" (
+	setlocal EnableDelayedExpansion
+	for /f "delims=" %%i in ('call "%LuaExe%" "%LuaScript%" --cd %MatchType% %StrictSub% %*') do set "NewPath=%%i"
+	if not "!NewPath!"=="" (
+		if exist !NewPath!\nul (
+			if /i "%EchoPath%"=="-e" (
+				echo !NewPath!
+			)
+			pushd !NewPath!
+			pushd !NewPath!
+			endlocal
+			popd
+		)
+	)
+)	else (
+	call "%LuaExe%" "%LuaScript%" -l %MatchType% %StrictSub% %*
+)
+:end
+set "LuaExe="
+set "LuaScript="
+set "MatchType="
+set "StrictSub="
+set "NewPath="
+set "ListOnly="
+set "PWD="
+]]
+
+
+-----------------------------------------------------------------------
+-- initialize cmd
+-----------------------------------------------------------------------
+function z_windows_init(opts)
+	print('@echo off')
+	print('set "LuaExe=' .. os.interpreter() .. '"')
+	print('set "LuaScript=' .. os.scriptname() .. '"')
+	print(script_init_cmd)
 end
 
 
