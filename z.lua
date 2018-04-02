@@ -436,17 +436,6 @@ function math.random_init()
 	end
 	local ppid = os.getenv('PPID')
 	seed = (ppid ~= nil) and (seed .. '/' .. ppid) or seed
-	if not windows then
-		local fp = io.open('/dev/random', 'rb')
-		if fp == nil then
-			fp = io.open('/dev/urandom', 'rb')
-		end
-		if fp ~= nil then
-			local data = fp:read(32)
-			seed = seed .. '/' .. data
-			fp:close()
-		end
-	end
 	local number = 0
 	for i = 1, seed:len() do
 		local k = string.byte(seed:sub(i, i))
