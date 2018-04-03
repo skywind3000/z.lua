@@ -641,6 +641,7 @@ function data_insert(M, filename)
 				table.insert(X, item)
 			end
 		end
+		M = X
 	end
 	local nocase = path_case_insensitive()
 	local name = filename
