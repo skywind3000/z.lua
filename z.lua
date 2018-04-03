@@ -1,10 +1,50 @@
 #! /usr/bin/env lua
 --=====================================================================
 --
--- z.lua - z.sh implementation in lua
+-- z.lua - z.sh implementation in lua, by skywind (2018/03/19)
+-- Licensed under MIT license.
 --
--- Created by skywind on 2018/03/19
--- Last Modified: 2018/04/02 19:37
+-- Version 30, Last Modified: 2018/04/03 17:49
+--
+-- * 10x times faster than fasd and autojump
+-- * 3x times faster than rupa/z
+-- * supports: Bash, Zsh and Windows Cmd
+--
+-- USE:
+--     * z foo     # cd to most frecent dir matching foo
+--     * z foo bar # cd to most frecent dir matching foo and bar
+--     * z -r foo  # cd to highest ranked dir matching foo
+--     * z -t foo  # cd to most recently accessed dir matching foo
+--     * z -l foo  # list matches instead of cd
+--     * z -c foo  # restrict matches to subdirs of $PWD
+--
+-- Bash Install: 
+--     * put something like this in your .bashrc:
+--         eval "$(lua /path/to/z.lua --init bash)"
+--
+-- Bash Fast Mode:
+--     * put something like this in your .bashrc:
+--         eval "$(lua /path/to/z.lua --init bash fast)"
+--
+-- Zsh Install:
+--     * put something like this in your .zshrc:
+--         eval "$(lua /path/to/z.lua --init zsh)"
+--
+-- Windows Install (with Clink):
+--     * copy z.lua and z.cmd to clink's home directory
+--     * Add clink's home to %PATH% (z.cmd can be called anywhere)
+--     * Ensure that "lua" can be called in %PATH%
+--
+-- Windows Cmder Install:
+--     * copy z.lua and z.cmd to cmder/vendor
+--     * Add cmder/vendor to %PATH%
+--     * Ensure that "lua" can be called in %PATH%
+--
+-- Configure (optional):
+--   set $_ZL_CMD in .bashrc/.zshrc to change the command (default z).
+--   set $_ZL_DATA in .bashrc/.zshrc to change the datafile (default ~/.zlua).
+--   set $_ZL_NO_PROMPT_COMMAND if you're handling PROMPT_COMMAND yourself.
+--   set $_ZL_EXCLUDE_DIRS to an array of directories to exclude.
 --
 --=====================================================================
 
@@ -45,6 +85,7 @@ PWD = ''
 Z_METHOD = 'frecent'
 Z_SUBDIR = false
 Z_EXCLUDE = {}
+Z_CMD = 'z'
 
 
 -----------------------------------------------------------------------
@@ -958,6 +999,8 @@ function main(argv)
 		for _, item in pairs(M) do
 			print(item.name)
 		end
+	elseif options['--help'] ~= nil or options['-h'] ~= nil then
+		z_help()
 	end
 	return true
 end
@@ -970,6 +1013,7 @@ function z_init()
 	local _zl_data = os.getenv('_ZL_DATA')
 	local _zl_maxage = os.getenv('_ZL_MAXAGE')
 	local _zl_exclude = os.getenv('_ZL_EXCLUDE')
+	local _zl_cmd = os.getenv('_ZL_CMD')
 	if _zl_data ~= nil and _zl_data ~= "" then
 		if windows then
 			DATA_FILE = _zl_data
@@ -1001,6 +1045,9 @@ function z_init()
 			end
 			Z_EXCLUDE[name] = 1
 		end
+	end
+	if _zl_cmd ~= nil then
+		Z_CMD = _zl_cmd
 	end
 end
 
@@ -1226,6 +1273,20 @@ function z_windows_init(opts)
 	print('set "LuaExe=' .. os.interpreter() .. '"')
 	print('set "LuaScript=' .. os.scriptname() .. '"')
 	print(script_init_cmd)
+end
+
+
+-----------------------------------------------------------------------
+-- help
+-----------------------------------------------------------------------
+function z_help()
+	local cmd = Z_CMD .. ' '
+	print(cmd .. 'foo       # cd to most frecent dir matching foo')
+	print(cmd .. 'foo bar   # cd to most frecent dir matching foo and bar')
+	print(cmd .. '-r bar    # cd to highest ranked dir matching foo')
+	print(cmd .. '-t bar    # cd to most recently accessed dir matching foo')
+	print(cmd .. '-l bar    # list matches instead of cd')
+	print(cmd .. '-c foo    # restrict matches to subdirs of $PWD')
 end
 
 
