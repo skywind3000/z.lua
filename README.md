@@ -25,10 +25,12 @@ z -e foo    # echo the best match, don't cd
 ## Install
 
 - bash:
+
   put something like this in your `.bashrc`:
       eval "$(lua /path/to/z.lua --init bash)"
 
 - zsh:
+
   put something like this in your `.zshrc`:
       eval "$(lua /path/to/z.lua --init zsh)"
 
