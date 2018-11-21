@@ -614,7 +614,8 @@ function data_save(filename, M)
 			tmpname = tmpname .. '' ..rnd
 		end
 		local sub = (os.tmpname()):sub(-6, -1):gsub('[\\/:~]', '')
-		tmpname = tmpname .. sub
+		local ppid = os.getenv('PPID')
+		tmpname = tmpname .. sub .. (ppid and ppid or '')
 		fp = io.open(tmpname, 'w')
 	end
 	if fp == nil then
