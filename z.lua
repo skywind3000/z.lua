@@ -29,6 +29,10 @@
 -- Zsh Install:
 --     * put something like this in your .zshrc:
 --         eval "$(lua /path/to/z.lua --init zsh)"
+-- 
+-- Posix Shell Install:
+--     * put something like this in your .profile:
+--         eval "$(lua /path/to/z.lua --init posix)"
 --
 -- Windows Install (with Clink):
 --     * copy z.lua and z.cmd to clink's home directory
