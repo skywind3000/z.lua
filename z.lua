@@ -1139,6 +1139,13 @@ case "$PROMPT_COMMAND" in
 esac
 ]]
 
+local script_init_posix = [[
+case "$PS1" in
+	*_zlua?--add*) ;;
+	*) PS1="\\$(_zlua --add \"\$(command pwd 2>/dev/null)\" &)$PS1"
+esac
+]]
+
 local script_init_zsh = [[
 _zlua_precmd() {
 	(_zlua --add "${PWD:a}" &)
@@ -1174,7 +1181,7 @@ function z_shell_init(opts)
 	print('')
 	print(script_zlua)
 
-	if opts.bash ~= nil or opts.busybox ~= nil then
+	if opts.bash ~= nil then
 		if os.getenv("_ZL_NO_PROMPT_COMMAND") == nil then
 			if opts.fast == nil then
 				print(script_init_bash)
@@ -1182,14 +1189,15 @@ function z_shell_init(opts)
 				print(script_init_bash_fast)
 			end
 		end
-		if opts.bash ~= nil then
-			print(script_complete_bash)
-		end
+		print(script_complete_bash)
 	elseif opts.zsh ~= nil then
 		if os.getenv("_ZL_NO_PROMPT_COMMAND") == nil then
 			print(script_init_zsh)
 		end
 		print(script_complete_zsh)
+	else
+		print(script_init_posix)
+		print('_ZL_NOBUILTIN=1')
 	end
 end
 
