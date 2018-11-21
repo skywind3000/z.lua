@@ -27,23 +27,29 @@ z -e foo    # echo the best match, don't cd
 - bash:
 
   put something like this in your `.bashrc`:
+
       eval "$(lua /path/to/z.lua --init bash)"
 
 - zsh:
 
   put something like this in your `.zshrc`:
+
       eval "$(lua /path/to/z.lua --init zsh)"
 
 - posix shells:
+- 
   put something like this in your `.profile`:
+
       eval "$(lua /path/to/z.lua --init posix)"
 
 - Windows (with clink):
+
   copy z.lua and z.cmd to clink's home directory
   Add clink's home to `%PATH%` (z.cmd can be called anywhere)
   Ensure that "lua" can be called in `%PATH%`
 
 - Windows Cmder Install:
+- 
   copy z.lua and z.cmd to cmder/vendor
   Add cmder/vendor to %PATH%
   Ensure that "lua" can be called in %PATH%
