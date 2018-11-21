@@ -8,7 +8,7 @@
 --
 -- * 10x times faster than fasd and autojump
 -- * 3x times faster than rupa/z
--- * supports: Bash, Zsh and Windows Cmd
+-- * supports: Bash, Zsh, BusyBox and Windows Cmd
 --
 -- USE:
 --     * z foo     # cd to most frecent dir matching foo
@@ -1078,7 +1078,7 @@ end
 -- shell scripts
 -----------------------------------------------------------------------
 local script_zlua = [[
-function _zlua() {
+_zlua() {
 	local arg_list=""
 	local arg_type=""
 	local arg_subdir=""
@@ -1149,7 +1149,9 @@ _zlua_precmd() {
 ]]
 
 local script_complete_bash = [[
-complete -o filenames -C '_zlua --complete "$COMP_LINE"' ${_ZL_CMD:-z}
+if [ -n "$BASH_VERSION" ]; then
+	complete -o filenames -C '_zlua --complete "$COMP_LINE"' ${_ZL_CMD:-z}
+fi
 ]]
 
 local script_complete_zsh = [[
