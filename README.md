@@ -5,9 +5,9 @@ z - jump around (lua implementation for running on both unix &amp; windows)
 
 ## Features
 
-- 10x times faster than fasd and autojump
-- 3x times faster than z.sh
-- supports posix shells: bash, zsh, dash, sh, busybox, and etc.
+- **10x** times faster than **fasd** and **autojump**
+- **3x** times faster than **z.sh**
+- supports **posix shells**: bash, zsh, dash, sh, busybox, and etc.
 - supports Windows cmd (with clink) and cmder
 
 ## USE
