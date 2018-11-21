@@ -48,7 +48,7 @@ z -e foo    # echo the best match, don't cd
   - Add clink's home to `%PATH%` (z.cmd can be called anywhere)
   - Ensure that "lua" can be called in `%PATH%`
 
-- Windows Cmder:
+- Windows cmder:
 
   - copy z.lua and z.cmd to cmder/vendor
   - Add cmder/vendor to %PATH%
