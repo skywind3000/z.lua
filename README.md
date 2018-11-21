@@ -45,7 +45,7 @@ z -e foo    # echo the best match, don't cd
 
       eval "$(lua /path/to/z.lua --init posix)"
 
-  (sh, dash and busybox have been tested)
+  (sh, ash, dash and busybox have been tested)
 
 - Windows (with clink):
 
