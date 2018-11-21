@@ -1142,7 +1142,7 @@ esac
 local script_init_posix = [[
 case "$PS1" in
 	*_zlua?--add*) ;;
-	*) PS1="\\$(_zlua --add \"\$(command pwd 2>/dev/null)\" &)$PS1"
+	*) PS1="\$(_zlua --add \"\$(command pwd 2>/dev/null)\" &)$PS1"
 esac
 ]]
 
