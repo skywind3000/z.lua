@@ -380,6 +380,22 @@ end
 
 
 -----------------------------------------------------------------------
+-- check single name element
+-----------------------------------------------------------------------
+function os.path.single(path)
+	if string.match(path, '/') then
+		return false
+	end
+	if windows then
+		if string.match(path, '\\') then
+			return false
+		end
+	end
+	return true
+end
+
+
+-----------------------------------------------------------------------
 -- expand user home
 -----------------------------------------------------------------------
 function os.path.expand(pathname)
@@ -415,8 +431,12 @@ function os.interpreter()
 		return nil
 	end
 	local lua = arg[-1]	
-	if lua == 'lua' then
-		return os.path.which('lua')
+	if os.path.single(lua) then
+		local path = os.path.which(lua)
+		if not os.path.isabs(path) then
+			return os.path.abspath(path)
+		end
+		return path
 	end
 	return os.path.abspath(lua)
 end
