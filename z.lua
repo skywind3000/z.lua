@@ -607,15 +607,12 @@ function data_save(filename, M)
 		fp = io.open(filename, 'w')
 	else
 		math.random_init()
-		tmpname = filename .. '.' .. math.random_string(8)
-		tmpname = tmpname .. tostring(os.time())
-		local rnd = os.getenv('_ZL_RANDOM')
-		if rnd ~= nil then
-			tmpname = tmpname .. '' ..rnd
-		end
+		tmpname = filename .. '.' .. math.random_string(6)
 		local sub = (os.tmpname()):sub(-6, -1):gsub('[\\/:~]', '')
-		local ppid = os.getenv('PPID')
-		tmpname = tmpname .. sub .. (ppid and ppid or '')
+		tmpname = tmpname .. sub .. tostring(os.time())
+		local rnd = os.getenv('_ZL_RANDOM')
+		tmpname = tmpname .. '' .. (rnd and rnd or '')
+		-- print('tmpname: '..tmpname)
 		fp = io.open(tmpname, 'w')
 	end
 	if fp == nil then

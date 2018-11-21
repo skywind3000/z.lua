@@ -67,6 +67,17 @@ z -e foo    # echo the best match, don't cd
 - set `$_ZL_NO_PROMPT_COMMAND` if you're handling PROMPT_COMMAND yourself.
 - set `$_ZL_EXCLUDE_DIRS` to an array of directories to exclude.
 
+
+
 ## Credit
 
+Releated projects:
+
+- [rupa/z](https://github.com/rupa/z): origin z.sh implementation
+- [JannesMeyer/z.ps](https://github.com/JannesMeyer/z.ps): z for powershell
+
+
+## License
+
 Licensed under MIT license.
+
