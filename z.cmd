@@ -68,11 +68,12 @@ if /i "%ListOnly%"=="-n" (
 		if exist !NewPath!\nul (
 			if /i "%EchoPath%"=="-e" (
 				echo !NewPath!
+			)	else (
+				pushd !NewPath!
+				pushd !NewPath!
+				endlocal
+				popd
 			)
-			pushd !NewPath!
-			pushd !NewPath!
-			endlocal
-			popd
 		)
 	)
 )	else (
