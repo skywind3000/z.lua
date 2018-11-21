@@ -8,7 +8,8 @@
 --
 -- * 10x times faster than fasd and autojump
 -- * 3x times faster than rupa/z
--- * supports: Bash, Zsh, Posix shells and Windows cmd
+-- * compatible with posix shells: bash, zsh, sh, ash, dash, busybox
+-- * supports windows
 --
 -- USE:
 --     * z foo     # cd to most frecent dir matching foo
@@ -1223,11 +1224,28 @@ function z_shell_init(opts)
 			print(script_init_zsh)
 		end
 		print(script_complete_zsh)
-	else
+	elseif opts.posix ~= nil then
 		if prompt_hook then
 			print(script_init_posix)
 		end
 		print('_ZL_NOBUILTIN=1')
+	else
+		print('if [ -n "$BASH_VERSION" ]; then')
+		if prompt_hook then
+			print(script_init_bash)
+		end
+		print(script_complete_bash)
+		print('elif [ -n "$ZSH_VERSION" ]; then')
+		if prompt_hook then
+			print(script_init_zsh)
+		end
+		-- print(script_complete_zsh)
+		print('else')
+		if prompt_hook then
+			print(script_init_posix)
+		end
+		print('_ZL_NOBUILTIN=1')
+		print('fi')
 	end
 end
 
