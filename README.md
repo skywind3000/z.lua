@@ -56,8 +56,8 @@ z -e foo    # echo the best match, don't cd
 - Windows cmder:
 
   - copy z.lua and z.cmd to cmder/vendor
-  - Add cmder/vendor to %PATH%
-  - Ensure that "lua" can be called in %PATH%
+  - Add cmder/vendor to `%PATH%`
+  - Ensure that "lua" can be called in `%PATH%`
 
 
 ## Customize
