@@ -1201,8 +1201,10 @@ function z_shell_init(opts)
 	print('')
 	print(script_zlua)
 
+	local prompt_hook = (os.getenv("_ZL_NO_PROMPT_COMMAND") == nil)
+
 	if opts.bash ~= nil then
-		if os.getenv("_ZL_NO_PROMPT_COMMAND") == nil then
+		if prompt_hook then
 			if opts.fast == nil then
 				print(script_init_bash)
 			else
@@ -1211,12 +1213,14 @@ function z_shell_init(opts)
 		end
 		print(script_complete_bash)
 	elseif opts.zsh ~= nil then
-		if os.getenv("_ZL_NO_PROMPT_COMMAND") == nil then
+		if prompt_hook then
 			print(script_init_zsh)
 		end
 		print(script_complete_zsh)
 	else
-		print(script_init_posix)
+		if prompt_hook then
+			print(script_init_posix)
+		end
 		print('_ZL_NOBUILTIN=1')
 	end
 end
