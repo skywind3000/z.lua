@@ -1,6 +1,8 @@
 # z.lua
 
-z - jump around (lua implementation for running on both unix &amp; windows)
+z - jump around (lua implementation for running on both unix &amp; windows).
+
+An alternative to [z.sh](https://github.com/rupa/z) with windows and posix shells support and performance improving.
 
 
 ## Features
@@ -9,6 +11,7 @@ z - jump around (lua implementation for running on both unix &amp; windows)
 - **3x** times faster than **z.sh**
 - supports **posix shells**: bash, zsh, dash, sh, busybox, and etc.
 - supports Windows cmd (with clink) and cmder
+- self contained, no dependence on awk
 
 ## USE
 
@@ -41,6 +44,8 @@ z -e foo    # echo the best match, don't cd
   put something like this in your `.profile`:
 
       eval "$(lua /path/to/z.lua --init posix)"
+
+  (sh, dash and busybox have been tested)
 
 - Windows (with clink):
 
