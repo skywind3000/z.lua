@@ -1174,7 +1174,7 @@ function z_shell_init(opts)
 	print('')
 	print(script_zlua)
 
-	if opts.bash ~= nil then
+	if opts.bash ~= nil or opts.busybox ~= nil then
 		if os.getenv("_ZL_NO_PROMPT_COMMAND") == nil then
 			if opts.fast == nil then
 				print(script_init_bash)
@@ -1182,7 +1182,9 @@ function z_shell_init(opts)
 				print(script_init_bash_fast)
 			end
 		end
-		print(script_complete_bash)
+		if opts.bash ~= nil then
+			print(script_complete_bash)
+		end
 	elseif opts.zsh ~= nil then
 		if os.getenv("_ZL_NO_PROMPT_COMMAND") == nil then
 			print(script_init_zsh)
