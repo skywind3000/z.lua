@@ -62,10 +62,10 @@ z -e foo    # echo the best match, don't cd
 
 ## Customize
 
-- set $_ZL_CMD in .bashrc/.zshrc to change the command (default z).
-- set $_ZL_DATA in .bashrc/.zshrc to change the datafile (default ~/.zlua).
-- set $_ZL_NO_PROMPT_COMMAND if you're handling PROMPT_COMMAND yourself.
-- set $_ZL_EXCLUDE_DIRS to an array of directories to exclude.
+- set `$_ZL_CMD` in .bashrc/.zshrc to change the command (default z).
+- set `$_ZL_DATA` in .bashrc/.zshrc to change the datafile (default ~/.zlua).
+- set `$_ZL_NO_PROMPT_COMMAND` if you're handling PROMPT_COMMAND yourself.
+- set `$_ZL_EXCLUDE_DIRS` to an array of directories to exclude.
 
 ## Credit
 
