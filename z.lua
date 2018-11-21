@@ -8,7 +8,7 @@
 --
 -- * 10x times faster than fasd and autojump
 -- * 3x times faster than rupa/z
--- * supports: Bash, Zsh, BusyBox and Windows Cmd
+-- * supports: Bash, Zsh, Posix Shells and Windows Cmd
 --
 -- USE:
 --     * z foo     # cd to most frecent dir matching foo
