@@ -8,7 +8,7 @@
 --
 -- * 10x times faster than fasd and autojump
 -- * 3x times faster than rupa/z
--- * supports: Bash, Zsh, Posix Shells and Windows Cmd
+-- * supports: Bash, Zsh, Posix shells and Windows cmd
 --
 -- USE:
 --     * z foo     # cd to most frecent dir matching foo
@@ -17,6 +17,7 @@
 --     * z -t foo  # cd to most recently accessed dir matching foo
 --     * z -l foo  # list matches instead of cd
 --     * z -c foo  # restrict matches to subdirs of $PWD
+--     * z -e foo  # echo the best match, don't cd
 --
 -- Bash Install: 
 --     * put something like this in your .bashrc:
@@ -1136,8 +1137,9 @@ _zlua() {
 	else
 		local dest=$("$ZLUA_LUAEXE" "$ZLUA_SCRIPT" --cd $arg_type $arg_subdir "$@")
 		if [ "$dest" ] && [ -d "$dest" ]; then
-			[ -n "$arg_echo" ] && echo "$dest"
-			if [ -z "$_ZL_NOBUILTIN" ]; then
+			if [ -n "$arg_echo" ]; then
+				echo "$dest"
+			elif [ -z "$_ZL_NOBUILTIN" ]; then
 				builtin cd "$dest"
 			else
 				cd "$dest"
@@ -1285,11 +1287,12 @@ if /i "%ListOnly%"=="-n" (
 		if exist !NewPath!\nul (
 			if /i "%EchoPath%"=="-e" (
 				echo !NewPath!
+			)	else (
+				pushd !NewPath!
+				pushd !NewPath!
+				endlocal
+				popd
 			)
-			pushd !NewPath!
-			pushd !NewPath!
-			endlocal
-			popd
 		)
 	)
 )	else (
