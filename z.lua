@@ -513,6 +513,7 @@ function math.random_init()
 	if rnd ~= nil then
 		seed = seed .. rnd
 	end
+	seed = seed .. os.tmpname()
 	local number = 0
 	for i = 1, seed:len() do
 		local k = string.byte(seed:sub(i, i))
@@ -612,6 +613,8 @@ function data_save(filename, M)
 		if rnd ~= nil then
 			tmpname = tmpname .. '' ..rnd
 		end
+		local sub = (os.tmpname()):sub(-6, -1):gsub('[\\/:~]', '')
+		tmpname = tmpname .. sub
 		fp = io.open(tmpname, 'w')
 	end
 	if fp == nil then
