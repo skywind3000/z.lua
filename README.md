@@ -9,9 +9,10 @@ An alternative to [z.sh](https://github.com/rupa/z) with windows and posix shell
 
 - **10x** times faster than **fasd** and **autojump**
 - **3x** times faster than **z.sh**
-- compatible with **posix shells**: bash, zsh, dash, sh, ash, busybox and etc.
+- available for **posix shells**: bash, zsh, dash, sh, ash, busybox and etc.
 - supports Windows cmd (with clink) and cmder
 - self contained, no dependence on awk/gawk
+- compatible with lua 5.1, 5.2 and 5.3+
 
 ## USE
 

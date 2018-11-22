@@ -4,12 +4,13 @@
 -- z.lua - z.sh implementation in lua, by skywind (2018/03/19)
 -- Licensed under MIT license.
 --
--- Version 30, Last Modified: 2018/04/03 17:49
+-- Version 31, Last Modified: 2018/11/23 00:36
 --
 -- * 10x times faster than fasd and autojump
 -- * 3x times faster than rupa/z
--- * compatible with posix shells: bash, zsh, sh, ash, dash, busybox
+-- * available for posix shells: bash, zsh, sh, ash, dash, busybox
 -- * supports windows
+-- * compatible with lua 5.1, 5.2 and 5.3+
 --
 -- USE:
 --     * z foo     # cd to most frecent dir matching foo
