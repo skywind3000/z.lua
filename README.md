@@ -70,7 +70,7 @@ z -e foo    # echo the best match, don't cd
 
 ## Benchmark
 
-The slowest part of all autojump tools is adding current path to history data file, which will run each time you press enter(installed in `$PROMPT_COMMAND`). So I profile them on my NAS:
+The slowest part is adding path to history data file. It will run every time when you press enter (installed in $PROMPT_COMMAND). so I profile it on my nas:
 
 ```bash
 $ time autojump --add /tmp
