@@ -1,13 +1,13 @@
 @echo off
+setlocal EnableDelayedExpansion
+
 set "HomeDir=%~dp0"
 set "PathSave=%PATH%"
 set "LuaExe=lua"
 set "LuaScript=%HomeDir%z.lua"
 set "MatchType=-n"
 set "StrictSub=-n"
-set "ListOnly=-n"
-set "HelpMode=-n"
-set "EchoPath=-n"
+set "RunMode=-n"
 
 if /i not "%_ZL_LUA_EXE%"=="" (
 	set "LuaExe=%_ZL_LUA_EXE%"
@@ -35,59 +35,49 @@ if /i "%1"=="-c" (
 )
 
 if /i "%1"=="-l" (
-	set "ListOnly=-l"
+	set "RunMode=-l"
 	shift /1
 	goto parse
 )
 
 if /i "%1"=="-e" (
-	set "EchoPath=-e"
+	set "RunMode=-e"
+	shift /1
+	goto parse
+)
+
+if /i "%1"=="-x" (
+	set "RunMode=-x"
 	shift /1
 	goto parse
 )
 
 if /i "%1"=="-h" (
 	call "%LuaExe%" "%LuaScript%" -h
-	shift /1
 	goto end
 )
-
 
 :check
 
 if /i "%1"=="" (
-	set "ListOnly=-l"
+	set "RunMode=-l"
 )
 
 for /f "delims=" %%i in ('cd') do set "PWD=%%i"
 
-if /i "%ListOnly%"=="-n" (
-	setlocal EnableDelayedExpansion
+if /i "%RunMode%"=="-n" (
 	for /f "delims=" %%i in ('call "%LuaExe%" "%LuaScript%" --cd %MatchType% %StrictSub% %*') do set "NewPath=%%i"
 	if not "!NewPath!"=="" (
 		if exist !NewPath!\nul (
-			if /i "%EchoPath%"=="-e" (
-				echo !NewPath!
-			)	else (
-				pushd !NewPath!
-				pushd !NewPath!
-				endlocal
-				popd
-			)
+			pushd !NewPath!
+			pushd !NewPath!
+			endlocal
+			popd
 		)
 	)
 )	else (
-	call "%LuaExe%" "%LuaScript%" -l %MatchType% %StrictSub% %*
+	call "%LuaExe%" "%LuaScript%" "%RunMode%" %MatchType% %StrictSub% %*
 )
 
 :end
-
-set "LuaExe="
-set "LuaScript="
-set "MatchType="
-set "StrictSub="
-set "NewPath="
-set "ListOnly="
-set "PWD="
-
 

@@ -4,7 +4,7 @@
 -- z.lua - z.sh implementation in lua, by skywind (2018/03/19)
 -- Licensed under MIT license.
 --
--- Version 31, Last Modified: 2018/11/23 00:36
+-- Version 32, Last Modified: 2018/11/23 16:23
 --
 -- * 10x times faster than fasd and autojump
 -- * 3x times faster than rupa/z
@@ -13,13 +13,14 @@
 -- * compatible with lua 5.1, 5.2 and 5.3+
 --
 -- USE:
---     * z foo     # cd to most frecent dir matching foo
---     * z foo bar # cd to most frecent dir matching foo and bar
---     * z -r foo  # cd to highest ranked dir matching foo
---     * z -t foo  # cd to most recently accessed dir matching foo
---     * z -l foo  # list matches instead of cd
---     * z -c foo  # restrict matches to subdirs of $PWD
---     * z -e foo  # echo the best match, don't cd
+--     * z foo      # cd to most frecent dir matching foo
+--     * z foo bar  # cd to most frecent dir matching foo and bar
+--     * z -r foo   # cd to highest ranked dir matching foo
+--     * z -t foo   # cd to most recently accessed dir matching foo
+--     * z -l foo   # list matches instead of cd
+--     * z -c foo   # restrict matches to subdirs of $PWD
+--     * z -e foo   # echo the best match, don't cd
+--     * z -x path  # remove path from history
 --
 -- Bash Install: 
 --     * put something like this in your .bashrc:
@@ -274,7 +275,7 @@ function os.path.abspath(path)
 		local script = string.format(script, path)
 		local script = 'cmd.exe /C ' .. script .. ' 2> nul'
 		local output = os.call(script)
-		return output
+		return output:gsub('%s$', '')
 	else
 		local test = os.path.which('realpath')
 		if test ~= nil and test ~= '' then
@@ -847,6 +848,40 @@ end
 
 
 -----------------------------------------------------------------------
+-- remove path
+-----------------------------------------------------------------------
+function z_remove(path)
+	local paths = {}
+	local count = 0
+	local remove = {}
+	if type(path) == 'table' then
+		paths = path
+	elseif type(path) == 'string' then
+		paths[1] = path
+	end
+	if table.length(paths) == 0 then
+		return false
+	end
+	local H = os.getenv('HOME')
+	local M = data_load(DATA_FILE)
+	local X = {}
+	M = data_filter(M)
+	for _, path in pairs(paths) do
+		path = os.path.abspath(path)
+		remove[path] = 1
+	end
+	for i = 1, #M do
+		local item = M[i]
+		if not remove[item.name] then
+			table.insert(X, item)
+			-- print('include:'..item.name)
+		end
+	end
+	data_save(DATA_FILE, X)
+end
+
+
+-----------------------------------------------------------------------
 -- match method: frecent, rank, time
 -----------------------------------------------------------------------
 function z_match(patterns, method, subdir)
@@ -989,15 +1024,15 @@ function main(argv)
 		print("args: ")
 		printT(args)
 	end
-	if options['-c'] ~= nil then
+	if options['-c'] then
 		Z_SUBDIR = true
 	end
-	if options['-r'] ~= nil then
+	if options['-r'] then
 		Z_METHOD = 'rank'
-	elseif options['-t'] ~= nil then
+	elseif options['-t'] then
 		Z_METHOD = 'time'
 	end
-	if options['--cd'] ~= nil then
+	if options['--cd'] or options['-e'] then
 		local path = ''
 		if #args == 0 then
 			path = os.path.expand('~')
@@ -1005,12 +1040,14 @@ function main(argv)
 			path = z_cd(args)
 		end
 		if path ~= nil then
-			io.write(path)
+			io.write(path .. (options['-e'] and "\n" or ""))
 		end
-	elseif options['--add'] ~= nil then
+	elseif options['--add'] then
 		-- print('data: ' .. DATA_FILE)
 		z_add(args)
-	elseif options['--init'] ~= nil then
+	elseif options['-x'] then
+		z_remove(args)
+	elseif options['--init'] then
 		local opts = {}
 		for _, key in ipairs(args) do
 			opts[key] = 1
@@ -1020,15 +1057,15 @@ function main(argv)
 		else
 			z_shell_init(opts)
 		end
-	elseif options['-l'] ~= nil then
-		local M = z_match(args ~= nil and args or {}, Z_METHOD, Z_SUBDIR)
+	elseif options['-l'] then
+		local M = z_match(args and args or {}, Z_METHOD, Z_SUBDIR)
 		z_print(M)
-	elseif options['--complete'] ~= nil then
-		local M = z_match(args ~= nil and args or {}, Z_METHOD, Z_SUBDIR)
+	elseif options['--complete'] then
+		local M = z_match(args and args or {}, Z_METHOD, Z_SUBDIR)
 		for _, item in pairs(M) do
 			print(item.name)
 		end
-	elseif options['--help'] ~= nil or options['-h'] ~= nil then
+	elseif options['--help'] or options['-h'] then
 		z_help()
 	end
 	return true
@@ -1107,42 +1144,42 @@ end
 -----------------------------------------------------------------------
 local script_zlua = [[
 _zlua() {
-	local arg_list=""
+	local arg_mode=""
 	local arg_type=""
 	local arg_subdir=""
 	local arg_loop="1"
-	local arg_echo=""
-	local arg_help=""
 	if [ "$1" = "--add" ]; then
+		shift
 		_ZL_RANDOM="$RANDOM" "$ZLUA_LUAEXE" "$ZLUA_SCRIPT" --add "$@"
 		return
-	fi
-	if [ "$1" = "--complete" ]; then
+	elif [ "$1" = "--complete" ]; then
+		shift
 		"$ZLUA_LUAEXE" "$ZLUA_SCRIPT" --complete "$@"
 		return 
 	fi
 	while [ "$1" ]; do
 		case "$1" in 
-			-l) local arg_list="-l" ;;
+			-l) local arg_mode="-l" ;;
+			-e) local arg_mode="-e" ;;
+			-x) local arg_mode="-x" ;;
 			-t) local arg_type="-t" ;;
 			-r) local arg_type="-r" ;;
 			-c) local arg_subdir="-c" ;;
-			-e) local arg_echo="1" ;;
-			-h) local arg_help="-h" ;;
+			-h|--help) local arg_mode="-h" ;;
 			*) break ;;
 		esac
 		shift
 	done
-	if [ -n "$arg_help" ]; then
+	if [ "$arg_mode" = "-h" ]; then
 		"$ZLUA_LUAEXE" "$ZLUA_SCRIPT" -h
-	elif [ -n "$arg_list" ] || [ "$#" -eq 0 ]; then
+	elif [ "$arg_mode" = "-l" ] || [ "$#" -eq 0 ]; then
 		"$ZLUA_LUAEXE" "$ZLUA_SCRIPT" -l $arg_subdir $arg_type "$@"
+	elif [ -n "$arg_mode" ]; then
+		"$ZLUA_LUAEXE" "$ZLUA_SCRIPT" $arg_mode $arg_subdir $arg_type "$@"
 	else
 		local dest=$("$ZLUA_LUAEXE" "$ZLUA_SCRIPT" --cd $arg_type $arg_subdir "$@")
-		if [ "$dest" ] && [ -d "$dest" ]; then
-			if [ -n "$arg_echo" ]; then
-				echo "$dest"
-			elif [ -z "$_ZL_NOBUILTIN" ]; then
+		if [ -n "$dest" ] && [ -d "$dest" ]; then
+			if [ -z "$_ZL_NO_BUILTIN_CD" ]; then
 				builtin cd "$dest"
 			else
 				cd "$dest"
@@ -1230,7 +1267,7 @@ function z_shell_init(opts)
 		if prompt_hook then
 			print(script_init_posix)
 		end
-		print('_ZL_NOBUILTIN=1')
+		print('_ZL_NO_BUILTIN_CD=1')
 	else
 		print('if [ -n "$BASH_VERSION" ]; then')
 		if prompt_hook then
@@ -1246,7 +1283,7 @@ function z_shell_init(opts)
 		if prompt_hook then
 			print(script_init_posix)
 		end
-		print('_ZL_NOBUILTIN=1')
+		print('_ZL_NO_BUILTIN_CD=1')
 		print('fi')
 	end
 end
@@ -1258,9 +1295,7 @@ end
 local script_init_cmd = [[
 set "MatchType=-n"
 set "StrictSub=-n"
-set "ListOnly=-n"
-set "HelpMode=-n"
-set "EchoPath=-n"
+set "RunMode=-n"
 if /i not "%_ZL_LUA_EXE%"=="" (
 	set "LuaExe=%_ZL_LUA_EXE%"
 )
@@ -1281,51 +1316,43 @@ if /i "%1"=="-c" (
 	goto parse
 )
 if /i "%1"=="-l" (
-	set "ListOnly=-l"
+	set "RunMode=-l"
 	shift /1
 	goto parse
 )
 if /i "%1"=="-e" (
-	set "EchoPath=-e"
+	set "RunMode=-e"
+	shift /1
+	goto parse
+)
+if /i "%1"=="-x" (
+	set "RunMode=-x"
 	shift /1
 	goto parse
 )
 if /i "%1"=="-h" (
 	call "%LuaExe%" "%LuaScript%" -h
-	shift /1
 	goto end
 )
 :check
 if /i "%1"=="" (
-	set "ListOnly=-l"
+	set "RunMode=-l"
 )
 for /f "delims=" %%i in ('cd') do set "PWD=%%i"
-if /i "%ListOnly%"=="-n" (
-	setlocal EnableDelayedExpansion
+if /i "%RunMode%"=="-n" (
 	for /f "delims=" %%i in ('call "%LuaExe%" "%LuaScript%" --cd %MatchType% %StrictSub% %*') do set "NewPath=%%i"
 	if not "!NewPath!"=="" (
 		if exist !NewPath!\nul (
-			if /i "%EchoPath%"=="-e" (
-				echo !NewPath!
-			)	else (
-				pushd !NewPath!
-				pushd !NewPath!
-				endlocal
-				popd
-			)
+			pushd !NewPath!
+			pushd !NewPath!
+			endlocal
+			popd
 		)
 	)
 )	else (
-	call "%LuaExe%" "%LuaScript%" -l %MatchType% %StrictSub% %*
+	call "%LuaExe%" "%LuaScript%" "%RunMode%" %MatchType% %StrictSub% %*
 )
 :end
-set "LuaExe="
-set "LuaScript="
-set "MatchType="
-set "StrictSub="
-set "NewPath="
-set "ListOnly="
-set "PWD="
 ]]
 
 
@@ -1334,6 +1361,7 @@ set "PWD="
 -----------------------------------------------------------------------
 function z_windows_init(opts)
 	print('@echo off')
+	print('setlocal EnableDelayedExpansion')
 	print('set "LuaExe=' .. os.interpreter() .. '"')
 	print('set "LuaScript=' .. os.scriptname() .. '"')
 	print(script_init_cmd)
@@ -1351,6 +1379,8 @@ function z_help()
 	print(cmd .. '-t bar    # cd to most recently accessed dir matching foo')
 	print(cmd .. '-l bar    # list matches instead of cd')
 	print(cmd .. '-c foo    # restrict matches to subdirs of $PWD')
+	print(cmd .. '-e foo    # echo the best match, don\'t cd')
+	print(cmd .. '-x path   # remove path from history')
 end
 
 
