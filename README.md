@@ -68,6 +68,33 @@ z -e foo    # echo the best match, don't cd
 - set `$_ZL_NO_PROMPT_COMMAND` if you're handling PROMPT_COMMAND yourself.
 - set `$_ZL_EXCLUDE_DIRS` to an array of directories to exclude.
 
+## Benchmark
+
+The slowest part of all autojump tools is path tracking, which is installed in your `$PROMPT_COMMAND` and will be invoked each time you press enter (each time before bash display prompt). So I profile them on my NAS:
+
+```bash
+$ time autojump --add /tmp
+real    0m0.352s
+user    0m0.077s
+sys     0m0.185s
+
+$ time fasd -A /tmp
+real    0m0.618s
+user    0m0.076s
+sys     0m0.242s
+
+$ time _z --add /tmp
+real    0m0.194s
+user    0m0.046s
+sys     0m0.154s
+
+$ time _zlua --add /tmp
+real    0m0.052s
+user    0m0.015s
+sys     0m0.030s
+```
+
+As you see, z.lua is the fastest one and requires less resource.
 
 
 ## Credit
