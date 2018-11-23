@@ -1272,16 +1272,22 @@ function z_shell_init(opts)
 		print('if [ -n "$BASH_VERSION" ]; then')
 		if prompt_hook then
 			print(script_init_bash)
+		else
+			print('_ZL_DUMMY_SET=1')
 		end
 		print(script_complete_bash)
 		print('elif [ -n "$ZSH_VERSION" ]; then')
 		if prompt_hook then
 			print(script_init_zsh)
+		else
+			print('_ZL_DUMMY_SET=1')
 		end
 		-- print(script_complete_zsh)
 		print('else')
 		if prompt_hook then
 			print(script_init_posix)
+		else
+			print('_ZL_DUMMY_SET=1')
 		end
 		print('_ZL_NO_BUILTIN_CD=1')
 		print('fi')
