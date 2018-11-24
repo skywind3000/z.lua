@@ -1122,7 +1122,16 @@ end
 -- initialize clink hooks
 -----------------------------------------------------------------------
 function z_clink_init()
+	local once = os.getenv("_ZL_ADD_ONCE")
+	local previous = ''
 	function z_add_to_database()
+		pwd = clink.get_cwd()
+		if once then
+			if previous == pwd then
+				return
+			end
+			previous = pwd
+		end
 		z_add(clink.get_cwd())
 	end
 	clink.prompt.register_filter(z_add_to_database, 99)
@@ -1205,6 +1214,18 @@ case "$PROMPT_COMMAND" in
 esac
 ]]
 
+local script_init_bash_once = [[
+_zlua_precmd() {
+    [ "$_ZL_PREVIOUS_PWD" = "$PWD" ] && return
+    _ZL_PREVIOUS_PWD="$PWD"
+    (_zlua --add "$PWD" 2> /dev/null &)
+}
+case "$PROMPT_COMMAND" in 
+	*_zlua_precmd*) ;;
+	*) PROMPT_COMMAND="_zlua_precmd;$PROMPT_COMMAND" ;;
+esac
+]]
+
 local script_init_posix = [[
 case "$PS1" in
 	*_zlua?--add*) ;;
@@ -1212,12 +1233,35 @@ case "$PS1" in
 esac
 ]]
 
+local script_init_posix_once = [[
+_zlua_precmd() {
+    [ "$_ZL_PREVIOUS_PWD" = "$PWD" ] && return
+    _ZL_PREVIOUS_PWD="$PWD"
+    (_zlua --add "$PWD" 2> /dev/null &)
+}
+case "$PS1" in
+	*_zlua_precmd*) ;;
+	*) PS1="\$(_zlua_precmd)$PS1"
+esac
+]]
+
 local script_init_zsh = [[
 _zlua_precmd() {
 	(_zlua --add "${PWD:a}" &)
 }
+typeset -gaU precmd_functions
 [ -n "${precmd_functions[(r)_zlua_precmd]}" ] || {
 	precmd_functions[$(($#precmd_functions+1))]=_zlua_precmd
+}
+]]
+
+local script_init_zsh_once = [[
+_zlua_precmd() {
+	(_zlua --add "${PWD:a}" &)
+}
+typeset -gaU chpwd_functions
+[ -n "${chpwd_functions[(r)_zlua_precmd]}" ] || {
+	chpwd_functions[$(($#chpwd_functions+1))]=_zlua_precmd
 }
 ]]
 
@@ -1248,49 +1292,48 @@ function z_shell_init(opts)
 	print(script_zlua)
 
 	local prompt_hook = (os.getenv("_ZL_NO_PROMPT_COMMAND") == nil)
+	local once = (os.getenv("_ZL_ADD_ONCE") ~= nil) or opts.once ~= nil
 
 	if opts.bash ~= nil then
 		if prompt_hook then
-			if opts.fast == nil then
-				print(script_init_bash)
-			else
+			if opts.once then
+				print(script_init_bash_once)
+			elseif opts.fast then
 				print(script_init_bash_fast)
+			else 
+				print(script_init_bash)
 			end
 		end
 		print(script_complete_bash)
 	elseif opts.zsh ~= nil then
 		if prompt_hook then
-			print(script_init_zsh)
+			print(once and script_init_zsh_once or script_init_zsh)
 		end
 		print(script_complete_zsh)
 	elseif opts.posix ~= nil then
 		if prompt_hook then
-			print(script_init_posix)
+			print(once and script_init_posix_once or script_init_posix)
 		end
 		print('_ZL_NO_BUILTIN_CD=1')
 	else
-		print('if [ -n "$BASH_VERSION" ]; then')
 		if prompt_hook then
-			print(script_init_bash)
-		else
-			print('_ZL_DUMMY_SET=1')
+			print('if [ -n "$BASH_VERSION" ]; then')
+			if opts.once then
+				print(script_init_bash_once)
+			elseif opts.fast then
+				print(script_init_bash_fast)
+			else 
+				print(script_init_bash)
+			end
+			print(script_complete_bash)
+			print('elif [ -n "$ZSH_VERSION" ]; then')
+			print(once and script_init_zsh_once or script_init_zsh)
+			-- print(script_complete_zsh)
+			print('else')
+			print(once and script_init_posix_once or script_init_posix)
+			print('_ZL_NO_BUILTIN_CD=1')
+			print('fi')
 		end
-		print(script_complete_bash)
-		print('elif [ -n "$ZSH_VERSION" ]; then')
-		if prompt_hook then
-			print(script_init_zsh)
-		else
-			print('_ZL_DUMMY_SET=1')
-		end
-		-- print(script_complete_zsh)
-		print('else')
-		if prompt_hook then
-			print(script_init_posix)
-		else
-			print('_ZL_DUMMY_SET=1')
-		end
-		print('_ZL_NO_BUILTIN_CD=1')
-		print('fi')
 	end
 end
 
