@@ -1061,7 +1061,9 @@ function main(argv)
 		local M = z_match(args and args or {}, Z_METHOD, Z_SUBDIR)
 		z_print(M)
 	elseif options['--complete'] then
-		local M = z_match(args and args or {}, Z_METHOD, Z_SUBDIR)
+		local line = args[1] and args[1] or ''
+		local head = line:sub(Z_CMD:len()+1):gsub('^%s+', '')
+		local M = z_match({head}, Z_METHOD, Z_SUBDIR)
 		for _, item in pairs(M) do
 			print(item.name)
 		end
