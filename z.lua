@@ -1190,12 +1190,13 @@ _zlua() {
 	else
 		local dest=$("$ZLUA_LUAEXE" "$ZLUA_SCRIPT" --cd $arg_type $arg_subdir "$@")
 		if [ -n "$dest" ] && [ -d "$dest" ]; then
-			if [ -z "$_ZL_NO_BUILTIN_CD" ]; then
+			if [ -z "$_ZL_CD" ]; then
 				builtin cd "$dest"
 			else
-				cd "$dest"
+				$_ZL_CD "$dest"
 			fi
 		fi
+		[ -n "$_ZL_ECHO" ] && pwd
 	fi
 }
 # alias ${_ZL_CMD:-z}='_zlua 2>&1'
