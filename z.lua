@@ -1195,8 +1195,8 @@ _zlua() {
 			else
 				$_ZL_CD "$dest"
 			fi
+			[ -n "$_ZL_ECHO" ] && pwd
 		fi
-		[ -n "$_ZL_ECHO" ] && pwd
 	fi
 }
 # alias ${_ZL_CMD:-z}='_zlua 2>&1'
@@ -1395,6 +1395,9 @@ if /i "%RunMode%"=="-n" (
 	for /f "delims=" %%i in ('call "%LuaExe%" "%LuaScript%" --cd %MatchType% %StrictSub% %*') do set "NewPath=%%i"
 	if not "!NewPath!"=="" (
 		if exist !NewPath!\nul (
+			if /i not "%_ZL_ECHO%"=="" (
+				echo !NewPath!
+			)
 			pushd !NewPath!
 			pushd !NewPath!
 			endlocal

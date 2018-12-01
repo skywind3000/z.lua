@@ -69,6 +69,9 @@ if /i "%RunMode%"=="-n" (
 	for /f "delims=" %%i in ('call "%LuaExe%" "%LuaScript%" --cd %MatchType% %StrictSub% %*') do set "NewPath=%%i"
 	if not "!NewPath!"=="" (
 		if exist !NewPath!\nul (
+			if /i not "%_ZL_ECHO%"=="" (
+				echo !NewPath!
+			)
 			pushd !NewPath!
 			pushd !NewPath!
 			endlocal
