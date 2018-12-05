@@ -1,6 +1,6 @@
 # z.lua
 
-z - jump around (lua implementation for running on both unix &amp; windows).
+z - jump around (lua implementation for unix &amp; windows).
 
 An alternative to [z.sh](https://github.com/rupa/z) with windows and posix shells support and performance improving.
 
