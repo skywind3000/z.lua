@@ -13,6 +13,7 @@ An alternative to [z.sh](https://github.com/rupa/z) with windows and posix shell
 - supports Windows cmd (with clink) and cmder
 - self contained, no dependence on awk/gawk
 - compatible with lua 5.1, 5.2 and 5.3+
+- new "$_ZL_ADD_ONCE" to allow updating database only if `$PWD` changed.
 
 ## USE
 
@@ -67,6 +68,7 @@ z -e foo    # echo the best match, don't cd
 - set `$_ZL_DATA` in .bashrc/.zshrc to change the datafile (default ~/.zlua).
 - set `$_ZL_NO_PROMPT_COMMAND` if you're handling PROMPT_COMMAND yourself.
 - set `$_ZL_EXCLUDE_DIRS` to an array of directories to exclude.
+- set `$_ZL_ADD_ONCE` to '1' to update database only if `$PWD` changed.
 
 ## Benchmark
 
@@ -95,6 +97,20 @@ sys     0m0.030s
 ```
 
 As you see, z.lua is the fastest one and requires less resource.
+
+
+## Add once
+
+By default, z.lua will add current directory to database each time before display command prompt (correspond with z.sh). But there is an option to allow z.lua add path only if current working directory changed. 
+
+To enable this, you can set `$_ZL_ADD_ONCE` to `1` before init z.lua. Or you can init z.lua on linux like this:
+
+````bash
+eval "$(lua /path/to/z.lua --init bash once)"
+eval "$(lua /path/to/z.lua --init zsh once)"
+````
+
+It could be much faster on slow hardware or Cygwin/MSYS.
 
 
 ## Credit
