@@ -4,7 +4,7 @@
 -- z.lua - z.sh implementation in lua, by skywind (2018/03/19)
 -- Licensed under MIT license.
 --
--- Version 32, Last Modified: 2018/11/23 16:23
+-- Version 32, Last Modified: 2018/12/05 17:55
 --
 -- * 10x times faster than fasd and autojump
 -- * 3x times faster than rupa/z
@@ -53,6 +53,10 @@
 --   set $_ZL_DATA in .bashrc/.zshrc to change the datafile (default ~/.zlua).
 --   set $_ZL_NO_PROMPT_COMMAND if you're handling PROMPT_COMMAND yourself.
 --   set $_ZL_EXCLUDE_DIRS to an array of directories to exclude.
+--   set $_ZL_ADD_ONCE to 1 to update database only if $PWD changed.
+--   set $_ZL_CD to specify your own cd command
+--   set $_ZL_ECHO to 1 to display new directory name after cd.
+--   set $_ZL_MAXAGE to define a aging threshold (default is 5000).
 --
 --=====================================================================
 

@@ -69,6 +69,11 @@ z -e foo    # echo the best match, don't cd
 - set `$_ZL_NO_PROMPT_COMMAND` if you're handling PROMPT_COMMAND yourself.
 - set `$_ZL_EXCLUDE_DIRS` to an array of directories to exclude.
 - set `$_ZL_ADD_ONCE` to '1' to update database only if `$PWD` changed.
+- set `$_ZL_MAXAGE` to define a aging threshold (default is 5000).
+- set `$_ZL_CD` to specify your own cd command.
+- set `$_ZL_ECHO` to 1 to display new directory name after cd.
+
+
 
 ## Benchmark
 
