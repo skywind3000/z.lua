@@ -4,7 +4,7 @@
 -- z.lua - z.sh implementation in lua, by skywind (2018/03/19)
 -- Licensed under MIT license.
 --
--- Version 33, Last Modified: 2018/12/26 21:14
+-- Version 35, Last Modified: 2018/12/26 21:14
 --
 -- * 10x times faster than fasd and autojump
 -- * 3x times faster than rupa/z
@@ -21,7 +21,6 @@
 --     * z -c foo   # restrict matches to subdirs of $PWD
 --     * z -e foo   # echo the best match, don't cd
 --     * z -x path  # remove path from history
---     * z -i foo   # cd with interactive selection
 --
 -- Bash Install: 
 --     * put something like this in your .bashrc:
@@ -1491,7 +1490,6 @@ function z_help()
 	print(cmd .. '-c foo    # restrict matches to subdirs of $PWD')
 	print(cmd .. '-e foo    # echo the best match, don\'t cd')
 	print(cmd .. '-x path   # remove path from history')
-	print(cmd .. '-i foo    # cd with interactive selection')
 end
 
 
