@@ -8,6 +8,8 @@ set "LuaScript=%HomeDir%z.lua"
 set "MatchType=-n"
 set "StrictSub=-n"
 set "RunMode=-n"
+set "StripMode="
+set "InterMode="
 
 if /i not "%_ZL_LUA_EXE%"=="" (
 	set "LuaExe=%_ZL_LUA_EXE%"
@@ -52,6 +54,18 @@ if /i "%1"=="-x" (
 	goto parse
 )
 
+if /i "%1"=="-i" (
+	set "InterMode=-i"
+	shift /1
+	goto parse
+)
+
+if /i "%1"=="-s" (
+	set "StripMode=-s"
+	shift /1
+	goto parse
+)
+
 if /i "%1"=="-h" (
 	call "%LuaExe%" "%LuaScript%" -h
 	goto end
@@ -66,7 +80,7 @@ if /i "%1"=="" (
 for /f "delims=" %%i in ('cd') do set "PWD=%%i"
 
 if /i "%RunMode%"=="-n" (
-	for /f "delims=" %%i in ('call "%LuaExe%" "%LuaScript%" --cd %MatchType% %StrictSub% %*') do set "NewPath=%%i"
+	for /f "delims=" %%i in ('call "%LuaExe%" "%LuaScript%" --cd %MatchType% %StrictSub% %InterMode% %*') do set "NewPath=%%i"
 	if not "!NewPath!"=="" (
 		if exist !NewPath!\nul (
 			if /i not "%_ZL_ECHO%"=="" (
@@ -79,7 +93,7 @@ if /i "%RunMode%"=="-n" (
 		)
 	)
 )	else (
-	call "%LuaExe%" "%LuaScript%" "%RunMode%" %MatchType% %StrictSub% %*
+	call "%LuaExe%" "%LuaScript%" "%RunMode%" %MatchType% %StrictSub% %InterMode% %StripMode% %*
 )
 
 :end

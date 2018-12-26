@@ -96,6 +96,7 @@ PRINT_TO_STDERR = false
 PWD = ''
 Z_METHOD = 'frecent'
 Z_SUBDIR = false
+Z_INTERACTIVE = false
 Z_EXCLUDE = {}
 Z_CMD = 'z'
 
@@ -275,7 +276,7 @@ end
 -----------------------------------------------------------------------
 function os.path.abspath(path)
 	if windows then
-		local script = 'FOR /F %%i IN ("%s") DO @echo %%~fi'
+		local script = 'FOR /f "delims=" %%i IN ("%s") DO @echo %%~fi'
 		local script = string.format(script, path)
 		local script = 'cmd.exe /C ' .. script .. ' 2> nul'
 		local output = os.call(script)
@@ -930,7 +931,7 @@ end
 -----------------------------------------------------------------------
 -- pretty print 
 -----------------------------------------------------------------------
-function z_print(M, number)
+function z_print(M, weight, number)
 	local N = {}
 	local maxsize = 10
 	local numsize = string.len(tostring(#M))
@@ -960,7 +961,11 @@ function z_print(M, number)
 		if dx > 0 then
 			line = line .. string.rep(' ', dx)
 		end
-		line = line .. '  ' .. record.name
+		if weight then
+			line = line .. '  ' .. record.name
+		else
+			line = record.name
+		end
 		if number then
 			local head = tostring(i)
 			if head:len() < numsize then
@@ -1002,10 +1007,28 @@ function z_cd(patterns)
 	end
 	if #M == 0 then
 		return nil
+	elseif #M == 1 then
+		return M[1].name
+	elseif not Z_INTERACTIVE then
+		return M[1].name
 	end
-	return M[1].name
+	PRINT_TO_STDERR = true
+	z_print(M, true, true)
+	io.stderr:write('> ')
+	io.stderr:flush()
+	local input = io.read('*l')
+	if input == nil then
+		return nil
+	end
+	local index = tonumber(input)
+	if index == nil then
+		return nil
+	end
+	if index < 1 or index > #M then
+		return nil
+	end
+	return M[index].name
 end
-
 
 
 
@@ -1036,6 +1059,9 @@ function main(argv)
 	elseif options['-t'] then
 		Z_METHOD = 'time'
 	end
+	if options['-i'] then
+		Z_INTERACTIVE = true
+	end
 	if options['--cd'] or options['-e'] then
 		local path = ''
 		if #args == 0 then
@@ -1063,7 +1089,11 @@ function main(argv)
 		end
 	elseif options['-l'] then
 		local M = z_match(args and args or {}, Z_METHOD, Z_SUBDIR)
-		z_print(M)
+		if options['-s'] then
+			z_print(M, false, false)
+		else
+			z_print(M, true, false)
+		end
 	elseif options['--complete'] then
 		local line = args[1] and args[1] or ''
 		local head = line:sub(Z_CMD:len()+1):gsub('^%s+', '')
@@ -1163,6 +1193,8 @@ _zlua() {
 	local arg_type=""
 	local arg_subdir=""
 	local arg_loop="1"
+	local arg_inter=""
+	local arg_strip=""
 	if [ "$1" = "--add" ]; then
 		shift
 		_ZL_RANDOM="$RANDOM" "$ZLUA_LUAEXE" "$ZLUA_SCRIPT" --add "$@"
@@ -1180,6 +1212,8 @@ _zlua() {
 			-t) local arg_type="-t" ;;
 			-r) local arg_type="-r" ;;
 			-c) local arg_subdir="-c" ;;
+			-s) local arg_strip="-s" ;;
+			-i) local arg_inter="-i" ;;
 			-h|--help) local arg_mode="-h" ;;
 			*) break ;;
 		esac
@@ -1188,11 +1222,11 @@ _zlua() {
 	if [ "$arg_mode" = "-h" ]; then
 		"$ZLUA_LUAEXE" "$ZLUA_SCRIPT" -h
 	elif [ "$arg_mode" = "-l" ] || [ "$#" -eq 0 ]; then
-		"$ZLUA_LUAEXE" "$ZLUA_SCRIPT" -l $arg_subdir $arg_type "$@"
+		"$ZLUA_LUAEXE" "$ZLUA_SCRIPT" -l $arg_subdir $arg_type $arg_strip "$@"
 	elif [ -n "$arg_mode" ]; then
-		"$ZLUA_LUAEXE" "$ZLUA_SCRIPT" $arg_mode $arg_subdir $arg_type "$@"
+		"$ZLUA_LUAEXE" "$ZLUA_SCRIPT" $arg_mode $arg_subdir $arg_type $arg_inter "$@"
 	else
-		local dest=$("$ZLUA_LUAEXE" "$ZLUA_SCRIPT" --cd $arg_type $arg_subdir "$@")
+		local dest=$("$ZLUA_LUAEXE" "$ZLUA_SCRIPT" --cd $arg_type $arg_subdir $arg_inter "$@")
 		if [ -n "$dest" ] && [ -d "$dest" ]; then
 			if [ -z "$_ZL_CD" ]; then
 				builtin cd "$dest"
@@ -1353,6 +1387,8 @@ local script_init_cmd = [[
 set "MatchType=-n"
 set "StrictSub=-n"
 set "RunMode=-n"
+set "StripMode="
+set "InterMode="
 if /i not "%_ZL_LUA_EXE%"=="" (
 	set "LuaExe=%_ZL_LUA_EXE%"
 )
@@ -1387,6 +1423,16 @@ if /i "%1"=="-x" (
 	shift /1
 	goto parse
 )
+if /i "%1"=="-i" (
+	set "InterMode=-i"
+	shift /1
+	goto parse
+)
+if /i "%1"=="-s" (
+	set "StripMode=-s"
+	shift /1
+	goto parse
+)
 if /i "%1"=="-h" (
 	call "%LuaExe%" "%LuaScript%" -h
 	goto end
@@ -1397,7 +1443,7 @@ if /i "%1"=="" (
 )
 for /f "delims=" %%i in ('cd') do set "PWD=%%i"
 if /i "%RunMode%"=="-n" (
-	for /f "delims=" %%i in ('call "%LuaExe%" "%LuaScript%" --cd %MatchType% %StrictSub% %*') do set "NewPath=%%i"
+	for /f "delims=" %%i in ('call "%LuaExe%" "%LuaScript%" --cd %MatchType% %StrictSub% %InterMode% %*') do set "NewPath=%%i"
 	if not "!NewPath!"=="" (
 		if exist !NewPath!\nul (
 			if /i not "%_ZL_ECHO%"=="" (
@@ -1410,7 +1456,7 @@ if /i "%RunMode%"=="-n" (
 		)
 	)
 )	else (
-	call "%LuaExe%" "%LuaScript%" "%RunMode%" %MatchType% %StrictSub% %*
+	call "%LuaExe%" "%LuaScript%" "%RunMode%" %MatchType% %StrictSub% %InterMode% %StripMode% %*
 )
 :end
 ]]

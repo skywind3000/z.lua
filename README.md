@@ -118,6 +118,10 @@ eval "$(lua /path/to/z.lua --init zsh once)"
 It could be much faster on slow hardware or Cygwin/MSYS.
 
 
+## Aliases
+
+TODO
+
 ## Credit
 
 Releated projects:
