@@ -25,6 +25,7 @@ z -t foo    # cd to most recently accessed dir matching foo
 z -l foo    # list matches instead of cd
 z -c foo    # restrict matches to subdirs of $PWD
 z -e foo    # echo the best match, don't cd
+z -i foo    # cd with interactive selection
 ```
 
 ## Install
@@ -120,7 +121,19 @@ It could be much faster on slow hardware or Cygwin/MSYS.
 
 ## Aliases
 
-TODO
+Recommanded aliases you may find useful:
+
+```bash
+alias zc='z -c'      # restrict matches to subdirs of $PWD
+alias zz='z -i'      # cd with interactive selection
+```
+
+And you can define a `zf` command to select history path with fzf:
+
+```bash
+alias zf='cd "$(z -l -s | fzf --reverse --height 35%)"'
+```
+
 
 ## Credit
 
