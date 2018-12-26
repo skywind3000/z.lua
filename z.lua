@@ -1283,6 +1283,7 @@ _zlua_zsh_tab_completion() {
 	# tab completion
 	local compl
 	read -l compl
+	(( $+compstate )) && compstate[insert]=menu # no expand
 	reply=(${(f)"$(_zlua --complete "$compl")"})
 }
 compctl -U -K _zlua_zsh_tab_completion _zlua
