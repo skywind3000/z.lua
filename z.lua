@@ -1,10 +1,10 @@
 #! /usr/bin/env lua
 --=====================================================================
 --
--- z.lua - z.sh implementation in lua, by skywind (2018/03/19)
+-- z.lua - z.sh implementation in lua, by skywind 2018, 2019
 -- Licensed under MIT license.
 --
--- Version 35, Last Modified: 2018/12/26 21:28
+-- Version 36, Last Modified: 2019/01/13 00:14
 --
 -- * 10x times faster than fasd and autojump
 -- * 3x times faster than rupa/z
@@ -57,6 +57,8 @@
 --   set $_ZL_CD to specify your own cd command
 --   set $_ZL_ECHO to 1 to display new directory name after cd.
 --   set $_ZL_MAXAGE to define a aging threshold (default is 5000).
+--   set $_ZL_MATCH_NAME to 1 to force match the last segment of the path.
+--   set $_ZL_SKIP_PWD to 1 to skip current directory ($PWD).
 --
 --=====================================================================
 
@@ -99,6 +101,8 @@ Z_SUBDIR = false
 Z_INTERACTIVE = false
 Z_EXCLUDE = {}
 Z_CMD = 'z'
+Z_MATCHNAME = false
+Z_SKIPPWD = false
 
 
 -----------------------------------------------------------------------
@@ -713,6 +717,14 @@ end
 
 
 -----------------------------------------------------------------------
+-- change database
+-----------------------------------------------------------------------
+function data_file_set(name)
+	DATA_FILE = name
+end
+
+
+-----------------------------------------------------------------------
 -- change pattern
 -----------------------------------------------------------------------
 function case_insensitive_pattern(pattern)
@@ -734,9 +746,10 @@ end
 -----------------------------------------------------------------------
 -- pathmatch
 -----------------------------------------------------------------------
-function path_match(pathname, patterns)
+function path_match(pathname, patterns, matchlast)
 	local pos = 1
 	local i = 0
+	local matchlast = matchlast ~= nil and matchlast or false
 	for i = 1, #patterns do
 		local pat = patterns[i]
 		start, endup = pathname:find(pat, pos)
@@ -745,6 +758,22 @@ function path_match(pathname, patterns)
 		end
 		pos = endup + 1
 	end
+	if matchlast and #patterns > 0 then
+		local last = ''
+		local index = #patterns
+		local pat = patterns[index]
+		if not windows then
+			last = string.match(pathname, ".*/(.*)")
+		else
+			last = string.match(pathname, ".*[/\\](.*)")
+		end
+		if last then
+			start, endup = last:find(pat, 1)
+			if start == nil or endup == nil then
+				return false
+			end
+		end
+	end
 	return true
 end
 
@@ -752,7 +781,7 @@ end
 -----------------------------------------------------------------------
 -- select matched pathnames
 -----------------------------------------------------------------------
-function data_select(M, patterns)
+function data_select(M, patterns, matchlast)
 	local N = {}
 	local i = 1
 	local pats = {}
@@ -762,7 +791,7 @@ function data_select(M, patterns)
 	end
 	for i = 1, #M do
 		local item = M[i]
-		if path_match(item.name, pats) then
+		if path_match(item.name, pats, matchlast) then
 			table.insert(N, item)
 		end
 	end
@@ -894,7 +923,13 @@ function z_match(patterns, method, subdir)
 	method = method ~= nil and method or 'frecent'
 	subdir = subdir ~= nil and subdir or false
 	local M = data_load(DATA_FILE)
-	M = data_select(M, patterns)
+	M = data_select(M, patterns, false)
+	if Z_MATCHNAME then
+		local N = data_select(M, patterns, true)
+		if #N > 0 then
+			M = N
+		end
+	end
 	M = data_filter(M)
 	M = data_update_frecent(M)
 	if method == 'time' then
@@ -912,12 +947,24 @@ function z_match(patterns, method, subdir)
 		end
 	end
 	table.sort(M, function (a, b) return a.score > b.score end)
-	if subdir then
-		local pwd = (PWD == nil or PWD == '') and os.getenv('PWD') or PWD
-		if pwd ~= '' and pwd ~= nil then 
+	local pwd = (PWD == nil or PWD == '') and os.getenv('PWD') or PWD
+	if pwd ~= '' and pwd ~= nil then 
+		if subdir then
 			local N = {}
 			for _, item in pairs(M) do
 				if os.path.subdir(pwd, item.name) then
+					table.insert(N, item)
+				end
+			end
+			M = N
+		end
+		if Z_SKIPPWD then
+			local N = {}
+			local key = windows and string.lower(pwd) or pwd
+			for _, item in pairs(M) do
+				local match = false
+				local name = windows and string.lower(item.name) or item.name
+				if name ~= key then
 					table.insert(N, item)
 				end
 			end
@@ -1116,6 +1163,8 @@ function z_init()
 	local _zl_maxage = os.getenv('_ZL_MAXAGE')
 	local _zl_exclude = os.getenv('_ZL_EXCLUDE')
 	local _zl_cmd = os.getenv('_ZL_CMD')
+	local _zl_matchname = os.getenv('_ZL_MATCH_NAME')
+	local _zl_skippwd = os.getenv('_ZL_SKIP_PWD')
 	if _zl_data ~= nil and _zl_data ~= "" then
 		if windows then
 			DATA_FILE = _zl_data
@@ -1150,6 +1199,18 @@ function z_init()
 	end
 	if _zl_cmd ~= nil then
 		Z_CMD = _zl_cmd
+	end
+	if _zl_matchname ~= nil then
+		local m = string.lower(_zl_matchname)
+		if (m == '1' or m == 'yes' or m == 'true' or m == 't') then
+			Z_MATCHNAME = true
+		end
+	end
+	if _zl_skippwd ~= nil then
+		local m = string.lower(_zl_matchname)
+		if (m == '1' or m == 'yes' or m == 'true' or m == 't') then
+			Z_SKIPPWD = true
+		end
 	end
 end
 
