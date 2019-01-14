@@ -1165,6 +1165,7 @@ function z_init()
 	local _zl_cmd = os.getenv('_ZL_CMD')
 	local _zl_matchname = os.getenv('_ZL_MATCH_NAME')
 	local _zl_skippwd = os.getenv('_ZL_SKIP_PWD')
+	local _zl_matchmode = os.getenv('_ZL_MATCH_MODE')
 	if _zl_data ~= nil and _zl_data ~= "" then
 		if windows then
 			DATA_FILE = _zl_data
@@ -1207,8 +1208,15 @@ function z_init()
 		end
 	end
 	if _zl_skippwd ~= nil then
-		local m = string.lower(_zl_matchname)
+		local m = string.lower(_zl_skippwd)
 		if (m == '1' or m == 'yes' or m == 'true' or m == 't') then
+			Z_SKIPPWD = true
+		end
+	end
+	if _zl_matchmode ~= nil then
+		local m = string.lower(_zl_matchmode)
+		if (m == '1') then
+			Z_MATCHNAME = true
 			Z_SKIPPWD = true
 		end
 	end
