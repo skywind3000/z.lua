@@ -1214,8 +1214,8 @@ function z_init()
 		end
 	end
 	if _zl_matchmode ~= nil then
-		local m = string.lower(_zl_matchmode)
-		if (m == '1') then
+		local m = tonumber('_ZL_MATCH_MODE')
+		if (m == 1) then
 			Z_MATCHNAME = true
 			Z_SKIPPWD = true
 		end
