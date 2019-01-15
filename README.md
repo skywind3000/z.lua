@@ -130,7 +130,7 @@ For a given set of queries (the set of command-line arguments passed to z.lua), 
 1. Queries match the path in order (same as default method).
 2. The last query matches the last segment of the path.
 
-If no match is found and if there is an existent pathname equals to the last query, the last query will be used as the result.
+If no match is found, it will fall back to default matching method.
 
 - match the last segment of the path:
   
