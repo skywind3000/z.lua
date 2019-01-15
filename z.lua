@@ -101,6 +101,7 @@ Z_SUBDIR = false
 Z_INTERACTIVE = false
 Z_EXCLUDE = {}
 Z_CMD = 'z'
+Z_MATCHMODE = 0
 Z_MATCHNAME = false
 Z_SKIPPWD = false
 
@@ -1116,6 +1117,13 @@ function main(argv)
 		else
 			path = z_cd(args)
 		end
+		if path == nil and Z_MATCHMODE ~= 0 then
+			local last = patterns[#patterns]
+			if os.path.isdir(last) then
+				path = os.path.abspath(last)
+				path = os.path.norm(path)
+			end
+		end
 		if path ~= nil then
 			io.write(path .. (options['-e'] and "\n" or ""))
 		end
@@ -1215,6 +1223,7 @@ function z_init()
 	end
 	if _zl_matchmode ~= nil then
 		local m = tonumber(_zl_matchmode)
+		Z_MATCHMODE = m
 		if (m == 1) then
 			Z_MATCHNAME = true
 			Z_SKIPPWD = true
