@@ -160,35 +160,6 @@ If no match is found and if there is an existent pathname equals to the last que
 The default matching method is designed to be compatible with original z.sh, but the enhanced matching method is much more handy and exclusive to z.lua.
 
 
-## Benchmark
-
-The slowest part is adding path to history data file. It will run every time when you press enter (installed in $PROMPT_COMMAND). so I profile it on my nas:
-
-```bash
-$ time autojump --add /tmp
-real    0m0.352s
-user    0m0.077s
-sys     0m0.185s
-
-$ time fasd -A /tmp
-real    0m0.618s
-user    0m0.076s
-sys     0m0.242s
-
-$ time _z --add /tmp
-real    0m0.194s
-user    0m0.046s
-sys     0m0.154s
-
-$ time _zlua --add /tmp
-real    0m0.052s
-user    0m0.015s
-sys     0m0.030s
-```
-
-As you see, z.lua is the fastest one and requires less resource.
-
-
 ## Add once
 
 By default, z.lua will add current directory to database each time before display command prompt (correspond with z.sh). But there is an option to allow z.lua add path only if current working directory changed. 
@@ -217,6 +188,36 @@ And you can define a `zf` command to select history path with fzf:
 ```bash
 alias zf='cd "$(z -l -s | fzf --reverse --height 35%)"'
 ```
+
+
+
+## Benchmark
+
+The slowest part is adding path to history data file. It will run every time when you press enter (installed in $PROMPT_COMMAND). so I profile it on my nas:
+
+```bash
+$ time autojump --add /tmp
+real    0m0.352s
+user    0m0.077s
+sys     0m0.185s
+
+$ time fasd -A /tmp
+real    0m0.618s
+user    0m0.076s
+sys     0m0.242s
+
+$ time _z --add /tmp
+real    0m0.194s
+user    0m0.046s
+sys     0m0.154s
+
+$ time _zlua --add /tmp
+real    0m0.052s
+user    0m0.015s
+sys     0m0.030s
+```
+
+As you see, z.lua is the fastest one and requires less resource.
 
 
 ## Credit
