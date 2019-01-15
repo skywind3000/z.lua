@@ -143,7 +143,7 @@ If no match is found, it will fall back to default matching method.
 
   If you use `"z wo"` in enhanced matching mode, only the `/home/user/work` will be matched, because according to rule No.2 it is the only path whose last segment matches `"wo"`.
 
-  Because the last segment of a path is always easier to be recalled, it is sane to give it higher priority. You can also achieve this by typing `"z space$"` in both methods, but `"z wo"` is easier to type.
+  Since the last segment of a path is always easier to be recalled, it is sane to give it higher priority. You can also achieve this by typing `"z space$"` in both methods, but `"z wo"` is easier to type.
 
 - cd to the existent path if there is no match.  
 
