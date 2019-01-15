@@ -1116,7 +1116,7 @@ function main(argv)
 			path = os.path.expand('~')
 		else
 			path = z_cd(args)
-			if path == nil and #args == 1 then
+			if path == nil and Z_MATCHMODE ~= 0 then
 				local last = args[#args]
 				if os.path.isdir(last) then
 					path = os.path.abspath(last)
