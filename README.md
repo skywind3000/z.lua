@@ -15,11 +15,11 @@ For example, `z foo bar` would match `/foo/bar` but not `/bar/foo`.
 
 - **10x** times faster than **fasd** and **autojump**
 - **3x** times faster than **z.sh**
-- available for **posix shells**: bash, zsh, dash, sh, ash, busybox and etc.
-- supports Windows cmd (with clink) and cmder
-- self contained, no dependence on awk/gawk
-- compatible with lua 5.1, 5.2 and 5.3+
-- new "$_ZL_ADD_ONCE" to allow updating database only if `$PWD` changed.
+- Available for **posix shells**: bash, zsh, dash, sh, ash, busybox and etc.
+- Supports Windows cmd (with clink) and cmder
+- Self contained, no dependence on awk/gawk
+- Compatible with lua 5.1, 5.2 and 5.3+
+- New "$_ZL_ADD_ONCE" to allow updating database only if `$PWD` changed.
 - Enhanced matching mode with "$_ZL_MATCH_MODE" set to 1.
 
 
