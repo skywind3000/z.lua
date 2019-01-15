@@ -2,7 +2,13 @@
 
 z - jump around (lua implementation for unix &amp; windows).
 
-An alternative to [z.sh](https://github.com/rupa/z) with windows and posix shells support and performance improving.
+An alternative to [z.sh](https://github.com/rupa/z) with windows and posix shells support and performance improving. 
+
+## Description
+
+z.lua is a faster way to navigate your filesystem. It tracks your most used directories, based on 'frecency'.  After  a  short  learning  phase, z will take you to the most 'frecent' directory that matches ALL of the regexes given on the command line, in order.
+
+For example, `z foo bar` would match `/foo/bar` but not `/bar/foo`.
 
 
 ## Features
@@ -14,8 +20,10 @@ An alternative to [z.sh](https://github.com/rupa/z) with windows and posix shell
 - self contained, no dependence on awk/gawk
 - compatible with lua 5.1, 5.2 and 5.3+
 - new "$_ZL_ADD_ONCE" to allow updating database only if `$PWD` changed.
+- Enhanced matching mode with "$_ZL_MATCH_MODE" set to 1.
 
-## USE
+
+## Examples
 
 ```bash
 z foo       # cd to most frecent dir matching foo
@@ -27,6 +35,7 @@ z -c foo    # restrict matches to subdirs of $PWD
 z -e foo    # echo the best match, don't cd
 z -i foo    # cd with interactive selection
 ```
+
 
 ## Install
 
@@ -63,7 +72,7 @@ z -i foo    # cd with interactive selection
   - Ensure that "lua" can be called in `%PATH%`
 
 
-## Customize
+## Options
 
 - set `$_ZL_CMD` in .bashrc/.zshrc to change the command (default z).
 - set `$_ZL_DATA` in .bashrc/.zshrc to change the datafile (default ~/.zlua).
@@ -73,7 +82,82 @@ z -i foo    # cd with interactive selection
 - set `$_ZL_MAXAGE` to define a aging threshold (default is 5000).
 - set `$_ZL_CD` to specify your own cd command.
 - set `$_ZL_ECHO` to 1 to display new directory name after cd.
+- set `$_ZL_MATCHMODE` to 1 to enable enhanced matching.
 
+## Aging
+
+he rank of directories maintained by z undergoes aging based on a sim-ple formula. The rank of each entry is incremented  every  time  it  is accessed.  When the sum of ranks is over 5000 (`$_ZL_MAXAGE`), all ranks are multiplied by 0.9. Entries with a rank lower than 1 are forgotten.
+
+## Frecency
+       
+Frecency is a portmanteau of 'recent' and 'frequency'. It is a weighted rank  that depends on how often and how recently something occurred. As far as I know, Mozilla came up with the term. 
+
+To z, a directory that has low ranking but has been  accessed  recently will  quickly  have  higher rank than a directory accessed frequently a long time ago. Frecency is determined at runtime.
+
+## Matching
+
+z.lua has two different matching methods: 0 for default, 1 for enhanced:
+
+### Default matching
+
+By default, z.lua uses default matching method similar to the original z.sh. Paths must be match all of the regexes in order.
+
+- cd to a directory contains foo:
+
+      j foo
+
+- cd to a directory ends with foo:
+
+      j foo$
+
+- use multiple arguments:
+  
+  Assuming the following database:
+
+      30   /home/user/mail/inbox
+      10   /home/user/work/inbox
+
+  `"z in"` would cd into `/home/user/mail/inbox` as the higher weighted entry. However you can pass multiple arguments to z.lua to prefer a different entry. In the above example, `"z w in"` would then change directory to `/home/user/work/inbox`.
+
+### Enhanced matching
+
+Enhanced matching can be enabled by export the environment:
+
+    export _ZL_MATCH_MODE=1
+
+For a given set of queries (the set of command-line arguments passed to z.lua), a path is a match if and only if:
+
+1. Queries match the path in order (same as default method).
+2. The last query matches the last segment of the path.
+
+If no match is found and if there is an existent pathname equals to the last query, the last query will be used as the result.
+
+- match the last segment of the path:
+  
+  Assuming the following database:
+  
+      10   /home/user/workspace
+      20   /home/user/workspace/project1
+      30   /home/user/workspace/project2
+      40   /home/user/workspace/project3
+
+  If you use `"z wo"` in enhanced matching mode, only the `/home/user/work` will be matched, because according to rule No.2 it is the only path whose last segment matches `"wo"`.
+
+  Because the last segment of a path is always easier to be recalled. You can also achieve this by typing `"z space$"` in both methods. But it is convenient to introduce rule No.2. 
+
+- cd to the existent path if there is no match.  
+
+  Sometimes if you use:
+
+      z foo
+
+  And there is no mathing result in the database, but there is an existent directory which can be accessed with the name "foo" from current directory, "`z foo`" will just work as:
+
+      cd foo
+
+  So, in the enhanced matching method, you can always use `z` like `cd` to change directory even if the new directory is untracked (haven't been accessed).
+
+The default matching method is designed to be compatible with original z.sh, but the enhanced matching method is much more handy and exclusive to z.lua.
 
 
 ## Benchmark
