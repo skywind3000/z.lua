@@ -2,7 +2,7 @@
 
 z - jump around (lua implementation for unix &amp; windows).
 
-An alternative to [z.sh](https://github.com/rupa/z) with windows and posix shells support and performance improving. 
+An alternative to [z.sh](https://github.com/rupa/z) with windows and posix shells support and various improvements. 
 
 ## Description
 
@@ -86,17 +86,20 @@ z -i foo    # cd with interactive selection
 
 ## Aging
 
-he rank of directories maintained by z undergoes aging based on a sim-ple formula. The rank of each entry is incremented  every  time  it  is accessed.  When the sum of ranks is over 5000 (`$_ZL_MAXAGE`), all ranks are multiplied by 0.9. Entries with a rank lower than 1 are forgotten.
+he rank of directories maintained by z.lua undergoes aging based on a sim-ple formula. The rank of each entry is incremented  every  time  it  is accessed.  When the sum of ranks is over 5000 (`$_ZL_MAXAGE`), all ranks are multiplied by 0.9. Entries with a rank lower than 1 are forgotten.
+
 
 ## Frecency
        
-Frecency is a portmanteau of 'recent' and 'frequency'. It is a weighted rank  that depends on how often and how recently something occurred. As far as I know, Mozilla came up with the term. 
+Frecency is a portmanteau of 'recent' and 'frequency'. It is a weighted rank that depends on how often and how recently something occurred. As far as I know, Mozilla came up with the term. 
 
-To z, a directory that has low ranking but has been  accessed  recently will  quickly  have  higher rank than a directory accessed frequently a long time ago. Frecency is determined at runtime.
+To z.lua, a directory that has low ranking but has been accessed recently will quickly  have higher rank than a directory accessed frequently a long time ago. Frecency is determined at runtime.
+
 
 ## Matching
 
 z.lua has two different matching methods: 0 for default, 1 for enhanced:
+
 
 ### Default matching
 
