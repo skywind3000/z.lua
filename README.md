@@ -21,6 +21,7 @@ For example, `z foo bar` would match `/foo/bar` but not `/bar/foo`.
 - Compatible with lua 5.1, 5.2 and 5.3+
 - New "$_ZL_ADD_ONCE" to allow updating database only if `$PWD` changed.
 - Enhanced matching mode with "$_ZL_MATCH_MODE" set to 1.
+- Interactive selection enables you to choose where to go before cd.
 
 
 ## Examples
@@ -148,6 +149,8 @@ If no match is found, it will fall back to default matching method.
 
   Since the last segment of a path is always easier to be recalled, it is sane to give it higher priority. You can also achieve this by typing `"z space$"` in both methods, but `"z wo"` is easier to type.
 
+  Tips: If you want your last query not to match the last segment of the path, append '$' as the last query. eg. `"z wo $"`.
+
 - cd to the existent path if there is no match:
 
   Sometimes if you use:
@@ -236,7 +239,7 @@ As you see, z.lua is the fastest one and requires less resource.
 
 ## Credit
 
-Related projects:
+Releated projects:
 
 - [rupa/z](https://github.com/rupa/z): origin z.sh implementation
 - [JannesMeyer/z.ps](https://github.com/JannesMeyer/z.ps): z for powershell
