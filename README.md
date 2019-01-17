@@ -82,7 +82,7 @@ z -i foo    # cd with interactive selection
 - set `$_ZL_MAXAGE` to define a aging threshold (default is 5000).
 - set `$_ZL_CD` to specify your own cd command.
 - set `$_ZL_ECHO` to 1 to display new directory name after cd.
-- set `$_ZL_MATCHMODE` to 1 to enable enhanced matching.
+- set `$_ZL_MATCH_MODE` to 1 to enable enhanced matching.
 
 ## Aging
 
