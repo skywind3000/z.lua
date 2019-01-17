@@ -4,7 +4,7 @@
 -- z.lua - z.sh implementation in lua, by skywind 2018, 2019
 -- Licensed under MIT license.
 --
--- Version 37, Last Modified: 2019/01/17 22:37
+-- Version 38, Last Modified: 2019/01/18 05:07
 --
 -- * 10x times faster than fasd and autojump
 -- * 3x times faster than rupa/z
@@ -764,9 +764,9 @@ function path_match(pathname, patterns, matchlast)
 		local index = #patterns
 		local pat = patterns[index]
 		if not windows then
-			last = string.match(pathname, ".*/(.*)")
+			last = string.match(pathname, ".*(/.*)")
 		else
-			last = string.match(pathname, ".*[/\\](.*)")
+			last = string.match(pathname, ".*([/\\].*)")
 		end
 		if last then
 			start, endup = last:find(pat, 1)
