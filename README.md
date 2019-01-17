@@ -148,7 +148,7 @@ If no match is found, it will fall back to default matching method.
 
   Since the last segment of a path is always easier to be recalled, it is sane to give it higher priority. You can also achieve this by typing `"z space$"` in both methods, but `"z wo"` is easier to type.
 
-- cd to the existent path if there is no match.  
+- cd to the existent path if there is no match:
 
   Sometimes if you use:
 
@@ -159,6 +159,17 @@ If no match is found, it will fall back to default matching method.
       cd foo
 
   So, in the enhanced matching method, you can always use `z` like `cd` to change directory even if the new directory is untracked (haven't been accessed).
+
+- Skip the current directory:
+
+  when you are calling `z xxx` but the best match is the current directory, z.lua will choose the 2nd best match result for you. Assuming the database:
+
+      10   /Users/Great_Wall/.rbenv/versions/2.4.1/lib/ruby/gems
+      20   /Library/Ruby/Gems/2.0.0/gems
+
+  When I use `z gems` by default, it will take me to `/Library/Ruby/Gems/2.0.0/gems`, but it's not what I want, so I press up arrow and execute `z gems` again, it will take me to `/Users/Great_Wall/.rbenv/versions/2.4.1/lib/ruby/gems` and this what I want. 
+
+  Of course I can always use `z env gems` to indicate what I want precisely. Skip the current directory means when you use `z xxx` you always want to change directory instead of stay in the same directory and do nothing if current directory is the best match.
 
 The default matching method is designed to be compatible with original z.sh, but the enhanced matching method is much more handy and exclusive to z.lua.
 
