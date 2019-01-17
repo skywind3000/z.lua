@@ -86,7 +86,7 @@ z -i foo    # cd with interactive selection
 
 ## Aging
 
-he rank of directories maintained by z.lua undergoes aging based on a sim-ple formula. The rank of each entry is incremented  every  time  it  is accessed.  When the sum of ranks is over 5000 (`$_ZL_MAXAGE`), all ranks are multiplied by 0.9. Entries with a rank lower than 1 are forgotten.
+The rank of directories maintained by z.lua undergoes aging based on a sim-ple formula. The rank of each entry is incremented  every  time  it  is accessed.  When the sum of ranks is over 5000 (`$_ZL_MAXAGE`), all ranks are multiplied by 0.9. Entries with a rank lower than 1 are forgotten.
 
 
 ## Frecency
@@ -154,7 +154,7 @@ If no match is found, it will fall back to default matching method.
 
       z foo
 
-  And there is no mathing result in the database, but there is an existent directory which can be accessed with the name "foo" from current directory, "`z foo`" will just work as:
+  And there is no matching result in the database, but there is an existent directory which can be accessed with the name "foo" from current directory, "`z foo`" will just work as:
 
       cd foo
 
@@ -190,7 +190,7 @@ It could be much faster on slow hardware or Cygwin/MSYS.
 
 ## Tips
 
-Recommanded aliases you may find useful:
+Recommended aliases you may find useful:
 
 ```bash
 alias zc='z -c'      # restrict matches to subdirs of $PWD
@@ -236,7 +236,7 @@ As you see, z.lua is the fastest one and requires less resource.
 
 ## Credit
 
-Releated projects:
+Related projects:
 
 - [rupa/z](https://github.com/rupa/z): origin z.sh implementation
 - [JannesMeyer/z.ps](https://github.com/JannesMeyer/z.ps): z for powershell
