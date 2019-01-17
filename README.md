@@ -149,7 +149,11 @@ If no match is found, it will fall back to default matching method.
 
   Since the last segment of a path is always easier to be recalled, it is sane to give it higher priority. You can also achieve this by typing `"z space$"` in both methods, but `"z wo"` is easier to type.
 
-  Tips: If you want your last query not only to match the last segment of the path, append '$' as the last query. eg. `"z wo $"`.
+  Tips for rule No.2: 
+
+  - If you want your last query not only to match the last segment of the path, append '$' as the last query. eg. `"z wo $"`. 
+  - If you want your last query not to match the last segment of the path, append '/' as the last query. eg. `"z wo /"`.
+ 
 
 - cd to the existent path if there is no match:
 
