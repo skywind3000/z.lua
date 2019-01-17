@@ -2,7 +2,7 @@
 
 z - a better method to change directory.
 
-An alternative to [z.sh](https://github.com/rupa/z) with windows and posix shells support and various improvements. 
+An alternative to [z.sh](https://github.com/rupa/z) with windows and posix shells support and various improvements.
 
 ## Description
 
@@ -90,8 +90,8 @@ he rank of directories maintained by z.lua undergoes aging based on a sim-ple fo
 
 
 ## Frecency
-       
-Frecency is a portmanteau of 'recent' and 'frequency'. It is a weighted rank that depends on how often and how recently something occurred. As far as I know, Mozilla came up with the term. 
+
+Frecency is a portmanteau of 'recent' and 'frequency'. It is a weighted rank that depends on how often and how recently something occurred. As far as I know, Mozilla came up with the term.
 
 To z.lua, a directory that has low ranking but has been accessed recently will quickly  have higher rank than a directory accessed frequently a long time ago. Frecency is determined at runtime.
 
@@ -114,7 +114,7 @@ By default, z.lua uses default matching method similar to the original z.sh. Pat
       j foo$
 
 - use multiple arguments:
-  
+
   Assuming the following database:
 
       30   /home/user/mail/inbox
@@ -136,9 +136,9 @@ For a given set of queries (the set of command-line arguments passed to z.lua), 
 If no match is found, it will fall back to default matching method.
 
 - match the last segment of the path:
-  
+
   Assuming the following database:
-  
+
       10   /home/user/workspace
       20   /home/user/workspace/project1
       30   /home/user/workspace/project2
@@ -167,7 +167,7 @@ If no match is found, it will fall back to default matching method.
       10   /Users/Great_Wall/.rbenv/versions/2.4.1/lib/ruby/gems
       20   /Library/Ruby/Gems/2.0.0/gems
 
-  When I use `z gems` by default, it will take me to `/Library/Ruby/Gems/2.0.0/gems`, but it's not what I want, so I press up arrow and execute `z gems` again, it will take me to `/Users/Great_Wall/.rbenv/versions/2.4.1/lib/ruby/gems` and this what I want. 
+  When I use `z gems` by default, it will take me to `/Library/Ruby/Gems/2.0.0/gems`, but it's not what I want, so I press up arrow and execute `z gems` again, it will take me to `/Users/Great_Wall/.rbenv/versions/2.4.1/lib/ruby/gems` and this what I want.
 
   Of course I can always use `z env gems` to indicate what I want precisely. Skip the current directory means when you use `z xxx` you always want to change directory instead of stay in the same directory and do nothing if current directory is the best match.
 
@@ -176,7 +176,7 @@ The default matching method is designed to be compatible with original z.sh, but
 
 ## Add once
 
-By default, z.lua will add current directory to database each time before display command prompt (correspond with z.sh). But there is an option to allow z.lua add path only if current working directory changed. 
+By default, z.lua will add current directory to database each time before display command prompt (correspond with z.sh). But there is an option to allow z.lua add path only if current working directory changed.
 
 To enable this, you can set `$_ZL_ADD_ONCE` to `1` before init z.lua. Or you can init z.lua on linux like this:
 
