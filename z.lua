@@ -4,7 +4,7 @@
 -- z.lua - z.sh implementation in lua, by skywind 2018, 2019
 -- Licensed under MIT license.
 --
--- Version 36, Last Modified: 2019/01/13 00:14
+-- Version 37, Last Modified: 2019/01/17 22:37
 --
 -- * 10x times faster than fasd and autojump
 -- * 3x times faster than rupa/z
@@ -21,6 +21,7 @@
 --     * z -c foo   # restrict matches to subdirs of $PWD
 --     * z -e foo   # echo the best match, don't cd
 --     * z -x path  # remove path from history
+--     * z -i foo   # cd with interactive selection
 --
 -- Bash Install: 
 --     * put something like this in your .bashrc:
@@ -57,8 +58,7 @@
 --   set $_ZL_CD to specify your own cd command
 --   set $_ZL_ECHO to 1 to display new directory name after cd.
 --   set $_ZL_MAXAGE to define a aging threshold (default is 5000).
---   set $_ZL_MATCH_NAME to 1 to force match the last segment of the path.
---   set $_ZL_SKIP_PWD to 1 to skip current directory ($PWD).
+--   set $_ZL_MATCH_MODE to 1 to enable enhanced matching mode.
 --
 --=====================================================================
 
@@ -1454,6 +1454,9 @@ function z_shell_init(opts)
 			print('_ZL_NO_BUILTIN_CD=1')
 			print('fi')
 		end
+	end
+	if opts.enhanced ~= nil then
+		print('export _ZL_MATCH_MODE=1')
 	end
 end
 
