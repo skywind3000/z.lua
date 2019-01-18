@@ -108,11 +108,11 @@ By default, z.lua uses default matching method similar to the original z.sh. Pat
 
 - cd to a directory contains foo:
 
-      j foo
+      z foo
 
 - cd to a directory ends with foo:
 
-      j foo$
+      z foo$
 
 - use multiple arguments:
 
@@ -151,8 +151,8 @@ If no match is found, it will fall back to default matching method.
 
   Tips for rule No.2: 
 
-  - If you want your last query not only to match the last segment of the path, append '$' as the last query. eg. `"z wo $"`. 
-  - If you want your last query not to match the last segment of the path, append '/' as the last query. eg. `"z wo /"`.
+  - If you want your last query **not only** to match the last segment of the path, append '$' as the last query. eg. `"z wo $"`. 
+  - If you want your last query **not** to match the last segment of the path, append '/' as the last query. eg. `"z wo /"`.
  
 
 - cd to the existent path if there is no match:
