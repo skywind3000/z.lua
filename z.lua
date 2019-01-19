@@ -1311,7 +1311,9 @@ _zlua() {
 			else
 				$_ZL_CD "$dest"
 			fi
-			[ -n "$_ZL_ECHO" ] && pwd
+			if [ -n "$_ZL_ECHO" ]; then
+				pwd
+			fi
 		fi
 	fi
 }
