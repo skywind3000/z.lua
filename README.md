@@ -61,7 +61,8 @@ z -i foo    # cd with interactive selection
   (sh, ash, dash and busybox have been tested)
 
 - fish:
-  create ~/.config/fish/conf.d/z.fish with following code
+  Required version of Fish >= `2.7`.
+  Create `~/.config/fish/conf.d/z.fish` with following code
 
       lua /path/to/z.lua --init fish | source
 
