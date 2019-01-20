@@ -1139,6 +1139,8 @@ function main(argv)
 		end
 		if windows then
 			z_windows_init(opts)
+		elseif opts.fish then
+			z_fish_init(opts)
 		else
 			z_shell_init(opts)
 		end
@@ -1462,6 +1464,99 @@ function z_shell_init(opts)
 	end
 end
 
+-----------------------------------------------------------------------
+-- Fish shell init
+-----------------------------------------------------------------------
+local script_zlua_fish = [[
+if test -z "$_ZL_CMD"
+	set -x _ZL_CMD z
+end
+
+function _zlua
+	argparse --n "$_ZL_CMD" -x 't,r' -x 'l,e,x'\
+	l e x t r c s i h/help A-add C-complete -- $argv
+
+	if test -n "$_flag_add"
+		env _ZL_RANDOM="$RANDOM" "$ZLUA_LUAEXE" "$ZLUA_SCRIPT" --add $argv
+		return
+	else if test -n "$_flag_complete"
+		"$ZLUA_LUAEXE" "$ZLUA_SCRIPT" --complete $argv
+		return
+	end
+
+	if test -n "$_flag_t$_flag_r"
+		set arg_type "$_flag_t$_flag_r"
+	end
+	if test -n "$_flag_l$_flag_e$_flag_x"
+		set arg_mode "$_flag_l$_flag_e$_flag_x"
+	end
+
+	if test  -n "$_flag_h"
+		"$ZLUA_LUAEXE" "$ZLUA_SCRIPT" -h
+	else if echo $arg_type | string match '*l'; or test (count $argv) -eq 0;
+		"$ZLUA_LUAEXE" "$ZLUA_SCRIPT" -l $_flag_c $arg_type $_flag_s $argv
+	else if test -n "$arg_mode"
+		"$ZLUA_LUAEXE" "$ZLUA_SCRIPT" $arg_mode $_flag_c $arg_type $_flag_i $argv
+	else
+		set -l dest ("$ZLUA_LUAEXE" "$ZLUA_SCRIPT" --cd  $arg_type $_flag_c $_flag_i $argv)
+		if test -n "$dest" -a -d "$dest"
+			if test -z "$_ZL_CD"
+				builtin cd "$dest"
+			else
+				$_ZL_CD "$dest"
+			end
+		end
+		if test -n "$_ZL_ECHO"
+			pwd
+		end
+	end
+end
+
+alias "$_ZL_CMD"=_zlua
+]]
+
+script_init_fish = [[
+function _zlua_precmd --on-event fish_prompt
+	_zlua --add "$PWD" 2> /dev/null &
+end
+]]
+
+script_init_fish_once = [[
+function _zlua_precmd --on-variable PWD
+	_zlua --add "$PWD" 2> /dev/null &
+end
+]]
+
+
+script_complete_fish = [[
+function _z_complete
+	"$_ZL_CMD" --complete (commandline -t)
+end
+
+complete -c $_ZL_CMD -a '(_z_complete)'
+complete -c $_ZL_CMD -s 'r' -d 'cd to highest ranked dir matching'
+complete -c $_ZL_CMD -s 't' -d 'cd to most recently accessed dir matching'
+complete -c $_ZL_CMD -s 'l' -d 'list matches instead of cd'
+complete -c $_ZL_CMD -s 'c' -d 'restrict matches to subdirs of $PWD'
+complete -c $_ZL_CMD -s 'e' -d 'echo the best match, don''t cd'
+complete -c $_ZL_CMD -s 'x' -x -d 'remove path from history' -a '(_z_complete)'
+]]
+
+function z_fish_init(opts)
+	print('set -x ZLUA_SCRIPT "' .. os.scriptname() .. '"')
+	print('set -x ZLUA_LUAEXE "' .. os.interpreter() .. '"')
+	local once = (os.getenv("_ZL_ADD_ONCE") ~= nil) or opts.once ~= nil
+	print(script_zlua_fish)
+	if once then
+		print(script_init_fish_once)
+	else
+		print(script_init_fish)
+	end
+	print(script_complete_fish)
+	if opts.enhanced ~= nil then
+		print('set -x _ZL_MATCH_MODE 1')
+	end
+end
 
 -----------------------------------------------------------------------
 -- windows .cmd script

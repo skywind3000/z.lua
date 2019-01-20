@@ -60,6 +60,11 @@ z -i foo    # cd with interactive selection
 
   (sh, ash, dash and busybox have been tested)
 
+- fish:
+  create ~/.config/conf.d/z.fish with following code
+
+      lua /path/to/z.lua --init fish | source
+
 - Windows (with clink):
 
   - copy z.lua and z.cmd to clink's home directory
@@ -190,6 +195,7 @@ To enable this, you can set `$_ZL_ADD_ONCE` to `1` before init z.lua. Or you can
 ````bash
 eval "$(lua /path/to/z.lua --init bash once)"
 eval "$(lua /path/to/z.lua --init zsh once)"
+lua /path/to/z.lua --init fish once | source
 ````
 
 It could be much faster on slow hardware or Cygwin/MSYS.
