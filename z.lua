@@ -1472,6 +1472,10 @@ if test -z "$_ZL_CMD"
 	set -x _ZL_CMD z
 end
 
+function _z_lua_impl
+	eval "$ZLUA_LUAEXE" "$ZLUA_SCRIPT" $argv
+end
+
 function _zlua
 	argparse --n "$_ZL_CMD" -x 't,r' -x 'l,e,x'\
 	l e x t r c s i h/help A-add C-complete -- $argv
@@ -1480,7 +1484,7 @@ function _zlua
 		env _ZL_RANDOM="$RANDOM" "$ZLUA_LUAEXE" "$ZLUA_SCRIPT" --add $argv
 		return
 	else if test -n "$_flag_complete"
-		"$ZLUA_LUAEXE" "$ZLUA_SCRIPT" --complete $argv
+		_z_lua_impl --complete $argv
 		return
 	end
 
@@ -1492,18 +1496,18 @@ function _zlua
 	end
 
 	if test  -n "$_flag_h"
-		"$ZLUA_LUAEXE" "$ZLUA_SCRIPT" -h
+		_z_lua_impl -h
 	else if echo $arg_type | string match '*l'; or test (count $argv) -eq 0;
-		"$ZLUA_LUAEXE" "$ZLUA_SCRIPT" -l $_flag_c $arg_type $_flag_s $argv
+		_z_lua_impl -l $_flag_c $arg_type $_flag_s $argv
 	else if test -n "$arg_mode"
-		"$ZLUA_LUAEXE" "$ZLUA_SCRIPT" $arg_mode $_flag_c $arg_type $_flag_i $argv
+		_z_lua_impl $arg_mode $_flag_c $arg_type $_flag_i $argv
 	else
-		set -l dest ("$ZLUA_LUAEXE" "$ZLUA_SCRIPT" --cd  $arg_type $_flag_c $_flag_i $argv)
+		set -l dest (_z_lua_impl --cd  $arg_type $_flag_c $_flag_i $argv)
 		if test -n "$dest" -a -d "$dest"
 			if test -z "$_ZL_CD"
 				builtin cd "$dest"
 			else
-				$_ZL_CD "$dest"
+				eval $_ZL_CD "$dest"
 			end
 		end
 		if test -n "$_ZL_ECHO"
@@ -1530,7 +1534,7 @@ end
 
 script_complete_fish = [[
 function _z_complete
-	"$_ZL_CMD" --complete (commandline -t)
+	eval "$_ZL_CMD" --complete (commandline -t)
 end
 
 complete -c $_ZL_CMD -a '(_z_complete)'
