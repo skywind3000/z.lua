@@ -4,7 +4,7 @@
 -- z.lua - z.sh implementation in lua, by skywind 2018, 2019
 -- Licensed under MIT license.
 --
--- Version 38, Last Modified: 2019/01/18 05:07
+-- Version 41, Last Modified: 2019/01/28 20:32
 --
 -- * 10x times faster than fasd and autojump
 -- * 3x times faster than rupa/z
@@ -1094,10 +1094,14 @@ function main(argv)
 		return false
 	end
 	if false then
-		print("options: ")
-		printT(options)
-		print("args: ")
-		printT(args)
+		if options['--init'] == nil and options['--cd'] == null then
+			if options['--complete'] == nil then
+				print("options: ")
+				printT(options)
+				print("args: ")
+				printT(args)
+			end
+		end
 	end
 	if options['-c'] then
 		Z_SUBDIR = true
@@ -1312,9 +1316,7 @@ _zlua() {
 			else
 				$_ZL_CD "$dest"
 			fi
-			if [ -n "$_ZL_ECHO" ]; then
-				pwd
-			fi
+			if [ -n "$_ZL_ECHO" ]; then pwd; fi
 		fi
 	fi
 }
@@ -1463,59 +1465,64 @@ function z_shell_init(opts)
 	end
 end
 
+
 -----------------------------------------------------------------------
 -- Fish shell init
 -----------------------------------------------------------------------
 local script_zlua_fish = [[
-if test -z "$_ZL_CMD"
-	set -x _ZL_CMD z
-end
-
-function _z_lua_impl
-	eval "$ZLUA_LUAEXE" "$ZLUA_SCRIPT" $argv
-end
-
 function _zlua
-	argparse --n "$_ZL_CMD" -x 't,r' -x 'l,e,x'\
-	l e x t r c s i h/help A-add C-complete -- $argv
-
-	if test -n "$_flag_add"
+	set -l arg_mode ""
+	set -l arg_type ""
+	set -l arg_subdir ""
+	set -l arg_inter ""
+	set -l arg_strip ""
+	function _zlua_call; eval (string escape -- $argv); end
+	if test "$argv[1]" = "--add"
+		set -e argv[1]
 		set -x _ZL_RANDOM (random)
-		eval "$ZLUA_LUAEXE" "$ZLUA_SCRIPT" --add $argv
+		_zlua_call "$ZLUA_LUAEXE" "$ZLUA_SCRIPT" --add $argv
 		return
-	else if test -n "$_flag_complete"
-		_z_lua_impl --complete $argv
+	else if test "$argv[1]" = "--complete"
+		set -e argv[1]
+		_zlua_call "$ZLUA_LUAEXE" "$ZLUA_SCRIPT" --complete $argv
 		return
 	end
-
-	if test -n "$_flag_t$_flag_r"
-		set arg_type "$_flag_t$_flag_r"
+	while true
+		switch "$argv[1]"
+			case "-l"; set arg_mode "-l"
+			case "-e"; set arg_mode "-e"
+			case "-x"; set arg_mode "-x"
+			case "-t"; set arg_type "-t"
+			case "-r"; set arg_type "-r"
+			case "-c"; set arg_subdir "-c"
+			case "-s"; set arg_strip "-s"
+			case "-i"; set arg_inter "-i"
+			case "-h"; set arg_mode "-h"
+			case "--help"; set arg_mode "-h"
+			case '*'; break
+		end
+		set -e argv[1]
 	end
-	if test -n "$_flag_l$_flag_e$_flag_x"
-		set arg_mode "$_flag_l$_flag_e$_flag_x"
-	end
-
-	if test  -n "$_flag_h"
-		_z_lua_impl -h
-	else if echo $arg_type | string match '*l'; or test (count $argv) -eq 0;
-		_z_lua_impl -l $_flag_c $arg_type $_flag_s $argv
+	if test "$arg_mode" = "-h"
+		_zlua_call "$ZLUA_LUAEXE" "$ZLUA_SCRIPT" -h
+	else if test "$arg_mode" = "-l" -o (count $argv) -eq 0;
+		_zlua_call "$ZLUA_LUAEXE" "$ZLUA_SCRIPT" -l $arg_subdir $arg_type $arg_strip $argv
 	else if test -n "$arg_mode"
-		_z_lua_impl $arg_mode $_flag_c $arg_type $_flag_i $argv
+		_zlua_call "$ZLUA_LUAEXE" "$ZLUA_SCRIPT" $arg_mode $arg_subdir $arg_type $arg_inter $argv
 	else
-		set -l dest (_z_lua_impl --cd  $arg_type $_flag_c $_flag_i $argv)
+		set -l dest (_zlua_call "$ZLUA_LUAEXE" "$ZLUA_SCRIPT" --cd $arg_type $arg_subdir $arg_inter $argv)
 		if test -n "$dest" -a -d "$dest"
 			if test -z "$_ZL_CD"
 				builtin cd "$dest"
 			else
-				eval $_ZL_CD "$dest"
+				_zlua_call "$_ZL_CD" "$dest"
 			end
 		end
-		if test -n "$_ZL_ECHO"
-			pwd
-		end
+		if test -n "$_ZL_ECHO"; pwd; end
 	end
 end
 
+if test -z "$_ZL_CMD"; set -x _ZL_CMD z; end
 alias "$_ZL_CMD"=_zlua
 ]]
 
@@ -1531,7 +1538,6 @@ function _zlua_precmd --on-variable PWD
 end
 ]]
 
-
 script_complete_fish = [[
 function _z_complete
 	eval "$_ZL_CMD" --complete (commandline -t)
@@ -1545,6 +1551,7 @@ complete -c $_ZL_CMD -s 'c' -d 'restrict matches to subdirs of $PWD'
 complete -c $_ZL_CMD -s 'e' -d 'echo the best match, don''t cd'
 complete -c $_ZL_CMD -s 'x' -x -d 'remove path from history' -a '(_z_complete)'
 ]]
+
 
 function z_fish_init(opts)
 	print('set -x ZLUA_SCRIPT "' .. os.scriptname() .. '"')
@@ -1561,6 +1568,7 @@ function z_fish_init(opts)
 		print('set -x _ZL_MATCH_MODE 1')
 	end
 end
+
 
 -----------------------------------------------------------------------
 -- windows .cmd script
