@@ -1480,7 +1480,8 @@ function _zlua
 	l e x t r c s i h/help A-add C-complete -- $argv
 
 	if test -n "$_flag_add"
-		env _ZL_RANDOM="$RANDOM" "$ZLUA_LUAEXE" "$ZLUA_SCRIPT" --add $argv
+		set _ZL_RANDOM (random)
+		eval "$ZLUA_LUAEXE" "$ZLUA_SCRIPT" --add $argv
 		return
 	else if test -n "$_flag_complete"
 		_z_lua_impl --complete $argv
