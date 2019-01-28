@@ -1272,7 +1272,6 @@ _zlua() {
 	local arg_mode=""
 	local arg_type=""
 	local arg_subdir=""
-	local arg_loop="1"
 	local arg_inter=""
 	local arg_strip=""
 	if [ "$1" = "--add" ]; then
