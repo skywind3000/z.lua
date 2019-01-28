@@ -17,6 +17,7 @@ For example, `z foo bar` would match `/foo/bar` but not `/bar/foo`.
 - **3x** times faster than **z.sh**
 - Available for **posix shells**: bash, zsh, dash, sh, ash, busybox and etc.
 - Supports Windows cmd (with clink) and cmder
+- Supports fish shell (2.4.0 +)
 - Self contained, no dependence on awk/gawk
 - Compatible with lua 5.1, 5.2 and 5.3+
 - New "$_ZL_ADD_ONCE" to allow updating database only if `$PWD` changed.
@@ -61,10 +62,12 @@ z -i foo    # cd with interactive selection
   (sh, ash, dash and busybox have been tested)
 
 - fish:
-  Required version of Fish >= `2.7.1`.
+
   Create `~/.config/fish/conf.d/z.fish` with following code
 
       lua /path/to/z.lua --init fish | source
+
+  Fish version `2.4.0` or above is required.
 
 - Windows (with clink):
 
