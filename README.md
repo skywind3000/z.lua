@@ -53,6 +53,8 @@ z -i foo    # cd with interactive selection
 
       eval "$(lua /path/to/z.lua --init zsh)"
 
+  It can also be initialized from "skywind3000/z.lua" with your zsh plugin managers (antigen / oh-my-zsh).
+
 - posix shells:
 
   put something like this in your `.profile`:
@@ -67,7 +69,11 @@ z -i foo    # cd with interactive selection
 
       lua /path/to/z.lua --init fish | source
 
-  Fish version `2.4.0` or above is required.
+  Fish version `2.4.0` or above is required. 
+
+      lua /path/to/z.lua --init fish > ~/.config/fish/conf.d/z.fish
+
+  This is another way to initiaze z.lua in fish shell, but remember to regenerate z.fish if z.lua has been updated or moved.
 
 - Windows (with clink):
 
