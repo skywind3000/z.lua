@@ -4,7 +4,7 @@ z - a better method to change directory.
 
 An alternative to [z.sh](https://github.com/rupa/z) with windows and posix shells support and various improvements.
 
-【[Chinese Documentation | 中文文档](README.cn.md)】
+【[README in Chinese | 中文文档](README.cn.md)】
 
 
 ## Description
