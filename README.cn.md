@@ -296,6 +296,13 @@ sys     0m0.030s
 
 最关键的一点，Lua 可以方便的兼容 Windows cmd 以及 cmder 和 ConEmu。
 
+## Import database
+
+导入 z.sh 的数据库很简单：
+
+cat ~/.z >> ~/.zlua
+
+
 ## Credit
 
 Releated projects:
