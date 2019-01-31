@@ -136,8 +136,8 @@ By default, z.lua uses default matching method similar to the original z.sh. Pat
 
   Assuming the following database:
 
-      30   /home/user/mail/inbox
       10   /home/user/work/inbox
+      30   /home/user/mail/inbox
 
   `"z in"` would cd into `/home/user/mail/inbox` as the higher weighted entry. However you can pass multiple arguments to z.lua to prefer a different entry. In the above example, `"z w in"` would then change directory to `/home/user/work/inbox`.
 

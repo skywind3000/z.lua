@@ -103,47 +103,64 @@ z -i foo    # 就进入交互式选择模式，让你自己挑选去哪里（多
 
 ## Aging
 
-The rank of directories maintained by z.lua undergoes aging based on a simple formula. The rank of each entry is incremented  every  time  it  is accessed.  When the sum of ranks is over 5000 (`$_ZL_MAXAGE`), all ranks are multiplied by 0.9. Entries with a rank lower than 1 are forgotten.
+`z.lua` 在数据库中为每条路径维护着一个称为 rank 的字段，用于记录每条历史路径的访问次数，每次访问某路径，该路径对应 rank 字段的值就会增加 1。随着被添加的路径越来越多，`z.lua` 使用一种称为 “数据老化” 的方式来控制数据的总量。即，每次更新数据库后，会将所有路径的 rank 值加起来，如果这个值大于 5000 （`$_ZL_MAXAGE`），所有路径的 rank 值都会乘以 0.9，然后剔除所有 rank 小于 1 的记录。
 
 
 ## Frecency
 
-Frecency is a portmanteau of 'recent' and 'frequency'. It is a weighted rank that depends on how often and how recently something occurred. As far as I know, Mozilla came up with the term.
+Frecency 是一个由 'recent' 和 'frequency' 组成的合成词，这个术语由 Mozilla 发明，用于同时兼顾访问的频率和上一次访问到现在的时间差（是否最近访问）两种情况。
 
-To z.lua, a directory that has low ranking but has been accessed recently will quickly  have higher rank than a directory accessed frequently a long time ago. Frecency is determined at runtime.
+对于 z.lua，一条路径如果访问次数过低，它的 rank 值就会比较低，但是如果它最近被访问过，那么它将迅速获得一个比其他曾经频繁访问但是最近没有访问过的路径更高的权重。Frecent 并不记录在数据库中，是运行的时候即时计算出来的。
 
 
 ## Matching
 
-z.lua has two different matching methods: 0 for default, 1 for enhanced:
+z.lua 提供两种路径匹配算法：
+
+- 设置 $_ZL_MATCH_MODE=0：默认匹配算法，兼容 z.sh。
+- 设置 $_ZL_MATCH_MODE=1：增强匹配算法，更懂你的高效匹配算法。
+
+除了设置环境变量外，还可以通过：
+
+    eval "$(lua /path/to/z.lua --init bash enhanced)"
+
+来进入增强模式。
 
 
-### Default matching
+### 默认匹配
 
-By default, z.lua uses default matching method similar to the original z.sh. Paths must be match all of the regexes in order.
+默认情况下 z.lua 使用和 z.sh 类似的匹配算法，成为默认匹配法。给定路径会按顺序匹配各个正则表达式。
 
-- cd to a directory contains foo:
+- cd 到一个包含 foo 的路径:
 
       z foo
 
-- cd to a directory ends with foo:
+- cd 到一个以 foo 结尾的路径:
 
       z foo$
 
-- use multiple arguments:
+- 使用多个参数进行跳转:
 
-  Assuming the following database:
+  假设路径历史数据库（~/.zlua）中有两条记录：
 
-      30   /home/user/mail/inbox
       10   /home/user/work/inbox
+      30   /home/user/mail/inbox
 
-  `"z in"` would cd into `/home/user/mail/inbox` as the higher weighted entry. However you can pass multiple arguments to z.lua to prefer a different entry. In the above example, `"z w in"` would then change directory to `/home/user/work/inbox`.
+  `"z in"`将会跳转到 `/home/user/mail/inbox` 因为它有更高的权重，同时你可以传递更多参数给 z.lua 来更加精确的指明，如 `"z w in"` 则会让你跳到 `/home/user/work/inbox`。
 
-### Enhanced matching
+### 增强匹配
 
-Enhanced matching can be enabled by export the environment:
+你可以通过设置环境变量来启用增强匹配模式:
 
     export _ZL_MATCH_MODE=1
+
+或者时候使用下面语句：
+
+    eval "$(lua /path/to/z.lua --init bash enhanced)"
+
+进行初始化，他们是等效的，记得把上面的 bash 可以根据你的 shell 改为 `zsh` 或者 `posix`。
+
+
 
 For a given set of queries (the set of command-line arguments passed to z.lua), a path is a match if and only if:
 
