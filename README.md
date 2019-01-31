@@ -213,6 +213,20 @@ lua /path/to/z.lua --init fish once | source
 
 It could be much faster on slow hardware or Cygwin/MSYS.
 
+## Interective selection
+
+When there are multiple matches found, using `z -i` will display a list:
+
+```bash
+$ z -i soft
+3:  0.25        /home/data/software
+2:  3.75        /home/skywind/tmp/comma/software
+1:  21          /home/skywind/software
+> {CURSOR}
+```
+
+And then you can input the number and choose where to go before actual cd. eg. input 3 to cd to `/home/data/software`. And if you just press ENTER and input nothing, it will just quit and stay where you were.
+
 
 ## Tips
 

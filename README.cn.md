@@ -167,9 +167,9 @@ z.lua 提供两种路径匹配算法：
 
 如果两条规则同时启用找不到任何结果，那么将会退回到只用规则 1 进行筛选，这两条规则是参考 fasd 引入的。
 
-- 匹配路径名的最后一段:
+- 匹配路径名的最后一段：
 
-  假设数据库内容为:
+  假设数据库内容为：
 
       10   /home/user/workspace
       20   /home/user/workspace/project1
@@ -188,7 +188,7 @@ z.lua 提供两种路径匹配算法：
 
 - 如果没法匹配，同时又存在一条路径名和关键字相同，那么 cd 过去:
 
-  有时候如果你输入:
+  有时候如果你输入：
 
       z foo
 
@@ -198,7 +198,7 @@ z.lua 提供两种路径匹配算法：
 
   因此，在增强匹配算法中，你总可以象 cd 命令一样使用 z 命令，而不必当心目标路径是否被记录过。
 
-- 忽略当前路径:
+- 忽略当前路径：
 
   如果你使用 `z xxx` 但是当前路径恰好是最佳匹配结果，那么 z.lua 会使用次优结果进行跳转。假设有如下数据：
 
@@ -209,34 +209,50 @@ z.lua 提供两种路径匹配算法：
 
   我当然可以每次使用`z env gems` 来精确指明，但是每当我输入 `z xxx` 我必然是想进行路径跳转的，而不是呆在原地，所以使用增强匹配模式，即便当前目录是最佳匹配，它也能懂得你想跳转的心思。
 
-再我最初实现 z.lua 时，只有一个和 z.sh 类似的默认匹配算法，在网友的建议下，我陆续学习了来自 fasd / autojump 中的优秀理念，并加以完善改进，成为如今集三家之长的 “增强匹配算法” 。给它取个昵称，叫做 “更懂你的匹配算法”。
+再我最初实现 z.lua 时，只有一个和 z.sh 类似的默认匹配算法，在网友的建议下，我陆续学习了来自 fasd / autojump 中的优秀理念，并加以完善改进，成为如今集三家之长的 “增强匹配算法” ，给它取个昵称，叫做 “更懂你的匹配算法”。
 
 
 ## Add once
 
-By default, z.lua will add current directory to database each time before display command prompt (correspond with z.sh). But there is an option to allow z.lua add path only if current working directory changed.
+何时更新数据呢？默认情况下，z.lua 会在每次显示命令提示符时记录当前路径（和 z.sh 一致），但是还提供了一个 $_ZL_ADD_ONCE 的环境变量选项，设置成 1 的话，只有当前路径改变，才会将新路径添加到数据库。
 
-To enable this, you can set `$_ZL_ADD_ONCE` to `1` before init z.lua. Or you can init z.lua on linux like this:
+除了设置环境变量外，不同的 shell 下还可以在初始化时增加 "once" 参数来达到相同目的，比如：
 
 ````bash
-eval "$(lua /path/to/z.lua --init bash once)"
-eval "$(lua /path/to/z.lua --init zsh once)"
-lua /path/to/z.lua --init fish once | source
+eval "$(lua /path/to/z.lua --init bash once enhanced)"
+eval "$(lua /path/to/z.lua --init zsh once enhanced)"
+lua /path/to/z.lua --init fish once enhanced | source
 ````
 
-It could be much faster on slow hardware or Cygwin/MSYS.
+将会同时启用增强匹配算法和 once 机制，在一些比较慢的硬件下（路由器，cygwin，msys），使用该机制将有效的提升性能。其实 autojump 在 zsh 下会使用类似 once 的机制，而 bash 下则和 z.sh 类似。
+
+从效果上来讲，z.sh 的模式（关闭 once）强调的是 “在某路径下工作的时间长短”，而 autojump 的模式（启用 once）则强调 “进入某路径的次数多少”。
+
+## 交互式选择模式
+
+使用 -i 参数进行跳转时, 如果有多个匹配结果，那么 z.lua 会给你显示一个列表：
+
+```bash
+$ z -i soft
+3:  0.25        /home/data/software
+2:  3.75        /home/skywind/tmp/comma/software
+1:  21          /home/skywind/software
+> {光标位置}
+```
+
+然后你按照最前面的序号输入你想要去的地方，比如输入 3 就会进入 `/home/data/software`。如果你不输入任何东西直接按回车，那么将会直接退出而不进行任何跳转。
 
 
 ## Tips
 
-Recommended aliases you may find useful:
+推荐一些常用的命令别名:
 
 ```bash
-alias zc='z -c'      # restrict matches to subdirs of $PWD
-alias zz='z -i'      # cd with interactive selection
+alias zc='z -c'      # 严格匹配当前路径的子路径
+alias zz='z -i'      # 使用交互式选择模式
 ```
 
-And you can define a `zf` command to select history path with fzf:
+同时你可以定义一个名为 `zf` 的命令，搭配 fzf 进行历史路径模糊匹配:
 
 ```bash
 alias zf='cd "$(z -l -s | fzf --reverse --height 35%)"'
@@ -246,7 +262,7 @@ alias zf='cd "$(z -l -s | fzf --reverse --height 35%)"'
 
 ## Benchmark
 
-The slowest part is adding path to history data file. It will run every time when you press enter (installed in $PROMPT_COMMAND). so I profile it on my nas:
+最慢的部分当然是添加当前路径到数据库。该操作会在每次你按回车时执行，所以我在我的 Nas 上做了个对比：
 
 ```bash
 $ time autojump --add /tmp
@@ -270,7 +286,7 @@ user    0m0.015s
 sys     0m0.030s
 ```
 
-As you see, z.lua is the fastest one and requires less resource.
+可以看出，z.lua 是消耗资源最少，并且最快的。
 
 
 ## Credit
