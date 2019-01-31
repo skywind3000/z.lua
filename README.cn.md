@@ -1,107 +1,105 @@
 # z.lua
 
-z - a better method to change directory.
-
-An alternative to [z.sh](https://github.com/rupa/z) with windows and posix shells support and various improvements.
-
-【[Chinese Documentation | 中文文档](README.cn.md)】
+快速路径切换工具（类似 z.sh / autojump / fasd），兼容 Windows 和所有 Posix Shell 以及 Fish Shell，同时包含了众多功能改进。
 
 
 ## Description
 
-z.lua is a faster way to navigate your filesystem. It tracks your most used directories, based on 'frecency'.  After  a  short  learning  phase, z will take you to the most 'frecent' directory that matches ALL of the regexes given on the command line, in order.
+z.lua 是一个快速路径切换工具，它会跟踪你在 shell 下访问过的路径，通过一套称为 Frecent 的机制（源自 FireFox），经过一段简短的学习之后，z.lua 会帮你跳转到所有匹配正则关键字的路径里 Frecent 值最高的那条路径去。
 
-For example, `z foo bar` would match `/foo/bar` but not `/bar/foo`.
+正则将按顺序进行匹配，"z foo bar" 可以匹配到 /foo/bar ，但是不能匹配 /bar/foo。
 
 
 ## Features
 
-- **10x** times faster than **fasd** and **autojump**
-- **3x** times faster than **z.sh**
-- Available for **posix shells**: bash, zsh, dash, sh, ash, busybox and etc.
-- Supports Windows cmd (with clink) and cmder
-- Supports fish shell (2.4.0 +)
-- Self contained, no dependence on awk/gawk
-- Compatible with lua 5.1, 5.2 and 5.3+
-- New "$_ZL_ADD_ONCE" to allow updating database only if `$PWD` changed.
-- Enhanced matching mode with "$_ZL_MATCH_MODE" set to 1.
-- Interactive selection enables you to choose where to go before cd.
+- 性能比 **z.sh** 快三倍，比 **fasd** / **autojump** 快十倍以上。
+- 支持 Posix Shell（bash, zsh, dash, sh, ash, busybox）及 Fish Shell。
+- 支持 Windows cmd 终端 (使用 clink)，cmder 和 ConEmu。
+- 无依赖，不会像 fasd/z.sh 那样对 awk/gawk 有特殊的版本要求。
+- 兼容 lua 5.1, 5.2 和 5.3 以上版本。
+- 新增：环境变量 "$_ZL_ADD_ONCE" 设成 1 的话性仅当前路径改变时才更新数据库。
+- 新增：增强匹配模式，将环境变量 "$_ZL_MATCH_MODE" 设置成 1 可以启用。
+- 新增：交互选择模式，如果有多个匹配结果的话，跳转前允许你进行选择。
 
 
 ## Examples
 
 ```bash
-z foo       # cd to most frecent dir matching foo
-z foo bar   # cd to most frecent dir matching foo and bar
-z -r foo    # cd to highest ranked dir matching foo
-z -t foo    # cd to most recently accessed dir matching foo
-z -l foo    # list matches instead of cd
-z -c foo    # restrict matches to subdirs of $PWD
-z -e foo    # echo the best match, don't cd
-z -i foo    # cd with interactive selection
+z foo       # 跳转到包含 foo 并且权重（Frecent）最高的路径
+z foo bar   # 跳转到同时包含 foo 和 bar 并且权重最高的路径
+z -r foo    # 跳转到包含 foo 并且访问次数最高的路径
+z -t foo    # 跳转到包含 foo 并且最近访问过的路径
+z -l foo    # 不跳转，只是列出所有匹配 foo 的路径
+z -c foo    # 跳转到包含 foo 并且是当前路径的子路径的权重最高的路径
+z -e foo    # 不跳转，只是打印出匹配 foo 并且权重最高的路径
+z -i foo    # 就进入交互式选择模式，让你自己挑选去哪里（多个结果的话）
 ```
 
 
 ## Install
 
-- bash:
+- Posix Shells（Bash、zsh、dash、sh 或 BusyBox 等）：
 
-  put something like this in your `.bashrc`:
+  在你的 `.bashrc`, `.zshrc` 或者 `.profile` 文件中按 shell 类型添加对应语句：
 
-      eval "$(lua /path/to/z.lua --init bash)"
+      eval "$(lua /path/to/z.lua  --init bash)"   # BASH 初始化
+      eval "$(lua /path/to/z.lua  --init zsh)"    # ZSH 初始化
+      eval "$(lua /path/to/z.lua  --init posix)"  # Posix shell 初始化
 
-- zsh:
+  用下面参数初始化会进入“增强匹配模式”：
 
-  put something like this in your `.zshrc`:
+      eval "$(lua /path/to/z.lua  --init bash once enhanced)"   # BASH 初始化
+      eval "$(lua /path/to/z.lua  --init zsh once enhanced)"    # ZSH 初始化
+      eval "$(lua /path/to/z.lua  --init posix once enhanced)"  # Posix shell 初始化
 
-      eval "$(lua /path/to/z.lua --init zsh)"
+  同时 zsh 支持 antigen/oh-my-zsh 等包管理器，可以用下面路径：
 
-  It can also be initialized from "skywind3000/z.lua" with your zsh plugin managers (antigen / oh-my-zsh).
+      skywind3000/z.lua
 
-- posix shells:
+  进行安装，比如 antigen 的话，在 `.zshrc` 中加入：
 
-  put something like this in your `.profile`:
+      antigen bundle skywind3000/z.lua
 
-      eval "$(lua /path/to/z.lua --init posix)"
+  就可以了（主要要放在 antigen apply 语句之前）。
 
-  (sh, ash, dash and busybox have been tested)
 
-- fish:
+- Fish Shell:
 
-  Create `~/.config/fish/conf.d/z.fish` with following code
+  新建 `~/.config/fish/conf.d/z.fish` 文件，并包含如下代码：
 
       lua /path/to/z.lua --init fish | source
 
-  Fish version `2.4.0` or above is required. 
+  Fish version `2.4.0` 或者以上版本都支持，还有一种初始化方法：
 
       lua /path/to/z.lua --init fish > ~/.config/fish/conf.d/z.fish
 
-  This is another way to initiaze z.lua in fish shell, but remember to regenerate z.fish if z.lua has been updated or moved.
+  但是第二种方法需要记得在 z.lua 位置改变或者 lua 版本升级后需要重新生成。
 
 - Windows (with clink):
 
-  - copy z.lua and z.cmd to clink's home directory
-  - Add clink's home to `%PATH%` (z.cmd can be called anywhere)
-  - Ensure that "lua" can be called in `%PATH%`
+  - 将 z.lua 和 z.cmd 拷贝到 clink 的安装目录。
+  - 将 clink 的安装目录添加到 `%PATH%` (z.cmd 可以被任意位置调用到)。
+  - 保证 lua 命令在你的 `%PATH%` 环境变量中。
+  
 
 - Windows cmder:
 
-  - copy z.lua and z.cmd to cmder/vendor
-  - Add cmder/vendor to `%PATH%`
-  - Ensure that "lua" can be called in `%PATH%`
+  - 将 z.lua 和 z.cmd 拷贝到 cmder/vendor 目录中。
+  - 将 cmder/vendor 添加到环境变量 `%PATH%` 里面。
+  - 保证 lua 命令在你的 `%PATH%` 环境变量中。
 
 
 ## Options
 
-- set `$_ZL_CMD` in .bashrc/.zshrc to change the command (default z).
-- set `$_ZL_DATA` in .bashrc/.zshrc to change the datafile (default ~/.zlua).
-- set `$_ZL_NO_PROMPT_COMMAND` if you're handling PROMPT_COMMAND yourself.
-- set `$_ZL_EXCLUDE_DIRS` to an array of directories to exclude.
-- set `$_ZL_ADD_ONCE` to '1' to update database only if `$PWD` changed.
-- set `$_ZL_MAXAGE` to define a aging threshold (default is 5000).
-- set `$_ZL_CD` to specify your own cd command.
-- set `$_ZL_ECHO` to 1 to display new directory name after cd.
-- set `$_ZL_MATCH_MODE` to 1 to enable enhanced matching.
+- 设置 `$_ZL_CMD` 来改变命令名称 (默认为 z)。
+- 设置 `$_ZL_DATA` 来改变数据文件 (default ~/.zlua)。
+- 设置 `$_ZL_NO_PROMPT_COMMAND` 为 1 来跳过钩子函数初始化（方便自己处理）。
+- 设置 `$_ZL_EXCLUDE_DIRS` 来确定一个你不想收集的路径数组。
+- 设置 `$_ZL_ADD_ONCE` 为 '1' 时，仅在当前路径 `$PWD` 改变时才更新数据库。
+- 设置 `$_ZL_MAXAGE` 来确定一个数据老化的阀值 (默认为 5000)。
+- 设置 `$_ZL_CD` 用来指定你想用的 cd 命令，比如有人用 cd_func 。
+- 设置 `$_ZL_ECHO` 为 1 可以在跳转后显示目标路径名称。
+- 设置 `$_ZL_MATCH_MODE` 为 1 可以打开 “增强匹配模式”。
 
 ## Aging
 
