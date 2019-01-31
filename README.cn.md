@@ -1,6 +1,6 @@
 # z.lua
 
-快速路径切换工具（类似 z.sh / autojump / fasd），兼容 Windows 和所有 Posix Shell 以及 Fish Shell，同时包含了众多功能改进。
+快速路径切换工具（类似 z.sh / autojump / fasd），兼容 Windows 和所有 Posix Shell 以及 Fish Shell，同时包含了众多改进。
 
 
 ## Description
@@ -160,58 +160,56 @@ z.lua 提供两种路径匹配算法：
 
 进行初始化，他们是等效的，记得把上面的 bash 可以根据你的 shell 改为 `zsh` 或者 `posix`。
 
+对于一个给定的正则关键字序列（即 z 命令后面的参数），某路径有且只有下面两种情况算作 “匹配成功”：
 
+1. 正则关键字将按顺序进行匹配（这条和默认匹配法相同）。
+2. 最后一个关键字可以和路径名的最后一段相匹配。
 
-For a given set of queries (the set of command-line arguments passed to z.lua), a path is a match if and only if:
+如果两条规则同时启用找不到任何结果，那么将会退回到只用规则 1 进行筛选，这两条规则是参考 fasd 引入的。
 
-1. Queries match the path in order (same as default method).
-2. The last query matches the last segment of the path.
+- 匹配路径名的最后一段:
 
-If no match is found, it will fall back to default matching method.
-
-- match the last segment of the path:
-
-  Assuming the following database:
+  假设数据库内容为:
 
       10   /home/user/workspace
       20   /home/user/workspace/project1
       30   /home/user/workspace/project2
       40   /home/user/workspace/project3
 
-  If you use `"z wo"` in enhanced matching mode, only the `/home/user/work` will be matched, because according to rule No.2 it is the only path whose last segment matches `"wo"`.
+  在增强模式下使用 `"z wo"` 的话，只有 `/home/user/work` 满足匹配，因为按照第二条规则，这是唯一一条最有一段名称匹配 `wo` 的路径。
 
-  Since the last segment of a path is always easier to be recalled, it is sane to give it higher priority. You can also achieve this by typing `"z space$"` in both methods, but `"z wo"` is easier to type.
+  因为最后一级目录名称总是最容易记住的，所以给到它比较高的优先级。在默认匹配算法中，你同样可以用 `"z space$"` 来达到相同的目的，但是 `"z wo"` 可以打更少的字。
 
-  Tips for rule No.2: 
+  小技巧: 
 
-  - If you want your last query **not only** to match the last segment of the path, append '$' as the last query. eg. `"z wo $"`. 
-  - If you want your last query **not** to match the last segment of the path, append '/' as the last query. eg. `"z wo /"`.
- 
+  - 如果你在增强匹配算法下，想让最后一个关键字不当匹配最后一段路径名，还可以像默认匹配算法中一样匹配路径的其他部分的话，你可以在最后加一个独立的 '$' 参数，比如：`"z wo $"`
+  - 如果你在增强匹配算法下，想让最后一个关键字匹配最后一段路径名以前的部分，那么可以增加一个斜杆参数，比如：`"z wo /"`。
+  
 
-- cd to the existent path if there is no match:
+- 如果没法匹配，同时又存在一条路径名和关键字相同，那么 cd 过去:
 
-  Sometimes if you use:
+  有时候如果你输入:
 
       z foo
 
-  And there is no matching result in the database, but there is an existent directory which can be accessed with the name "foo" from current directory, "`z foo`" will just work as:
+  但是数据库里又没有任何匹配 foo 的记录，然后却存在一个可以在当前位置访问的目录，刚好名字是 "foo"，那么 "`z foo`" 的效果将会和下面的命令效果相同：
 
       cd foo
 
-  So, in the enhanced matching method, you can always use `z` like `cd` to change directory even if the new directory is untracked (haven't been accessed).
+  因此，在增强匹配算法中，你总可以象 cd 命令一样使用 z 命令，而不必当心目标路径是否被记录过。
 
-- Skip the current directory:
+- 忽略当前路径:
 
-  when you are calling `z xxx` but the best match is the current directory, z.lua will choose the 2nd best match result for you. Assuming the database:
+  如果你使用 `z xxx` 但是当前路径恰好是最佳匹配结果，那么 z.lua 会使用次优结果进行跳转。假设有如下数据：
 
       10   /Users/Great_Wall/.rbenv/versions/2.4.1/lib/ruby/gems
       20   /Library/Ruby/Gems/2.0.0/gems
 
-  When I use `z gems` by default, it will take me to `/Library/Ruby/Gems/2.0.0/gems`, but it's not what I want, so I press up arrow and execute `z gems` again, it will take me to `/Users/Great_Wall/.rbenv/versions/2.4.1/lib/ruby/gems` and this what I want.
+  默认情况下，当我使用 `z gems` 时，我会被带到 `/Library/Ruby/Gems/2.0.0/gems`，因为它有更高权重，但是可能并不是我想要去的地方，这时我按一下方向键上键，再次执行 `z gems`，那么我就能被带到 `/Users/Great_Wall/.rbenv/versions/2.4.1/lib/ruby/gems` 目录中，而这正是我想去的地方。
 
-  Of course I can always use `z env gems` to indicate what I want precisely. Skip the current directory means when you use `z xxx` you always want to change directory instead of stay in the same directory and do nothing if current directory is the best match.
+  我当然可以每次使用`z env gems` 来精确指明，但是每当我输入 `z xxx` 我必然是想进行路径跳转的，而不是呆在原地，所以使用增强匹配模式，即便当前目录是最佳匹配，它也能懂得你想跳转的心思。
 
-The default matching method is designed to be compatible with original z.sh, but the enhanced matching method is much more handy and exclusive to z.lua.
+再我最初实现 z.lua 时，只有一个和 z.sh 类似的默认匹配算法，在网友的建议下，我陆续学习了来自 fasd / autojump 中的优秀理念，并加以完善改进，成为如今集三家之长的 “增强匹配算法” 。给它取个昵称，叫做 “更懂你的匹配算法”。
 
 
 ## Add once
