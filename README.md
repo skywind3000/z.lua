@@ -1,6 +1,6 @@
 # z.lua
 
-z - a better method to change directory.
+A command line tool which helps you navigate faster by learning your habits :zap:
 
 An alternative to [z.sh](https://github.com/rupa/z) with windows and posix shells support and various improvements.
 
