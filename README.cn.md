@@ -298,9 +298,19 @@ sys     0m0.030s
 
 ## Import database
 
-导入 z.sh 的数据库很简单：
+导入 z.sh 的数据文件很简单，格式是一样的：
 
+
+```bash
 cat ~/.z >> ~/.zlua
+```
+
+导入 autojump 数据文件需要稍微转换下：
+
+```bash
+FN="$HOME/.local/share/autojump/autojump.txt"
+awk -F '\t' '{print $2 "|" $1 "|" 0}' $FN >> ~/.zlua
+```
 
 
 ## Credit

@@ -274,6 +274,23 @@ sys     0m0.030s
 As you see, z.lua is the fastest one and requires less resource.
 
 
+## Import database
+
+You can import your datafile from z.sh by：
+
+
+```bash
+cat ~/.z >> ~/.zlua
+```
+
+Import datafile from autojump by：
+
+```bash
+FN="$HOME/.local/share/autojump/autojump.txt"
+awk -F '\t' '{print $2 "|" $1 "|" 0}' $FN >> ~/.zlua
+```
+
+
 ## Credit
 
 Releated projects:
