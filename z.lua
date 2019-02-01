@@ -4,7 +4,7 @@
 -- z.lua - z.sh implementation in lua, by skywind 2018, 2019
 -- Licensed under MIT license.
 --
--- Version 41, Last Modified: 2019/01/28 20:32
+-- Version 42, Last Modified: 2019/02/01 17:41
 --
 -- * 10x times faster than fasd and autojump
 -- * 3x times faster than rupa/z
@@ -445,10 +445,14 @@ end
 -- get lua executable
 -----------------------------------------------------------------------
 function os.interpreter()
-	if arg == nil then
+	if os.argv == nil then
+		io.stderr:write("cannot get arguments (arg), recompiled your lua\n")
 		return nil
 	end
-	local lua = arg[-1]	
+	local lua = os.argv[-1]	
+	if lua == nil then
+		io.stderr:write("cannot get executable name, recompiled your lua\n")
+	end
 	if os.path.single(lua) then
 		local path = os.path.which(lua)
 		if not os.path.isabs(path) then
@@ -464,10 +468,14 @@ end
 -- get script name
 -----------------------------------------------------------------------
 function os.scriptname()
-	if arg == nil then
+	if os.argv == nil then
+		io.stderr:write("cannot get arguments (arg), recompiled your lua\n")
 		return nil
 	end
-	local script = arg[0]
+	local script = os.argv[0]
+	if script == nil then
+		io.stderr:write("cannot get script name, recompiled your lua\n")
+	end
 	return os.path.abspath(script)
 end
 
