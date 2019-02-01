@@ -509,9 +509,12 @@ end
 -----------------------------------------------------------------------
 function math.random_init()
 	-- random seed from os.time()
-	local seed = tostring(os.time()):reverse()
-	for _, key in ipairs(os.argv) do
-		seed = seed .. '/' .. key
+	local seed = tostring(os.time() * 1000)
+	seed = seed .. tostring(math.random(99999999))
+	if os.argv ~= nil then
+		for _, key in ipairs(os.argv) do
+			seed = seed .. '/' .. key
+		end
 	end
 	local ppid = os.getenv('PPID')
 	seed = (ppid ~= nil) and (seed .. '/' .. ppid) or seed
@@ -525,9 +528,21 @@ function math.random_init()
 	if rnd ~= nil then
 		seed = seed .. rnd
 	end
-	local tmpname = os.tmpname()
-	seed = seed .. tmpname
-	os.remove(tmpname)
+	if not windows then
+		local fp = io.open('/dev/random', 'rb')
+		if fp ~= nil then
+			seed = seed .. fp:read(10)
+			fp:close()
+		end
+	else
+		if math.random_inited == nil then
+			math.random_inited = 1
+			local name = os.tmpname()
+			os.remove(name)
+			seed = seed .. name
+		end
+	end
+	seed = seed .. tostring(os.clock() * 10000000)
 	local number = 0
 	for i = 1, seed:len() do
 		local k = string.byte(seed:sub(i, i))
@@ -621,8 +636,8 @@ function data_save(filename, M)
 		fp = io.open(filename, 'w')
 	else
 		math.random_init()
-		tmpname = filename .. '.' .. math.random_string(6)
-		tmpname = tmpname .. tostring(os.time())
+		tmpname = filename .. '.' .. tostring(os.time()) 
+		tmpname = tmpename .. math.random_string(8)
 		local rnd = os.getenv('_ZL_RANDOM')
 		tmpname = tmpname .. '' .. (rnd and rnd or '')
 		-- print('tmpname: '..tmpname)
