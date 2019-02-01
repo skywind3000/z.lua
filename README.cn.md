@@ -67,7 +67,7 @@ z -i foo    # 就进入交互式选择模式，让你自己挑选去哪里（多
 
   新建 `~/.config/fish/conf.d/z.fish` 文件，并包含如下代码：
 
-      lua /path/to/z.lua --init fish | source
+      source (lua /path/to/z.lua --init fish | psub)
 
   Fish version `2.4.0` 或者以上版本都支持，还有一种初始化方法：
 
@@ -222,7 +222,7 @@ z.lua 提供两种路径匹配算法：
 ````bash
 eval "$(lua /path/to/z.lua --init bash once enhanced)"
 eval "$(lua /path/to/z.lua --init zsh once enhanced)"
-lua /path/to/z.lua --init fish once enhanced | source
+source (lua /path/to/z.lua --init fish once enhanced | psub)
 ````
 
 将会同时启用增强匹配算法和 once 机制，在一些比较慢的硬件下（路由器，cygwin，msys），使用该机制将有效的提升性能。其实 autojump 在 zsh 下会使用类似 once 的机制，而 bash 下则和 z.sh 类似。
@@ -257,7 +257,7 @@ alias zz='z -i'      # 使用交互式选择模式
 
 ```bash
 zf() { 
- cd "$(z -l 2>&1 | fzf --height 40% --nth 2.. --reverse --inline-info +s --tac --query "${*##-*}" | sed 's/^[0-9,.]* *//')" 
+ cd "$(z -l "$@" 2>&1 | fzf --height 40% --nth 2.. --reverse --inline-info +s --tac | sed 's/^[0-9,.]* *//')" 
 }
 ```
 

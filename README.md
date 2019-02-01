@@ -70,7 +70,7 @@ z -i foo    # cd with interactive selection
 
   Create `~/.config/fish/conf.d/z.fish` with following code
 
-      lua /path/to/z.lua --init fish | source
+      source (lua /path/to/z.lua --init fish | psub)
 
   Fish version `2.4.0` or above is required. 
 
@@ -208,7 +208,7 @@ To enable this, you can set `$_ZL_ADD_ONCE` to `1` before init z.lua. Or you can
 ````bash
 eval "$(lua /path/to/z.lua --init bash once)"
 eval "$(lua /path/to/z.lua --init zsh once)"
-lua /path/to/z.lua --init fish once | source
+source (lua /path/to/z.lua --init fish | psub)
 ````
 
 It could be much faster on slow hardware or Cygwin/MSYS.
@@ -241,7 +241,7 @@ And you can define a `zf` command to select history path with fzf:
 
 ```bash
 zf() { 
- cd "$(z -l 2>&1 | fzf --height 40% --nth 2.. --reverse --inline-info +s --tac --query "${*##-*}" | sed 's/^[0-9,.]* *//')" 
+ cd "$(z -l "$@" 2>&1 | fzf --height 40% --nth 2.. --reverse --inline-info +s --tac | sed 's/^[0-9,.]* *//')" 
 }
 ```
 
