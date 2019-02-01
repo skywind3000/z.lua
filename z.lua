@@ -645,7 +645,7 @@ function data_save(filename, M)
 	else
 		math.random_init()
 		tmpname = filename .. '.' .. tostring(os.time()) 
-		tmpname = tmpename .. math.random_string(8)
+		tmpname = tmpname .. math.random_string(8)
 		local rnd = os.getenv('_ZL_RANDOM')
 		tmpname = tmpname .. '' .. (rnd and rnd or '')
 		-- print('tmpname: '..tmpname)
