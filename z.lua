@@ -505,42 +505,11 @@ end
 
 
 -----------------------------------------------------------------------
--- generate random seed
------------------------------------------------------------------------
-function math.random_init()
-	-- random seed from os.time()
-	local seed = tostring(os.time()):reverse()
-	for _, key in ipairs(os.argv) do
-		seed = seed .. '/' .. key
-	end
-	local ppid = os.getenv('PPID')
-	seed = (ppid ~= nil) and (seed .. '/' .. ppid) or seed
-	-- random seed from socket.gettime()
-	local status, socket = pcall(require, 'socket')
-	if status then
-		seed = seed .. tostring(socket.gettime())
-	end
-	-- random seed from _ZL_RANDOM
-	local rnd = os.getenv('_ZL_RANDOM')
-	if rnd ~= nil then
-		seed = seed .. rnd
-	end
-	local tmpname = os.tmpname()
-	seed = seed .. tmpname
-	os.remove(tmpname)
-	local number = 0
-	for i = 1, seed:len() do
-		local k = string.byte(seed:sub(i, i))
-		number = ((number * 127) % 0x7fffffff) + k
-	end
-	math.randomseed(number)
-end
-
-
------------------------------------------------------------------------
 -- math random string
 -----------------------------------------------------------------------
 function math.random_string(N)
+	math.randomseed(os.time() + math.random(9999999999))
+
 	local text = ''
 	for i = 1, N do
 		local k = math.random(0, 26 * 2 + 10 - 1)
@@ -620,7 +589,6 @@ function data_save(filename, M)
 	if windows then
 		fp = io.open(filename, 'w')
 	else
-		math.random_init()
 		tmpname = filename .. '.' .. math.random_string(6)
 		tmpname = tmpname .. tostring(os.time())
 		local rnd = os.getenv('_ZL_RANDOM')
