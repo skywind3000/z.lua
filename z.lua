@@ -525,9 +525,9 @@ function math.random_init()
 	if rnd ~= nil then
 		seed = seed .. rnd
 	end
-    local tmpname = os.tmpname()
+	local tmpname = os.tmpname()
 	seed = seed .. tmpname
-    os.remove(tmpname)
+	os.remove(tmpname)
 	local number = 0
 	for i = 1, seed:len() do
 		local k = string.byte(seed:sub(i, i))
