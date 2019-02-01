@@ -4,7 +4,7 @@
 -- z.lua - z.sh implementation in lua, by skywind 2018, 2019
 -- Licensed under MIT license.
 --
--- Version 43, Last Modified: 2019/02/01 19:22
+-- Version 45, Last Modified: 2019/02/01 21:07
 --
 -- * 10x times faster than fasd and autojump
 -- * 3x times faster than rupa/z
@@ -1584,7 +1584,7 @@ function _z_complete
 	eval "$_ZL_CMD" --complete (commandline -t)
 end
 
-complete -c $_ZL_CMD -a '(_z_complete)'
+complete -c $_ZL_CMD -f -a '(_z_complete)'
 complete -c $_ZL_CMD -s 'r' -d 'cd to highest ranked dir matching'
 complete -c $_ZL_CMD -s 't' -d 'cd to most recently accessed dir matching'
 complete -c $_ZL_CMD -s 'l' -d 'list matches instead of cd'
