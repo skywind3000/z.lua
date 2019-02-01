@@ -240,7 +240,9 @@ alias zz='z -i'      # cd with interactive selection
 And you can define a `zf` command to select history path with fzf:
 
 ```bash
-alias zf='cd "$(z -l -s | fzf --reverse --height 35%)"'
+zf() { 
+ cd "$(z -l 2>&1 | fzf --height 40% --nth 2.. --reverse --inline-info +s --tac --query "${*##-*}" | sed 's/^[0-9,.]* *//')" 
+}
 ```
 
 

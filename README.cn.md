@@ -253,10 +253,12 @@ alias zc='z -c'      # 严格匹配当前路径的子路径
 alias zz='z -i'      # 使用交互式选择模式
 ```
 
-同时你可以定义一个名为 `zf` 的命令，搭配 fzf 进行历史路径模糊匹配:
+同时你可以定义一个名为 `zf` 的命令，搭配 fzf 进行历史路径模糊匹配：
 
 ```bash
-alias zf='cd "$(z -l -s | fzf --reverse --height 35%)"'
+zf() { 
+ cd "$(z -l 2>&1 | fzf --height 40% --nth 2.. --reverse --inline-info +s --tac --query "${*##-*}" | sed 's/^[0-9,.]* *//')" 
+}
 ```
 
 
