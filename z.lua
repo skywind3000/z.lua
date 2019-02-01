@@ -4,7 +4,7 @@
 -- z.lua - z.sh implementation in lua, by skywind 2018, 2019
 -- Licensed under MIT license.
 --
--- Version 42, Last Modified: 2019/02/01 17:41
+-- Version 43, Last Modified: 2019/02/01 19:22
 --
 -- * 10x times faster than fasd and autojump
 -- * 3x times faster than rupa/z
@@ -104,6 +104,7 @@ Z_CMD = 'z'
 Z_MATCHMODE = 0
 Z_MATCHNAME = false
 Z_SKIPPWD = false
+Z_LOGNAME = os.getenv('_ZL_LOG_NAME')
 
 
 -----------------------------------------------------------------------
@@ -203,6 +204,23 @@ function printT(table, level)
 		print(indent .. "}")
 	end
 	func(table, level)
+end
+
+
+-----------------------------------------------------------------------
+-- write log
+-----------------------------------------------------------------------
+function mlog(text)
+	if not Z_LOGNAME then
+		return
+	end
+	local fp = io.open(Z_LOGNAME, 'a')
+	if not fp then
+		return
+	end
+	local date = "[" .. os.date('%Y-%m-%d %H:%M:%S') .. "] "
+	fp:write(date .. text .. "\n")
+	fp:close()
 end
 
 
@@ -497,12 +515,14 @@ function os.getopt(argv)
 	while index <= count do
 		local arg = argv[index]
 		local head = arg:sub(1, 1)
-		if head ~= '-' then
-			break
+		if arg ~= '' then
+			if head ~= '-' then
+				break
+			end
+			local part = arg:split('=')
+			options[part[1]] = part[2] ~= nil and part[2] or ''
 		end
 		index = index + 1
-		local part = arg:split('=')
-		options[part[1]] = part[2] ~= nil and part[2] or ''
 	end
 	while index <= count do
 		table.insert(args, argv[index])
@@ -1109,6 +1129,7 @@ end
 -----------------------------------------------------------------------
 function main(argv)
 	local options, args = os.getopt(argv)
+	mlog("main()")
 	if options == nil then
 		return false
 	elseif table.length(args) == 0 and table.length(options) == 0 then
@@ -1117,15 +1138,9 @@ function main(argv)
 		print('Try \'' .. help .. '\' for more information')
 		return false
 	end
-	if false then
-		if options['--init'] == nil and options['--cd'] == null then
-			if options['--complete'] == nil then
-				print("options: ")
-				printT(options)
-				print("args: ")
-				printT(args)
-			end
-		end
+	if true then
+		mlog("options: " .. dump(options))
+		mlog("args: " .. dump(args))
 	end
 	if options['-c'] then
 		Z_SUBDIR = true
@@ -1529,7 +1544,9 @@ function _zlua
 	end
 	if test "$arg_mode" = "-h"
 		_zlua_call "$ZLUA_LUAEXE" "$ZLUA_SCRIPT" -h
-	else if test "$arg_mode" = "-l" -o (count $argv) -eq 0;
+	else if test "$arg_mode" = "-l"
+		_zlua_call "$ZLUA_LUAEXE" "$ZLUA_SCRIPT" -l $arg_subdir $arg_type $arg_strip $argv
+	else if test (count $argv) -eq 0
 		_zlua_call "$ZLUA_LUAEXE" "$ZLUA_SCRIPT" -l $arg_subdir $arg_type $arg_strip $argv
 	else if test -n "$arg_mode"
 		_zlua_call "$ZLUA_LUAEXE" "$ZLUA_SCRIPT" $arg_mode $arg_subdir $arg_type $arg_inter $argv
