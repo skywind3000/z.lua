@@ -525,7 +525,9 @@ function math.random_init()
 	if rnd ~= nil then
 		seed = seed .. rnd
 	end
-	seed = seed .. os.tmpname()
+    local tmpname = os.tmpname()
+	seed = seed .. tmpname
+    os.remove(tmpname)
 	local number = 0
 	for i = 1, seed:len() do
 		local k = string.byte(seed:sub(i, i))
@@ -620,8 +622,7 @@ function data_save(filename, M)
 	else
 		math.random_init()
 		tmpname = filename .. '.' .. math.random_string(6)
-		local sub = (os.tmpname()):sub(-6, -1):gsub('[\\/:~]', '')
-		tmpname = tmpname .. sub .. tostring(os.time())
+		tmpname = tmpname .. tostring(os.time())
 		local rnd = os.getenv('_ZL_RANDOM')
 		tmpname = tmpname .. '' .. (rnd and rnd or '')
 		-- print('tmpname: '..tmpname)
