@@ -1147,7 +1147,7 @@ function z_cd(patterns)
 		local cmd = ((not fzf) and 'fzf' or fzf)  .. ' ' .. cmd
 		if not windows then
 			tmpname = os.tmpname()
-			cmd = 'cat "' .. tmpname .. '" | --height 35% ' .. cmd
+			cmd = 'cat "' .. tmpname .. '" | ' .. cmd .. ' --height 35%'
 		else
 			tmpname = os.tmpname():gsub('\\', ''):gsub('%.', '')
 			tmpname = os.getenv('TMP') .. '\\zlua_' .. tmpname .. '.txt'
