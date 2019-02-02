@@ -23,7 +23,7 @@
 --     * z -x path  # remove path from history
 --     * z -i foo   # cd with interactive selection
 --
--- Bash Install: 
+-- Bash Install:
 --     * put something like this in your .bashrc:
 --         eval "$(lua /path/to/z.lua --init bash)"
 --
@@ -34,7 +34,7 @@
 -- Zsh Install:
 --     * put something like this in your .zshrc:
 --         eval "$(lua /path/to/z.lua --init zsh)"
--- 
+--
 -- Posix Shell Install:
 --     * put something like this in your .profile:
 --         eval "$(lua /path/to/z.lua --init posix)"
@@ -200,7 +200,7 @@ function printT(table, level)
 				func(v, level + 1)
 			else
 				local content = string.format("%s%s = %s", indent .. "  ",tostring(k), tostring(v))
-				print(content)  
+				print(content)
 			end
 		end
 		print(indent .. "}")
@@ -401,7 +401,7 @@ end
 -- normalize path
 -----------------------------------------------------------------------
 function os.path.norm(pathname)
-	if windows then 
+	if windows then
 		pathname = pathname:gsub('\\', '/')
 	end
 	if windows then
@@ -491,7 +491,7 @@ function os.interpreter()
 		io.stderr:write("cannot get arguments (arg), recompiled your lua\n")
 		return nil
 	end
-	local lua = os.argv[-1]	
+	local lua = os.argv[-1]
 	if lua == nil then
 		io.stderr:write("cannot get executable name, recompiled your lua\n")
 	end
@@ -628,7 +628,7 @@ end
 -- returns true for path is insensitive
 -----------------------------------------------------------------------
 function path_case_insensitive()
-	if windows then 
+	if windows then
 		return true
 	end
 	local eos = os.getenv('OS')
@@ -688,7 +688,7 @@ function data_save(filename, M)
 		fp = io.open(filename, 'w')
 	else
 		math.random_init()
-		tmpname = filename .. '.' .. tostring(os.time()) 
+		tmpname = filename .. '.' .. tostring(os.time())
 		tmpname = tmpname .. math.random_string(8)
 		local rnd = os.getenv('_ZL_RANDOM')
 		tmpname = tmpname .. '' .. (rnd and rnd or '')
@@ -735,7 +735,7 @@ end
 function data_insert(M, filename)
 	local i = 1
 	local sumscore = 0
-	for i = 1, #M do 
+	for i = 1, #M do
 		local item = M[i]
 		sumscore = sumscore + item.rank
 	end
@@ -877,7 +877,7 @@ function data_update_frecent(M)
 	for i = 1, #M do
 		local item = M[i]
 		local dx = current - item.time
-		if dx < 3600 then 
+		if dx < 3600 then
 			item.frecent = item.rank * 4
 		elseif dx < 86400 then
 			item.frecent = item.rank * 2
@@ -1017,7 +1017,7 @@ function z_match(patterns, method, subdir)
 	end
 	table.sort(M, function (a, b) return a.score > b.score end)
 	local pwd = (PWD == nil or PWD == '') and os.getenv('PWD') or PWD
-	if pwd ~= '' and pwd ~= nil then 
+	if pwd ~= '' and pwd ~= nil then
 		if subdir then
 			local N = {}
 			for _, item in pairs(M) do
@@ -1045,7 +1045,7 @@ end
 
 
 -----------------------------------------------------------------------
--- pretty print 
+-- pretty print
 -----------------------------------------------------------------------
 function z_print(M, weight, number)
 	local N = {}
@@ -1061,7 +1061,7 @@ function z_print(M, weight, number)
 		end
 	end
 	local fp = io.stdout
-	if PRINT_MODE == '<stdout>' then 
+	if PRINT_MODE == '<stdout>' then
 		fp = io.stdout
 	elseif PRINT_MODE == '<stderr>' then
 		fp = io.stderr
@@ -1073,8 +1073,8 @@ function z_print(M, weight, number)
 		local line = record.score
 		while true do
 			local tail = line:sub(-1, -1)
-			if tail ~= '0' and tail ~= '.' then 
-				break 
+			if tail ~= '0' and tail ~= '.' then
+				break
 			end
 			line = line:sub(1, -2)
 			if tail == '.' then
@@ -1415,10 +1415,10 @@ _zlua() {
 	elif [ "$1" = "--complete" ]; then
 		shift
 		"$ZLUA_LUAEXE" "$ZLUA_SCRIPT" --complete "$@"
-		return 
+		return
 	fi
 	while [ "$1" ]; do
-		case "$1" in 
+		case "$1" in
 			-l) local arg_mode="-l" ;;
 			-e) local arg_mode="-e" ;;
 			-x) local arg_mode="-x" ;;
@@ -1456,14 +1456,14 @@ alias ${_ZL_CMD:-z}='_zlua'
 ]]
 
 local script_init_bash = [[
-case "$PROMPT_COMMAND" in 
+case "$PROMPT_COMMAND" in
 	*_zlua?--add*) ;;
 	*) PROMPT_COMMAND="(_zlua --add \"\$(command pwd 2>/dev/null)\" &);$PROMPT_COMMAND" ;;
 esac
 ]]
 
 local script_init_bash_fast = [[
-case "$PROMPT_COMMAND" in 
+case "$PROMPT_COMMAND" in
 	*_zlua?--add*) ;;
 	*) PROMPT_COMMAND="(_zlua --add \"\$PWD\" &);$PROMPT_COMMAND" ;;
 esac
@@ -1475,7 +1475,7 @@ _zlua_precmd() {
     _ZL_PREVIOUS_PWD="$PWD"
     (_zlua --add "$PWD" 2> /dev/null &)
 }
-case "$PROMPT_COMMAND" in 
+case "$PROMPT_COMMAND" in
 	*_zlua_precmd*) ;;
 	*) PROMPT_COMMAND="_zlua_precmd;$PROMPT_COMMAND" ;;
 esac
@@ -1556,7 +1556,7 @@ function z_shell_init(opts)
 				print(script_init_bash_once)
 			elseif opts.fast then
 				print(script_init_bash_fast)
-			else 
+			else
 				print(script_init_bash)
 			end
 		end
@@ -1578,7 +1578,7 @@ function z_shell_init(opts)
 				print(script_init_bash_once)
 			elseif opts.fast then
 				print(script_init_bash_fast)
-			else 
+			else
 				print(script_init_bash)
 			end
 			print(script_complete_bash)
@@ -1792,18 +1792,69 @@ if /i "%RunMode%"=="-n" (
 :end
 ]]
 
+local script_init_powershell = [[
+
+   function z_init_powershell {
+      if (!$LuaExe) {
+         $LuaExe = "luajit.exe"
+      }
+      if (!$LuaScript) {
+         $LuaScript = ${HOME} + "\" + "z.lua"
+      }
+      if (!$env:_ZL_CD) {
+         $env:_ZL_CD = "Push-Location"
+      }
+
+      function global:z_add {
+         param (
+            [string] $path
+         )
+         & $LuaExe $LuaScript --add $path
+      }
+
+      function global:z {
+         foreach ($i in $args) {
+            if ($i -eq "-e" -or $i -eq "-x" -or $i -eq "-l") {
+               & $LuaExe $LuaScript $args
+               return
+            }
+         }
+         & $env:_ZL_CD (& $LuaExe $LuaScript -e $args)
+      }
+
+      $script:_zlua_orig_prompt = ([ref] $function:prompt)
+      $script:_zlua_previous = ""
+      function global:prompt {
+         & $script:_zlua_orig_prompt.value
+         $local:str_pwd = ([string] $PWD)
+         if (($env:_ZL_ADD_ONCE -eq 0) -or
+               (($env:_ZL_ADD_ONCE -eq 1) -and ($script:_zlua_previous -ne $str_pwd))) {
+            $script:_zlua_previous = $str_pwd
+            z_add $str_pwd
+         }
+      }
+   }
+
+   z_init_powershell
+]]
 
 -----------------------------------------------------------------------
 -- initialize cmd
 -----------------------------------------------------------------------
 function z_windows_init(opts)
-	print('@echo off')
-	print('setlocal EnableDelayedExpansion')
-	print('set "LuaExe=' .. os.interpreter() .. '"')
-	print('set "LuaScript=' .. os.scriptname() .. '"')
-	print(script_init_cmd)
-	if opts.newline then
-		print('echo.')
+	if opts.powershell ~= nil then
+		print('$LuaExe = "' .. os.interpreter() .. '"')
+		print('$LuaScript = "' .. os.scriptname() .. '"')
+		print(script_init_powershell)
+	else
+		print('@echo off')
+		print('setlocal EnableDelayedExpansion')
+		print('set "LuaExe=' .. os.interpreter() .. '"')
+		print('set "LuaScript=' .. os.scriptname() .. '"')
+		print(script_init_cmd)
+		if opts.newline then
+			print('echo.')
+		end
 	end
 end
 
@@ -1836,6 +1887,3 @@ if not pcall(debug.getlocal, 4, 1) then
 		main()
 	end
 end
-
-
-
