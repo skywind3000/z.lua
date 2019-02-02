@@ -26,6 +26,7 @@ For example, `z foo bar` would match `/foo/bar` but not `/bar/foo`.
 - New "$_ZL_ADD_ONCE" to allow updating database only if `$PWD` changed.
 - Enhanced matching mode with "$_ZL_MATCH_MODE" set to 1.
 - Interactive selection enables you to choose where to go before cd.
+- Support fzf for selecting from multiple results.
 
 
 ## Examples
@@ -227,6 +228,20 @@ $ z -i soft
 
 And then you can input the number and choose where to go before actual cd. eg. input 3 to cd to `/home/data/software`. And if you just press ENTER and input nothing, it will just quit and stay where you were.
 
+NOTE: for fish shell, this feature requires fish 2.7.0 or above.
+
+## FZF supports
+
+From version 1.1.0, a new option `"-I"` will allow you to use fzf to select when there are multiple matches. 
+
+![](images/fzf.png)
+
+Usually, `z -I` can be aliased to `zf` (z + fuzzy finder) for convenience. If there are only one path matched, `z -I` will jump to it directly, fzf will only be invoked for multiple matches.
+
+`"z -I ."` or `"zf ."` can be used to use fzf select from entire database.
+
+NOTE: for fish shell, this feature requires fish 2.7.0 or above.
+
 
 ## Tips
 
@@ -235,14 +250,7 @@ Recommended aliases you may find useful:
 ```bash
 alias zc='z -c'      # restrict matches to subdirs of $PWD
 alias zz='z -i'      # cd with interactive selection
-```
-
-And you can define a `zf` command to select history path with fzf:
-
-```bash
-zf() { 
- cd "$(z -l "$@" 2>&1 | fzf --height 40% --nth 2.. --reverse --inline-info +s --tac | sed 's/^[0-9,.]* *//')" 
-}
+alias zf='z -I'      # use fzf to select in multiple matches
 ```
 
 
