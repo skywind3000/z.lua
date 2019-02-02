@@ -239,6 +239,10 @@ From version 1.1.0, a new option `"-I"` will allow you to use fzf to select when
 
 ![](images/fzf.png)
 
+When we use `"z -I vim"`，12 paths contains keyword "vim" has been matched and ordered by their frecent value, the higher frecent comes with the higher rank. Then without cd to the highest ranked path, z.lua passes all the candidates to fzf. And you can use fzf to select where you want to go, or ESC to quit.
+
+Of course, you can always give more keywords to `z` command to match your destination precisely. This feature provide you another way to do that.
+
 Usually, `z -I` can be aliased to `zf` (z + fuzzy finder) for convenience. If there are only one path matched, `z -I` will jump to it directly, fzf will only be invoked for multiple matches.
 
 `"z -I ."` or `"zf ."` can be used to use fzf select from entire database.
