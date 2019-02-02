@@ -116,12 +116,7 @@ Frecency is a portmanteau of 'recent' and 'frequency'. It is a weighted rank tha
 To z.lua, a directory that has low ranking but has been accessed recently will quickly  have higher rank than a directory accessed frequently a long time ago. Frecency is determined at runtime.
 
 
-## Matching
-
-z.lua has two different matching methods: 0 for default, 1 for enhanced:
-
-
-### Default matching
+## Default Matching
 
 By default, z.lua uses default matching method similar to the original z.sh. Paths must be match all of the regexes in order.
 
@@ -142,11 +137,19 @@ By default, z.lua uses default matching method similar to the original z.sh. Pat
 
   `"z in"` would cd into `/home/user/mail/inbox` as the higher weighted entry. However you can pass multiple arguments to z.lua to prefer a different entry. In the above example, `"z w in"` would then change directory to `/home/user/work/inbox`.
 
-### Enhanced matching
+## Enhanced Matching
 
-Enhanced matching can be enabled by export the environment:
+Enhanced matching can be enabled by exporting the environment:
 
-    export _ZL_MATCH_MODE=1
+```bash
+export _ZL_MATCH_MODE=1
+```
+
+Or, append a `enhanced` after `--init xxx`:
+
+```bash
+eval "$(lua /path/to/z.lua --init bash enhanced)"
+```
 
 For a given set of queries (the set of command-line arguments passed to z.lua), a path is a match if and only if:
 
@@ -200,7 +203,7 @@ If no match is found, it will fall back to default matching method.
 The default matching method is designed to be compatible with original z.sh, but the enhanced matching method is much more handy and exclusive to z.lua.
 
 
-## Add once
+## Add Once
 
 By default, z.lua will add current directory to database each time before display command prompt (correspond with z.sh). But there is an option to allow z.lua add path only if current working directory changed.
 
@@ -214,7 +217,7 @@ source (lua /path/to/z.lua --init fish | psub)
 
 It could be much faster on slow hardware or Cygwin/MSYS.
 
-## Interective selection
+## Interective Selection
 
 When there are multiple matches found, using `z -i` will display a list:
 
@@ -230,7 +233,7 @@ And then you can input the number and choose where to go before actual cd. eg. i
 
 NOTE: for fish shell, this feature requires fish 2.7.0 or above.
 
-## FZF supports
+## FZF Supports
 
 From version 1.1.0, a new option `"-I"` will allow you to use fzf to select when there are multiple matches. 
 
@@ -284,7 +287,7 @@ sys     0m0.030s
 As you see, z.lua is the fastest one and requires less resource.
 
 
-## Import database
+## Import Database
 
 You can import your datafile from z.sh by：
 
