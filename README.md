@@ -240,7 +240,7 @@ Usually, `z -I` can be aliased to `zf` (z + fuzzy finder) for convenience. If th
 
 `"z -I ."` or `"zf ."` can be used to use fzf select from entire database.
 
-NOTE: for fish shell, this feature requires fish 2.7.0 or above.
+NOTE: For fish shell, this feature requires fish 2.7.0 or above. You can specify fzf executable in `$_ZL_FZF` environment variable, `"fzf"` will be called by default.
 
 
 ## Tips
