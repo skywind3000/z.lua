@@ -1664,6 +1664,8 @@ end
 
 complete -c $_ZL_CMD -f -a '(_z_complete)'
 complete -c $_ZL_CMD -s 'r' -d 'cd to highest ranked dir matching'
+complete -c $_ZL_CMD -s 'i' -d 'cd with interactive selection'
+complete -c $_ZL_CMD -s 'I' -d 'cd with interactive selection using fzf'
 complete -c $_ZL_CMD -s 't' -d 'cd to most recently accessed dir matching'
 complete -c $_ZL_CMD -s 'l' -d 'list matches instead of cd'
 complete -c $_ZL_CMD -s 'c' -d 'restrict matches to subdirs of $PWD'
