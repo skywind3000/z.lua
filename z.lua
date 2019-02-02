@@ -309,13 +309,28 @@ function os.path.abspath(path)
 	else
 		local test = os.path.which('realpath')
 		if test ~= nil and test ~= '' then
-			return os.call('realpath \'' .. path .. '\'')
+			test = os.call('realpath -s \'' .. path .. '\' 2> /dev/null')
+			if test ~= nil and test ~= '' then
+				return test
+			end
 		end
+        if os.path.isdir(path) then
+            if os.path.exists('/bin/sh') and os.path.exists('/bin/pwd') then
+                local cmd = "/bin/sh -c 'cd \"" ..path .."\"; /bin/pwd'"
+                test = os.call(cmd)
+				if test ~= nil and test ~= '' then
+					return test
+				end
+            end
+        end
 		local test = os.path.which('perl')
 		if test ~= nil and test ~= '' then
 			local s = 'perl -MCwd -e "print Cwd::realpath(\\$ARGV[0])" \'%s\''
 			local s = string.format(s, path)
-			return os.call(s)
+			test = os.call(s)
+			if test ~= nil and test ~= '' then
+				return test
+			end
 		end
 		for _, python in pairs({'python', 'python2', 'python3'}) do
 			local s = 'sys.stdout.write(os.path.abspath(sys.argv[1]))'
