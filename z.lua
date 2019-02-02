@@ -4,7 +4,7 @@
 -- z.lua - z.sh implementation in lua, by skywind 2018, 2019
 -- Licensed under MIT license.
 --
--- Version 45, Last Modified: 2019/02/01 21:07
+-- Version 1.1.0, Last Modified: 2019/02/02 14:51
 --
 -- * 10x times faster than fasd and autojump
 -- * 3x times faster than rupa/z
@@ -94,17 +94,19 @@ os.argv = arg ~= nil and arg or {}
 -----------------------------------------------------------------------
 MAX_AGE = 5000
 DATA_FILE = '~/.zlua'
-PRINT_TO_STDERR = false
+PRINT_MODE = '<stdout>'
 PWD = ''
 Z_METHOD = 'frecent'
 Z_SUBDIR = false
-Z_INTERACTIVE = false
+Z_INTERACTIVE = 0
 Z_EXCLUDE = {}
 Z_CMD = 'z'
 Z_MATCHMODE = 0
 Z_MATCHNAME = false
 Z_SKIPPWD = false
-Z_LOGNAME = os.getenv('_ZL_LOG_NAME')
+
+os.LOG_NAME = os.getenv('_ZL_LOG_NAME')
+
 
 
 -----------------------------------------------------------------------
@@ -208,23 +210,6 @@ end
 
 
 -----------------------------------------------------------------------
--- write log
------------------------------------------------------------------------
-function mlog(text)
-	if not Z_LOGNAME then
-		return
-	end
-	local fp = io.open(Z_LOGNAME, 'a')
-	if not fp then
-		return
-	end
-	local date = "[" .. os.date('%Y-%m-%d %H:%M:%S') .. "] "
-	fp:write(date .. text .. "\n")
-	fp:close()
-end
-
-
------------------------------------------------------------------------
 -- invoke command and retrive output
 -----------------------------------------------------------------------
 function os.call(command)
@@ -235,6 +220,23 @@ function os.call(command)
 	local line = fp:read('*l')
 	fp:close()
 	return line
+end
+
+
+-----------------------------------------------------------------------
+-- write log
+-----------------------------------------------------------------------
+function os.log(text)
+	if not os.LOG_NAME then
+		return
+	end
+	local fp = io.open(os.LOG_NAME, 'a')
+	if not fp then
+		return
+	end
+	local date = "[" .. os.date('%Y-%m-%d %H:%M:%S') .. "] "
+	fp:write(date .. text .. "\n")
+	fp:close()
 end
 
 
@@ -456,6 +458,13 @@ function os.path.expand(pathname)
 		return home .. '/' .. pathname:sub(3, -1)
 	end
 	return pathname
+end
+
+
+-----------------------------------------------------------------------
+-- search executable
+-----------------------------------------------------------------------
+function os.path.search(name)
 end
 
 
@@ -1036,6 +1045,14 @@ function z_print(M, weight, number)
 			maxsize = record.score:len()
 		end
 	end
+	local fp = io.stdout
+	if PRINT_MODE == '<stdout>' then 
+		fp = io.stdout
+	elseif PRINT_MODE == '<stderr>' then
+		fp = io.stderr
+	else
+		fp = io.open(PRINT_MODE, 'w')
+	end
 	for i = #N, 1, -1 do
 		local record = N[i]
 		local line = record.score
@@ -1065,11 +1082,12 @@ function z_print(M, weight, number)
 			end
 			line = head .. ':  ' .. line
 		end
-		if not PRINT_TO_STDERR then
-			print(line)
-		else
-			io.stderr:write(line .. '\n')
+		if fp ~= nil then
+			fp:write(line .. '\n')
 		end
+	end
+	if PRINT_MODE:sub(1, 1) ~= '<' then
+		if fp ~= nil then fp:close() end
 	end
 end
 
@@ -1101,27 +1119,77 @@ function z_cd(patterns)
 		return nil
 	elseif #M == 1 then
 		return M[1].name
-	elseif not Z_INTERACTIVE then
+	elseif Z_INTERACTIVE == 0 then
 		return M[1].name
 	end
-	PRINT_TO_STDERR = true
-	z_print(M, true, true)
-	io.stderr:write('> ')
-	io.stderr:flush()
-	local input = io.read('*l')
-	if input == nil then
-		return nil
+	local retval = nil
+	if Z_INTERACTIVE == 1 then
+		PRINT_MODE = '<stderr>'
+		z_print(M, true, true)
+		io.stderr:write('> ')
+		io.stderr:flush()
+		local input = io.read('*l')
+		if input == nil then
+			return nil
+		end
+		local index = tonumber(input)
+		if index == nil then
+			return nil
+		end
+		if index < 1 or index > #M then
+			return nil
+		end
+		retval = M[index].name
+	elseif Z_INTERACTIVE == 2 then
+		local fzf = os.getenv('_ZL_FZF')
+		local tmpname = '/tmp/zlua.txt'
+		local cmd = '--nth 2.. --reverse --inline-info +s --tac'
+		local cmd = ((not fzf) and 'fzf' or fzf)  .. ' ' .. cmd
+		if not windows then
+			tmpname = os.tmpname()
+			cmd = 'cat "' .. tmpname .. '" | --height 35% ' .. cmd
+		else
+			tmpname = os.tmpname():gsub('\\', ''):gsub('%.', '')
+			tmpname = os.getenv('TMP') .. '\\zlua_' .. tmpname .. '.txt'
+			cmd = 'type "' .. tmpname .. '" | ' .. cmd
+		end
+		PRINT_MODE = tmpname
+		z_print(M, true, false)
+		retval = os.call(cmd)
+		-- io.stderr:write('<'..cmd..'>\n')
+		os.remove(tmpname)
+		if retval == '' or retval == nil then
+			return nil
+		end
+		local pos = retval:find(' ')
+		if not pos then
+			return nil
+		end
+		retval = retval:sub(pos, -1):gsub('^%s*', '')
 	end
-	local index = tonumber(input)
-	if index == nil then
-		return nil
-	end
-	if index < 1 or index > #M then
-		return nil
-	end
-	return M[index].name
+	return (retval ~= '' and retval or nil)
 end
 
+
+-----------------------------------------------------------------------
+-- cd to parent directories which contains keyword
+-----------------------------------------------------------------------
+function cd_backward(args, options)
+end
+
+
+-----------------------------------------------------------------------
+-- cd forward
+-----------------------------------------------------------------------
+function cd_forward(args, options)
+end
+
+
+-----------------------------------------------------------------------
+-- cd detour
+-----------------------------------------------------------------------
+function cd_forward(args, options)
+end
 
 
 -----------------------------------------------------------------------
@@ -1129,7 +1197,7 @@ end
 -----------------------------------------------------------------------
 function main(argv)
 	local options, args = os.getopt(argv)
-	mlog("main()")
+	os.log("main()")
 	if options == nil then
 		return false
 	elseif table.length(args) == 0 and table.length(options) == 0 then
@@ -1139,8 +1207,8 @@ function main(argv)
 		return false
 	end
 	if true then
-		mlog("options: " .. dump(options))
-		mlog("args: " .. dump(args))
+		os.log("options: " .. dump(options))
+		os.log("args: " .. dump(args))
 	end
 	if options['-c'] then
 		Z_SUBDIR = true
@@ -1151,11 +1219,19 @@ function main(argv)
 		Z_METHOD = 'time'
 	end
 	if options['-i'] then
-		Z_INTERACTIVE = true
+		Z_INTERACTIVE = 1
+	elseif options['-I'] then
+		Z_INTERACTIVE = 2
 	end
 	if options['--cd'] or options['-e'] then
 		local path = ''
-		if #args == 0 then
+		if options['-b'] then
+			path = cd_backward(args, options)
+		elseif options['-f'] then
+			path = cd_forward(args, options)
+		elseif options['-d'] then
+			path = cd_detour(args, options)
+		elseif #args == 0 then
 			path = os.path.expand('~')
 		else
 			path = z_cd(args)
@@ -1336,6 +1412,7 @@ _zlua() {
 			-c) local arg_subdir="-c" ;;
 			-s) local arg_strip="-s" ;;
 			-i) local arg_inter="-i" ;;
+			-I) local arg_inter="-I" ;;
 			-h|--help) local arg_mode="-h" ;;
 			*) break ;;
 		esac
@@ -1536,6 +1613,7 @@ function _zlua
 			case "-c"; set arg_subdir "-c"
 			case "-s"; set arg_strip "-s"
 			case "-i"; set arg_inter "-i"
+			case "-I"; set arg_inter "-I"
 			case "-h"; set arg_mode "-h"
 			case "--help"; set arg_mode "-h"
 			case '*'; break
@@ -1654,8 +1732,13 @@ if /i "%1"=="-x" (
 	shift /1
 	goto parse
 )
-if /i "%1"=="-i" (
+if "%1"=="-i" (
 	set "InterMode=-i"
+	shift /1
+	goto parse
+)
+if "%1"=="-I" (
+	set "InterMode=-I"
 	shift /1
 	goto parse
 )

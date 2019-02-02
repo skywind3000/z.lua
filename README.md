@@ -292,6 +292,17 @@ FN="$HOME/.local/share/autojump/autojump.txt"
 awk -F '\t' '{print $2 "|" $1 "|" 0}' $FN >> ~/.zlua
 ```
 
+## History
+
+- 1.1.0 (2019-02-02): New option '-I' to use fzf to select from multiple matches.
+- 1.0.0 (2019-02-01): Fixed minor issues and make it stable.
+- 0.5.0 (2019-01-21): supports fish shell (Daniel Lewan).
+- 0.4.1 (2019-01-20): Don't return failed exit code when $_ZL_ECHO is unbind (Mario Rodas).
+- 0.4.0 (2019-01-17): new enhanced matching algorithm，can be enabled by appending `enhanced` keyword after `--init`.
+- 0.3.0 (2018-12-26): new option `-i` to enable interactive selection.
+- 0.2.0 (2018-11-25): new option `$_ZL_ADD_ONCE` to enable updating datafile only if `$PWD` changed.
+- 0.1.0 (2018-04-30): supports windows cmd, cmder and conemu.
+- 0.0.0 (2018-03-21): initial commit, compatible with original z.sh.
 
 ## Credit
 
