@@ -26,6 +26,6 @@ eval "$($ZLUA_EXEC $ZLUA_SCRIPT --init zsh once enhanced)"
 
 alias zz='z -i'
 alias zc='z -c'
-alias zf='cd "$(z -l -s | fzf --reverse --height 35%)"'
+alias zf='z -I'
 alias zzc='zz -c'
 
