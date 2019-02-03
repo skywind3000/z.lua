@@ -2077,20 +2077,26 @@ if /i "%RunMode%"=="-n" (
 local script_init_powershell = [[
 
 function Init-ZLua {
-   if (!$script:LuaExe) {
-      $script:LuaExe = "luajit.exe"
+
+   # Prevent repeating init
+   if ($global:_zlua_inited) {
+      return
    }
+
+   if (!$script:LuaExe) {
+      $script:LuaExe = "lua.exe"
+   }
+
    if (!$script:LuaScript) {
       $script:LuaScript = "z.lua"
    }
+
    if (!$env:_ZL_CD) {
       $env:_ZL_CD = "Push-Location"
    }
+
    if (!$env:_ZL_CMD) {
       $env:_ZL_CMD = "z"
-   }
-   if (!$env:_ZL_RANDOM) {
-      $env:_ZL_RANDOM = Get-Random
    }
 
    function global:_zlua {
@@ -2103,6 +2109,7 @@ function Init-ZLua {
 
       if ($args[0] -eq "--add") {
          $_, $rest = $args
+         $env:_ZL_RANDOM = Get-Random
          & $script:LuaExe $script:LuaScript --add $rest
          return
       } elseif ($args[0] -eq "--complete") {
@@ -2127,11 +2134,11 @@ function Init-ZLua {
                break
             }
             "-t" {
-               $arg_mode = "-t"
+               $arg_type = "-t"
                break
             }
             "-r" {
-               $arg_mode = "-r"
+               $arg_type = "-r"
                break
             }
             "-c" {
@@ -2167,6 +2174,7 @@ function Init-ZLua {
             break loop
          }
          $first = $args[0]
+         $env:PWD = ([string] $PWD)
       }
 
       if ($arg_mode -eq "-h") {
@@ -2187,21 +2195,25 @@ function Init-ZLua {
    }
 
    Set-Alias $env:_ZL_CMD _zlua -Scope Global
-   $script:_zlua_orig_prompt = ([ref] $function:prompt)
-   $script:_zlua_previous = ""
-   function global:prompt {
-      & $script:_zlua_orig_prompt.value
-      $local:str_pwd = ([string] $PWD)
-      if (($env:_ZL_ADD_ONCE -eq 0) -or
-            (($env:_ZL_ADD_ONCE -eq 1) -and ($script:_zlua_previous -ne $str_pwd))) {
-         $script:_zlua_previous = $str_pwd
-         & $script:LuaExe $script:LuaScript --add $str_pwd
+
+   if (!$env:_ZL_NO_PROMPT_COMMAND) {
+      $script:_zlua_orig_prompt = ([ref] $function:prompt)
+      $script:_zlua_previous = ""
+      function global:prompt {
+         & $script:_zlua_orig_prompt.value
+         $str_pwd = ([string] $PWD)
+         if ((!$env:_ZL_ADD_ONCE) -or
+               ($env:_ZL_ADD_ONCE -and ($script:_zlua_previous -ne $str_pwd))) {
+            $script:_zlua_previous = $str_pwd
+            _zlua --add $str_pwd
+         }
       }
    }
+
+   $global:_zlua_inited = $True
 }
 
 Init-ZLua
-
 ]]
 
 -----------------------------------------------------------------------
@@ -2211,6 +2223,12 @@ function z_windows_init(opts)
 	if opts.powershell ~= nil then
 		print('$LuaExe = "' .. os.interpreter() .. '"')
 		print('$LuaScript = "' .. os.scriptname() .. '"')
+		if opts.enhanced ~= nil then
+			print('$env:_ZL_MATCH_MODE = 1')
+		end
+		if opts.once ~= nil then
+			print('$env:_ZL_ADD_ONCE = 1')
+		end
 		print(script_init_powershell)
 	else
 		print('@echo off')
