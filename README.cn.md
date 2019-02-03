@@ -14,7 +14,7 @@ z.lua 是一个快速路径切换工具，它会跟踪你在 shell 下访问过�
 
 - 性能比 **z.sh** 快三倍，比 **fasd** / **autojump** 快十倍以上。
 - 支持 Posix Shell（bash, zsh, dash, sh, ash, busybox）及 Fish Shell。
-- 支持 Windows cmd 终端 (使用 clink)，cmder 和 ConEmu。
+- 支持 Windows Power Shell 和 cmd (使用 clink)，cmder 和 ConEmu。
 - 无依赖，不会像 fasd/z.sh 那样对 awk/gawk 及 shell 有特殊的版本要求。
 - 兼容 lua 5.1, 5.2 和 5.3 以上版本。
 - 新增：环境变量 "$_ZL_ADD_ONCE" 设成 1 的话性仅当前路径改变时才更新数据库。
@@ -76,6 +76,13 @@ z -i foo    # 就进入交互式选择模式，让你自己挑选去哪里（多
       lua /path/to/z.lua --init fish > ~/.config/fish/conf.d/z.fish
 
   但是第二种方法需要记得在 z.lua 位置改变或者 lua 版本升级后需要重新生成。
+
+- Windows Power Shell:
+
+  在你 Power Shell 的配置文件 `profile.ps1` 中放入下面语句：
+
+      iex ($(lua /path/to/z.lua --init powershell) -join "`n") 
+
 
 - Windows (with clink):
 

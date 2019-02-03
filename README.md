@@ -19,7 +19,7 @@ For example, `z foo bar` would match `/foo/bar` but not `/bar/foo`.
 - **10x** times faster than **fasd** and **autojump**
 - **3x** times faster than **z.sh**
 - Available for **posix shells**: bash, zsh, dash, sh, ash, busybox and etc.
-- Supports Windows cmd (with clink) and cmder
+- Supports Windows Power Shell and cmd (with clink/cmder/conemu).
 - Supports fish shell (2.4.0 +)
 - Self contained, no dependence on awk/gawk
 - Compatible with lua 5.1, 5.2 and 5.3+
@@ -79,6 +79,13 @@ z -i foo    # cd with interactive selection
       lua /path/to/z.lua --init fish > ~/.config/fish/conf.d/z.fish
 
   This is another way to initiaze z.lua in fish shell, but remember to regenerate z.fish if z.lua has been updated or moved.
+
+- Windows Power Shell:
+
+  put something like this in your `profile.ps1`:
+
+      iex ($(lua /path/to/z.lua --init powershell) -join "`n") 
+
 
 - Windows (with clink):
 
