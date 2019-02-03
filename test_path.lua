@@ -142,6 +142,12 @@ function test_join_windows()
 	assert_join_windows({'c:a/b', 'C:x/y'}, 'C:a/b\\x/y')
 	assert_join_windows({'c:/', 'C:x/y'}, 'C:/x/y')
 	assert_join_windows({'c:/a/b', 'C:x/y'}, 'C:/a/b\\x/y')
+
+	for _, x in ipairs({'', 'a/b', '/a/b', 'c:', 'c:a/b', 'c:/', 'c:/a/b'}) do
+		for _, y in ipairs({'d:', 'd:x/y', 'd:/', 'd:/x/y'}) do
+			assert_join_windows({x, y}, y)
+		end
+	end
 end
 
 test_join_posix()

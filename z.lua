@@ -542,14 +542,8 @@ function os.path.join(path1, path2)
 		end
 		return path2
 	elseif windows then
-		local d1 = path1:sub(1, 2)
-		local d2 = path2:sub(1, 2)
-		if not path1:match('^%a:') then
-			d1 = ''
-		end
-		if not path2:match('^%a:') then
-			d2 = ''
-		end
+		local d1 = path1:match('^%a:') and path1:sub(1, 2) or ''
+		local d2 = path2:match('^%a:') and path2:sub(1, 2) or ''
 		if d1 ~= '' then
 			if d2 ~= '' then
 				if d1:lower() == d2:lower() then
@@ -558,6 +552,8 @@ function os.path.join(path1, path2)
 					return path2
 				end
 			end
+		elseif d2 ~= '' then
+			return path2
 		end
 	end
 	local postsep = true
