@@ -1805,7 +1805,10 @@ function Init-ZLua {
       $env:_ZL_CD = "Push-Location"
    }
    if (!$env:_ZL_CMD) {
-      $env:_ZL_CMD = "j"
+      $env:_ZL_CMD = "z"
+   }
+   if (!$env:_ZL_RANDOM) {
+      $env:_ZL_RANDOM = Get-Random
    }
 
    function global:_zlua {
@@ -1865,7 +1868,10 @@ function Init-ZLua {
                $arg_inter="-I"
                break
             }
-            "-h" {}
+            "-h" {
+               $arg_mode="-h"
+               break
+            }
             "--help" {
                $arg_mode="-h"
                break
@@ -1913,6 +1919,7 @@ function Init-ZLua {
 }
 
 Init-ZLua
+
 ]]
 
 -----------------------------------------------------------------------
