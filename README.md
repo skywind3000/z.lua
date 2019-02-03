@@ -367,11 +367,12 @@ awk -F '\t' '{print $2 "|" $1 "|" 0}' $FN >> ~/.zlua
 
 ## History
 
+- 1.4.0 (2019-02-04): supports Power Shell ([@manhong2112](https://github.com/manhong2112))
 - 1.3.0 (2019-02-04): Backward jumping, prevent "cd ../../.." repeatly.
 - 1.2.0 (2019-02-03): Upgrading string lib and path lib.
 - 1.1.0 (2019-02-02): New option '-I' to use fzf to select from multiple matches.
 - 1.0.0 (2019-02-01): Fixed minor issues and make it stable.
-- 0.5.0 (2019-01-21): supports fish shell (Daniel Lewan).
+- 0.5.0 (2019-01-21): supports Fish Shell ([@TeddyDD](https://github.com/TeddyDD)).
 - 0.4.1 (2019-01-20): Don't return failed exit code when $_ZL_ECHO is unbind (Mario Rodas).
 - 0.4.0 (2019-01-17): new enhanced matching algorithm，can be enabled by appending `enhanced` keyword after `--init`.
 - 0.3.0 (2018-12-26): new option `-i` to enable interactive selection.
@@ -381,9 +382,10 @@ awk -F '\t' '{print $2 "|" $1 "|" 0}' $FN >> ~/.zlua
 
 ## Thanks
 
-Thanks to @rupa for inspiring me to start this project.
-Thanks to @vigneshwaranr and @shyiko for inspiring me the backward jumping.
-Thanks to @TeddyDD for fish shell porting.
+- Thanks to [@rupa](https://github.com/rupa) for inspiring me to start this project.
+- Thanks to [@vigneshwaranr](https://github.com/vigneshwaranr) and [@shyiko](https://github.com/shyiko) for inspiring me the backward jumping.
+- Thanks to [@TeddyDD](https://github.com/TeddyDD) for Fish Shell porting.
+- Thanks to [@manhong2112](https://github.com/manhong2112) for Power Shell porting.
 
 And many others.
 
