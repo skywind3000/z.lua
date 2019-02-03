@@ -2217,7 +2217,7 @@ Init-ZLua
 ]]
 
 -----------------------------------------------------------------------
--- initialize cmd
+-- initialize cmd/powershell
 -----------------------------------------------------------------------
 function z_windows_init(opts)
 	if opts.powershell ~= nil then
