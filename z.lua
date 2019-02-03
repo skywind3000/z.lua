@@ -2221,8 +2221,8 @@ Init-ZLua
 -----------------------------------------------------------------------
 function z_windows_init(opts)
 	if opts.powershell ~= nil then
-		print('$LuaExe = "' .. os.interpreter() .. '"')
-		print('$LuaScript = "' .. os.scriptname() .. '"')
+		print('$ZLUA_LUAEXE = "' .. os.interpreter() .. '"')
+		print('$ZLUA_SCRIPT = "' .. os.scriptname() .. '"')
 		if opts.enhanced ~= nil then
 			print('$env:_ZL_MATCH_MODE = 1')
 		end
