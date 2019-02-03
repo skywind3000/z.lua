@@ -1793,6 +1793,7 @@ if /i "%RunMode%"=="-n" (
 ]]
 
 local script_init_powershell = [[
+
 function Init-ZLua {
    if (!$script:LuaExe) {
       $script:LuaExe = "luajit.exe"
@@ -1803,8 +1804,11 @@ function Init-ZLua {
    if (!$env:_ZL_CD) {
       $env:_ZL_CD = "Push-Location"
    }
+   if (!$env:_ZL_CMD) {
+      $env:_ZL_CMD = "j"
+   }
 
-   function global:z {
+   function global:_zlua {
       $arg_mode = ""
       $arg_type = ""
       $arg_subdir = ""
@@ -1861,7 +1865,8 @@ function Init-ZLua {
                $arg_inter="-I"
                break
             }
-            "-h" {} "--help" {
+            "-h" {}
+            "--help" {
                $arg_mode="-h"
                break
             }
@@ -1893,6 +1898,7 @@ function Init-ZLua {
       }
    }
 
+   Set-Alias $env:_ZL_CMD _zlua -Scope Global
    $script:_zlua_orig_prompt = ([ref] $function:prompt)
    $script:_zlua_previous = ""
    function global:prompt {
@@ -1905,6 +1911,7 @@ function Init-ZLua {
       }
    }
 }
+
 Init-ZLua
 ]]
 
