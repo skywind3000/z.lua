@@ -27,5 +27,6 @@ eval "$($ZLUA_EXEC $ZLUA_SCRIPT --init zsh once enhanced)"
 alias zz='z -i'
 alias zc='z -c'
 alias zf='z -I'
+alias zb='z -b'
 alias zzc='zz -c'
 
