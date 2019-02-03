@@ -577,6 +577,56 @@ end
 
 
 -----------------------------------------------------------------------
+-- split
+-----------------------------------------------------------------------
+function os.path.split(path)
+	if path == '' then
+		return '', ''
+	end
+	local pos = path:rfind('/')
+	if os.path.sep == '\\' then
+		local p2 = path:rfind('\\')
+		if pos == nil and p2 ~= nil then
+			pos = p2
+		elseif p1 ~= nil and p2 ~= nil then
+			pos = (pos < p2) and pos or p2
+		end
+		if path:match('^%a:[/\\]') and pos == nil then
+			return path:sub(1, 2), path:sub(3)
+		end
+	end
+	if pos == nil then
+		if windows then
+			local drive = path:match('^%a:') and path:sub(1, 2) or ''
+			if drive ~= '' then
+				return path:sub(1, 2), path:sub(3)
+			end
+		end
+		return '', path
+	elseif pos == 1 then
+		return path:sub(1, 1), path:sub(2)
+	elseif windows then
+		local drive = path:match('^%a:') and path:sub(1, 2) or ''
+		if pos == 3 then
+			return path:sub(1, 3), path:sub(4)
+		end
+	end
+	local head = path:sub(1, pos)
+	local tail = path:sub(pos + 1)
+	local test = string.rep('/', head:len())
+	if head ~= test then
+		head = head:gsub('/+$', '')
+	elseif windows then
+		test = string.rep('\\', head:len())
+		if head ~= test then
+			head = head:gsub('\\+$', '')
+		end
+	end
+	return head, tail
+end
+
+
+-----------------------------------------------------------------------
 -- check subdir
 -----------------------------------------------------------------------
 function os.path.subdir(basename, subname)
