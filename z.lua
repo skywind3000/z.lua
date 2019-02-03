@@ -342,15 +342,28 @@ end
 
 
 -----------------------------------------------------------------------
--- get absolute path
+-- absolute path (simulated)
+-----------------------------------------------------------------------
+function os.path.absolute(path)
+	local pwd = os.pwd()
+	return os.path.normpath(os.path.join(pwd, path))
+end
+
+
+-----------------------------------------------------------------------
+-- absolute path (system call, can fall back to os.path.absolute)
 -----------------------------------------------------------------------
 function os.path.abspath(path)
+	if path == '' then path = '.' end
 	if windows then
 		local script = 'FOR /f "delims=" %%i IN ("%s") DO @echo %%~fi'
 		local script = string.format(script, path)
 		local script = 'cmd.exe /C ' .. script .. ' 2> nul'
 		local output = os.call(script)
-		return output:gsub('%s$', '')
+		local test = output:gsub('%s$', '')
+		if test ~= nil and test ~= '' then
+			return test
+		end
 	else
 		local test = os.path.which('realpath')
 		if test ~= nil and test ~= '' then
@@ -387,6 +400,7 @@ function os.path.abspath(path)
 			end
 		end
 	end
+	return os.path.absolute(path)
 end
 
 
@@ -505,12 +519,46 @@ end
 -- join two path
 -----------------------------------------------------------------------
 function os.path.join(path1, path2)
-	if path2 == nil or path2 == '' then
-		return path1
+	if path1 == nil or path1 == '' then
+		if path2 == nil or path2 == '' then
+			return ''
+		else
+			return path2
+		end
+	elseif path2 == nil or path2 == '' then
+		local head = path1:sub(-1, -1)
+		if head == '/' or (windows and head == '\\') then
+			return path1
+		end
+		return path1 .. os.path.sep
 	elseif os.path.isabs(path2) then
+		if windows then
+			local head = path2:sub(1, 1)
+			if head == '/' or head == '\\' then
+				if path1:match('^%a:') then
+					return path1:sub(1, 2) .. path2
+				end
+			end
+		end
 		return path2
-	elseif path1 == nil or path1 == '' then
-		return path2
+	elseif windows then
+		local d1 = path1:sub(1, 2)
+		local d2 = path2:sub(1, 2)
+		if not path1:match('^%a:') then
+			d1 = ''
+		end
+		if not path2:match('^%a:') then
+			d2 = ''
+		end
+		if d1 ~= '' then
+			if d2 ~= '' then
+				if d1:lower() == d2:lower() then
+					return d2 .. os.path.join(path1:sub(3), path2:sub(3))
+				else
+					return path2
+				end
+			end
+		end
 	end
 	local postsep = true
 	local len1 = path1:len()
