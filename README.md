@@ -80,14 +80,14 @@ z -i foo    # cd with interactive selection
 
   This is another way to initiaze z.lua in fish shell, but remember to regenerate z.fish if z.lua has been updated or moved.
 
-- Windows Power Shell:
+- Power Shell:
 
   put something like this in your `profile.ps1`:
 
       iex ($(lua /path/to/z.lua --init powershell) -join "`n") 
 
 
-- Windows (with clink):
+- Windows cmd (with clink):
 
   - copy z.lua and z.cmd to clink's home directory
   - Add clink's home to `%PATH%` (z.cmd can be called anywhere)

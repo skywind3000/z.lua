@@ -77,14 +77,14 @@ z -i foo    # 就进入交互式选择模式，让你自己挑选去哪里（多
 
   但是第二种方法需要记得在 z.lua 位置改变或者 lua 版本升级后需要重新生成。
 
-- Windows Power Shell:
+- Power Shell:
 
   在你 Power Shell 的配置文件 `profile.ps1` 中放入下面语句：
 
       iex ($(lua /path/to/z.lua --init powershell) -join "`n") 
 
 
-- Windows (with clink):
+- Windows cmd (with clink):
 
   - 将 z.lua 和 z.cmd 拷贝到 clink 的安装目录。
   - 将 clink 的安装目录添加到 `%PATH%` (z.cmd 可以被任意位置调用到)。
