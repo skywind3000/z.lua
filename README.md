@@ -252,7 +252,7 @@ NOTE: For fish shell, this feature requires fish 2.7.0 or above. You can specify
 
 ## Jump Backwards
 
-New option `"-b"` to quickly go back to a specific parent directory in bash instead of typing "cd ../../.." redundantly.
+New option `"-b"` can quickly go back to a specific parent directory in bash instead of typing "cd ../../.." redundantly.
 
 - **(No argument)** `cd` into the project root:
 
@@ -284,8 +284,6 @@ Let's start by alising `z -b` to `zb`:
 ~/github/jekyll/test$ zb jekyll ghost
   => cd ~/github/ghost/test
 ```
-
-## Echo target result
 
 Backward jumping can also be used with `$_ZL_ECHO` option (echo $pwd), which makes it possible to combine them with other tools (without actually changing the working directory):
 
@@ -369,6 +367,8 @@ awk -F '\t' '{print $2 "|" $1 "|" 0}' $FN >> ~/.zlua
 
 ## History
 
+- 1.3.0 (2019-02-04): Backward jumping, prevent "cd ../../.." repeatly.
+- 1.2.0 (2019-02-03): Upgrading string lib and path lib.
 - 1.1.0 (2019-02-02): New option '-I' to use fzf to select from multiple matches.
 - 1.0.0 (2019-02-01): Fixed minor issues and make it stable.
 - 0.5.0 (2019-01-21): supports fish shell (Daniel Lewan).

@@ -249,6 +249,66 @@ PS：如果你使用 Fish shell，需要 2.7.0 以上才支持该功能。
 
 PS：你可以使用 `$_ZL_FZF` 环境变量来精确指明 fzf 的可执行路径，默认的话就是 fzf。如果你使用 Fish shell，需要 2.7.0 以上才支持该功能。
 
+
+## 快速回到父目录
+
+`"-b"` 选项可以快速回到某一级父目录，避免重复的输入 "cd ../../.."。
+
+- **(没有参数)** `cd` 到项目根目录：
+  
+  使用 `"z -b"` 后面不跟任何参数，z.lua 会寻找当前项目的 checkout 目录（有 `.git`/`.hg`/`.svn` 的地方） 然后 `cd` 过去。
+
+- **(单个参数)** `cd` 到离当前目录最近的以关键字开头的父目录：
+
+  假设你在 `/home/user/project/src/org/main/site/utils/file/reader/whatever` 然后你想快速回到 `site` 目录，
+
+  只需要输入：`z -b site`
+
+  实际上，可简化为 `z -b <开头的几个字母>` 比如 `z -b s` or `z -b si`。
+  
+  如果当前存在多级父目录同时包含你输入的关键词，`z -b xxx` 会将你到离你最近的那一层父目录。
+
+- **(两个参数)** 将当前路径中的第一个关键词替换为第二个关键词。
+
+为了使用简便，我们继续将 `z -b` 取个别名成 `zb`：
+
+```bash
+# 一直向上退到项目根目录（就是里面有一个 .git 目录的地方）
+~/github/lorem/src/public$ zb
+  => cd ~/github/lorem
+
+# cd 到第一个以 g 开头的父目录
+~/github/vimium/src/public$ zb g
+  => cd ~/github
+
+# 将 jekyll 替换为 ghost
+~/github/jekyll/test$ zb jekyll ghost
+  => cd ~/github/ghost/test
+```
+
+向后跳转同样也支持环境变量 `$_ZL_ECHO`（用来显示跳转结果），这样为搭配其他工具提供了可能性（并不需要改变当前工作目录）：
+
+
+```bash
+# 假设我们位于 ~/github/vim/src/libvterm
+# 打开 $_ZL_ECHO 用于在每次跳转后调用一次 pwd 显示当前目录
+$ _ZL_ECHO=1
+
+# 看看我项目根目录（有 .git 那个）目录里有什么？
+$ ls -l `zb`
+  => ls -l ~/github/vim
+
+# 检查 "<项目根目录>/logs" 下面的日志
+$ tail -f `zb`/logs/error.log
+  => tail -f ~/github/vim/logs/error.log
+
+# 查看一下某一级父目录里有些啥
+$ ls -l `zb git`
+  => ls -l ~/github
+
+```
+
+
 ## Tips
 
 推荐一些常用的命令别名:
