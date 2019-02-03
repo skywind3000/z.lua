@@ -1235,6 +1235,9 @@ function z_match(patterns, method, subdir)
 	end
 	table.sort(M, function (a, b) return a.score > b.score end)
 	local pwd = (PWD == nil or PWD == '') and os.getenv('PWD') or PWD
+	if pwd == nil or pwd == '' then
+		pwd = os.pwd()
+	end
 	if pwd ~= '' and pwd ~= nil then 
 		if subdir then
 			local N = {}
