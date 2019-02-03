@@ -4,7 +4,7 @@
 -- z.lua - z.sh implementation in lua, by skywind 2018, 2019
 -- Licensed under MIT license.
 --
--- Version 1.3.0, Last Modified: 2019/02/04 00:06
+-- Version 1.4.0, Last Modified: 2019/02/04 00:06
 --
 -- * 10x times faster than fasd and autojump
 -- * 3x times faster than rupa/z
