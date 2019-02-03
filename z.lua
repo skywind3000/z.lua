@@ -4,7 +4,7 @@
 -- z.lua - z.sh implementation in lua, by skywind 2018, 2019
 -- Licensed under MIT license.
 --
--- Version 1.2.0, Last Modified: 2019/02/03 17:46
+-- Version 1.2.1, Last Modified: 2019/02/03 21:15
 --
 -- * 10x times faster than fasd and autojump
 -- * 3x times faster than rupa/z
@@ -372,15 +372,15 @@ function os.path.abspath(path)
 				return test
 			end
 		end
-        if os.path.isdir(path) then
-            if os.path.exists('/bin/sh') and os.path.exists('/bin/pwd') then
-                local cmd = "/bin/sh -c 'cd \"" ..path .."\"; /bin/pwd'"
-                test = os.call(cmd)
+		if os.path.isdir(path) then
+			if os.path.exists('/bin/sh') and os.path.exists('/bin/pwd') then
+				local cmd = "/bin/sh -c 'cd \"" ..path .."\"; /bin/pwd'"
+				test = os.call(cmd)
 				if test ~= nil and test ~= '' then
 					return test
 				end
-            end
-        end
+			end
+		end
 		local test = os.path.which('perl')
 		if test ~= nil and test ~= '' then
 			local s = 'perl -MCwd -e "print Cwd::realpath(\\$ARGV[0])" \'%s\''
@@ -1465,7 +1465,7 @@ function main(argv)
 		elseif options['-d'] then
 			path = cd_detour(args, options)
 		elseif #args == 0 then
-			path = os.path.expand('~')
+			path = nil
 		else
 			path = z_cd(args)
 			if path == nil and Z_MATCHMODE ~= 0 then
