@@ -369,7 +369,7 @@ awk -F '\t' '{print $2 "|" $1 "|" 0}' $FN >> ~/.zlua
 
 - 1.4.0 (2019-02-04): supports Power Shell ([@manhong2112](https://github.com/manhong2112))
 - 1.3.0 (2019-02-04): Backward jumping, prevent "cd ../../.." repeatly.
-- 1.2.0 (2019-02-03): Upgrading string lib and path lib.
+- 1.2.0 (2019-02-03): Upgrade string lib and path lib.
 - 1.1.0 (2019-02-02): New option '-I' to use fzf to select from multiple matches.
 - 1.0.0 (2019-02-01): Fixed minor issues and make it stable.
 - 0.5.0 (2019-01-21): supports Fish Shell ([@TeddyDD](https://github.com/TeddyDD)).
