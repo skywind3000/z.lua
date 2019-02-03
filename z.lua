@@ -1793,49 +1793,119 @@ if /i "%RunMode%"=="-n" (
 ]]
 
 local script_init_powershell = [[
+function Init-ZLua {
+   if (!$script:LuaExe) {
+      $script:LuaExe = "luajit.exe"
+   }
+   if (!$script:LuaScript) {
+      $script:LuaScript = "z.lua"
+   }
+   if (!$env:_ZL_CD) {
+      $env:_ZL_CD = "Push-Location"
+   }
 
-   function z_init_powershell {
-      if (!$LuaExe) {
-         $LuaExe = "luajit.exe"
-      }
-      if (!$LuaScript) {
-         $LuaScript = ${HOME} + "\" + "z.lua"
-      }
-      if (!$env:_ZL_CD) {
-         $env:_ZL_CD = "Push-Location"
+   function global:z {
+      $arg_mode = ""
+      $arg_type = ""
+      $arg_subdir = ""
+      $arg_inter = ""
+      $arg_strip = ""
+
+
+      if ($args[0] -eq "--add") {
+         $_, $rest = $args
+         & $script:LuaExe $script:LuaScript --add $rest
+         return
+      } elseif ($args[0] -eq "--complete") {
+         $_, $rest = $args
+         & $script:LuaExe $script:LuaScript --complete $rest
+         return
       }
 
-      function global:z_add {
-         param (
-            [string] $path
-         )
-         & $LuaExe $LuaScript --add $path
-      }
-
-      function global:z {
-         foreach ($i in $args) {
-            if ($i -eq "-e" -or $i -eq "-x" -or $i -eq "-l") {
-               & $LuaExe $LuaScript $args
-               return
+      $first = $args[0]
+      :loop while ($first) {
+         switch ($first) {
+            "-l" {
+               $arg_mode = "-l"
+               break
+            }
+            "-e" {
+               $arg_mode = "-e"
+               break
+            }
+            "-x" {
+               $arg_mode = "-x"
+               break
+            }
+            "-t" {
+               $arg_mode = "-t"
+               break
+            }
+            "-r" {
+               $arg_mode = "-r"
+               break
+            }
+            "-c" {
+               $arg_subdir="-c"
+               break
+            }
+            "-s" {
+               $arg_strip="-s"
+               break
+            }
+            "-i" {
+               $arg_inter="-i"
+               break
+            }
+            "-I" {
+               $arg_inter="-I"
+               break
+            }
+            "-h" {} "--help" {
+               $arg_mode="-h"
+               break
+            }
+            Default {
+               break loop
             }
          }
-         & $env:_ZL_CD (& $LuaExe $LuaScript -e $args)
+         $_, $args = $args
+         if(!$args) {
+            break loop
+         }
+         $first = $args[0]
       }
 
-      $script:_zlua_orig_prompt = ([ref] $function:prompt)
-      $script:_zlua_previous = ""
-      function global:prompt {
-         & $script:_zlua_orig_prompt.value
-         $local:str_pwd = ([string] $PWD)
-         if (($env:_ZL_ADD_ONCE -eq 0) -or
-               (($env:_ZL_ADD_ONCE -eq 1) -and ($script:_zlua_previous -ne $str_pwd))) {
-            $script:_zlua_previous = $str_pwd
-            z_add $str_pwd
+      if ($arg_mode -eq "-h") {
+         & $script:LuaExe $script:LuaScript -h
+      } elseif ($arg_mode -eq "-l" -or $args.Length -eq 0) {
+         & $script:LuaExe $script:LuaScript -l $arg_subdir $arg_type $arg_strip $args
+      } elseif ($arg_mode -ne "") {
+         & $script:LuaExe $script:LuaScript $arg_mode $arg_subdir $arg_type $arg_inter $args
+      } else {
+         $dest = & $script:LuaExe $script:LuaScript --cd $arg_type $arg_subdir $arg_inter $args
+         if ($dest) {
+            & $env:_ZL_CD "$dest"
+            if ($env:_ZL_ECHO) {
+               Write-Host $PWD
+            }
          }
       }
    }
 
-   z_init_powershell
+   $script:_zlua_orig_prompt = ([ref] $function:prompt)
+   $script:_zlua_previous = ""
+   function global:prompt {
+      & $script:_zlua_orig_prompt.value
+      $local:str_pwd = ([string] $PWD)
+      if (($env:_ZL_ADD_ONCE -eq 0) -or
+            (($env:_ZL_ADD_ONCE -eq 1) -and ($script:_zlua_previous -ne $str_pwd))) {
+         $script:_zlua_previous = $str_pwd
+         & $script:LuaExe $script:LuaScript --add $str_pwd
+      }
+   }
+}
+Init-ZLua
 ]]
 
 -----------------------------------------------------------------------
