@@ -4,7 +4,7 @@
 -- z.lua - z.sh implementation in lua, by skywind 2018, 2019
 -- Licensed under MIT license.
 --
--- Version 1.1.0, Last Modified: 2019/02/02 14:51
+-- Version 1.3.0, Last Modified: 2019/02/04 00:06
 --
 -- * 10x times faster than fasd and autojump
 -- * 3x times faster than rupa/z
@@ -87,6 +87,7 @@ local in_module = pcall(debug.getlocal, 4, 1) and true or false
 local utils = {}
 os.path = {}
 os.argv = arg ~= nil and arg or {}
+os.path.sep = windows and '\\' or '/'
 
 
 -----------------------------------------------------------------------
@@ -110,7 +111,7 @@ os.LOG_NAME = os.getenv('_ZL_LOG_NAME')
 
 
 -----------------------------------------------------------------------
--- split string
+-- string lib
 -----------------------------------------------------------------------
 function string:split(sSeparator, nMax, bRegexp)
 	assert(sSeparator ~= '')
@@ -120,29 +121,73 @@ function string:split(sSeparator, nMax, bRegexp)
 		local bPlain = not bRegexp
 		nMax = nMax or -1
 		local nField, nStart = 1, 1
-		local nFirst,nLast = self:find(sSeparator, nStart, bPlain)
+		local nFirst, nLast = self:find(sSeparator, nStart, bPlain)
 		while nFirst and nMax ~= 0 do
-			aRecord[nField] = self:sub(nStart, nFirst-1)
-			nField = nField+1
-			nStart = nLast+1
-			nFirst,nLast = self:find(sSeparator, nStart, bPlain)
-			nMax = nMax-1
+			aRecord[nField] = self:sub(nStart, nFirst - 1)
+			nField = nField + 1
+			nStart = nLast + 1
+			nFirst, nLast = self:find(sSeparator, nStart, bPlain)
+			nMax = nMax - 1
 		end
 		aRecord[nField] = self:sub(nStart)
+	else
+		aRecord[1] = ''
 	end
 	return aRecord
 end
 
-
------------------------------------------------------------------------
--- string starts with
------------------------------------------------------------------------
 function string:startswith(text)
 	local size = text:len()
 	if self:sub(1, size) == text then
 		return true
 	end
 	return false
+end
+
+function string:lstrip()
+	if self == nil then return nil end
+	local s = self:gsub('^%s+', '')
+	return s
+end
+
+function string:rstrip()
+	if self == nil then return nil end
+	local s = self:gsub('%s+$', '')
+	return s
+end
+
+function string:strip()
+	return self:lstrip():rstrip()
+end
+
+function string:rfind(key)
+	if keyword == '' then
+		return self:len(), 0
+	end
+	local length = self:len()
+	local start, ends = self:reverse():find(key:reverse())
+	if start == nil then
+		return nil
+	end
+	return (length - ends + 1), (length - start + 1)
+end
+
+function string:join(parts)
+	if parts == nil or #parts == 0 then
+		return ''
+	end
+	local size = #parts
+	local text = ''
+	local index = 1
+	while index <= size do
+		if index == 1 then
+			text = text .. parts[index]
+		else
+			text = text .. self .. parts[index]
+		end
+		index = index + 1
+	end
+	return text
 end
 
 
@@ -297,15 +342,28 @@ end
 
 
 -----------------------------------------------------------------------
--- get absolute path
+-- absolute path (simulated)
+-----------------------------------------------------------------------
+function os.path.absolute(path)
+	local pwd = os.pwd()
+	return os.path.normpath(os.path.join(pwd, path))
+end
+
+
+-----------------------------------------------------------------------
+-- absolute path (system call, can fall back to os.path.absolute)
 -----------------------------------------------------------------------
 function os.path.abspath(path)
+	if path == '' then path = '.' end
 	if windows then
 		local script = 'FOR /f "delims=" %%i IN ("%s") DO @echo %%~fi'
 		local script = string.format(script, path)
 		local script = 'cmd.exe /C ' .. script .. ' 2> nul'
 		local output = os.call(script)
-		return output:gsub('%s$', '')
+		local test = output:gsub('%s$', '')
+		if test ~= nil and test ~= '' then
+			return test
+		end
 	else
 		local test = os.path.which('realpath')
 		if test ~= nil and test ~= '' then
@@ -314,15 +372,15 @@ function os.path.abspath(path)
 				return test
 			end
 		end
-        if os.path.isdir(path) then
-            if os.path.exists('/bin/sh') and os.path.exists('/bin/pwd') then
-                local cmd = "/bin/sh -c 'cd \"" ..path .."\"; /bin/pwd'"
-                test = os.call(cmd)
+		if os.path.isdir(path) then
+			if os.path.exists('/bin/sh') and os.path.exists('/bin/pwd') then
+				local cmd = "/bin/sh -c 'cd \"" ..path .."\"; /bin/pwd'"
+				test = os.call(cmd)
 				if test ~= nil and test ~= '' then
 					return test
 				end
-            end
-        end
+			end
+		end
 		local test = os.path.which('perl')
 		if test ~= nil and test ~= '' then
 			local s = 'perl -MCwd -e "print Cwd::realpath(\\$ARGV[0])" \'%s\''
@@ -342,6 +400,7 @@ function os.path.abspath(path)
 			end
 		end
 	end
+	return os.path.absolute(path)
 end
 
 
@@ -379,19 +438,19 @@ end
 -----------------------------------------------------------------------
 -- is absolute path
 -----------------------------------------------------------------------
-function os.path.isabs(pathname)
-	local h1 = pathname:sub(1, 1)
-	if windows then
-		local h2 = pathname:sub(2, 2)
-		local h3 = pathname:sub(3, 3)
-		if h1 == '/' or h1 == '\\' then
-			return true
-		end
-		if h2 == ':' and (h3 == '/' or h3 == '\\') then
-			return true
-		end
-	elseif h1 == '/' then
+function os.path.isabs(path)
+	if path == nil or path == '' then
+		return false
+	elseif path:sub(1, 1) == '/' then
 		return true
+	end
+	if windows then
+		local head = path:sub(1, 1)
+		if head == '\\' then
+			return true
+		elseif path:match('^%a:[/\\]') ~= nil then
+			return true
+		end
 	end
 	return false
 end
@@ -408,6 +467,165 @@ function os.path.norm(pathname)
 		pathname = pathname:gsub('/', '\\')
 	end
 	return pathname
+end
+
+
+-----------------------------------------------------------------------
+-- normalize . and ..
+-----------------------------------------------------------------------
+function os.path.normpath(path)
+	if os.path.sep ~= '/' then
+		path = path:gsub('\\', '/')
+	end
+	path = path:gsub('/+', '/')
+	local srcpath = path
+	local basedir = ''
+	local isabs = false
+	if windows and path:sub(2, 2) == ':' then
+		basedir = path:sub(1, 2)
+		path = path:sub(3, -1)
+	end
+	if path:sub(1, 1) == '/' then
+		basedir = basedir .. '/'
+		isabs = true
+		path = path:sub(2, -1)
+	end
+	local parts = path:split('/')
+	local output = {}
+	for _, path in ipairs(parts) do
+		if path == '.' or path == '' then
+		elseif path == '..' then
+			local size = #output
+			if size == 0 then
+				if not isabs then
+					table.insert(output, '..')
+				end
+			elseif output[size] == '..' then
+				table.insert(output, '..')
+			else
+				table.remove(output, size)
+			end
+		else
+			table.insert(output, path)
+		end
+	end
+	path = basedir .. string.join('/', output)
+	if windows then path = path:gsub('/', '\\') end
+	return path == '' and '.' or path
+end
+
+
+-----------------------------------------------------------------------
+-- join two path
+-----------------------------------------------------------------------
+function os.path.join(path1, path2)
+	if path1 == nil or path1 == '' then
+		if path2 == nil or path2 == '' then
+			return ''
+		else
+			return path2
+		end
+	elseif path2 == nil or path2 == '' then
+		local head = path1:sub(-1, -1)
+		if head == '/' or (windows and head == '\\') then
+			return path1
+		end
+		return path1 .. os.path.sep
+	elseif os.path.isabs(path2) then
+		if windows then
+			local head = path2:sub(1, 1)
+			if head == '/' or head == '\\' then
+				if path1:match('^%a:') then
+					return path1:sub(1, 2) .. path2
+				end
+			end
+		end
+		return path2
+	elseif windows then
+		local d1 = path1:match('^%a:') and path1:sub(1, 2) or ''
+		local d2 = path2:match('^%a:') and path2:sub(1, 2) or ''
+		if d1 ~= '' then
+			if d2 ~= '' then
+				if d1:lower() == d2:lower() then
+					return d2 .. os.path.join(path1:sub(3), path2:sub(3))
+				else
+					return path2
+				end
+			end
+		elseif d2 ~= '' then
+			return path2
+		end
+	end
+	local postsep = true
+	local len1 = path1:len()
+	local len2 = path2:len()
+	if path1:sub(-1, -1) == '/' then
+		postsep = false
+	elseif windows then
+		if path1:sub(-1, -1) == '\\' then
+			postsep = false
+		elseif len1 == 2 and path1:sub(2, 2) == ':' then
+			postsep = false
+		end
+	end
+	if postsep then
+		return path1 .. os.path.sep .. path2
+	else
+		return path1 .. path2
+	end
+end
+
+
+-----------------------------------------------------------------------
+-- split
+-----------------------------------------------------------------------
+function os.path.split(path)
+	if path == '' then
+		return '', ''
+	end
+	local pos = path:rfind('/')
+	if os.path.sep == '\\' then
+		local p2 = path:rfind('\\')
+		if pos == nil and p2 ~= nil then
+			pos = p2
+		elseif p1 ~= nil and p2 ~= nil then
+			pos = (pos < p2) and pos or p2
+		end
+		if path:match('^%a:[/\\]') and pos == nil then
+			return path:sub(1, 2), path:sub(3)
+		end
+	end
+	if pos == nil then
+		if windows then
+			local drive = path:match('^%a:') and path:sub(1, 2) or ''
+			if drive ~= '' then
+				return path:sub(1, 2), path:sub(3)
+			end
+		end
+		return '', path
+	elseif pos == 1 then
+		return path:sub(1, 1), path:sub(2)
+	elseif windows then
+		local drive = path:match('^%a:') and path:sub(1, 2) or ''
+		if pos == 3 then
+			return path:sub(1, 3), path:sub(4)
+		end
+	end
+	local head = path:sub(1, pos)
+	local tail = path:sub(pos + 1)
+	if not windows then
+		local test = string.rep('/', head:len())
+		if head ~= test then
+			head = head:gsub('/+$', '')
+		end
+	else
+		local t1 = string.rep('/', head:len())
+		local t2 = string.rep('\\', head:len())
+		if head ~= t1 and head ~= t2 then
+			head = head:gsub('[/\\]+$', '')
+		end
+	end
+	return head, tail
 end
 
 
@@ -1017,6 +1235,9 @@ function z_match(patterns, method, subdir)
 	end
 	table.sort(M, function (a, b) return a.score > b.score end)
 	local pwd = (PWD == nil or PWD == '') and os.getenv('PWD') or PWD
+	if pwd == nil or pwd == '' then
+		pwd = os.pwd()
+	end
 	if pwd ~= '' and pwd ~= nil then
 		if subdir then
 			local N = {}
@@ -1187,9 +1408,70 @@ end
 
 
 -----------------------------------------------------------------------
--- cd to parent directories which contains keyword
+-- find_vcs_root
 -----------------------------------------------------------------------
-function cd_backward(args, options)
+function find_vcs_root(path)
+	local markers = os.getenv('_ZL_ROOT_MARKERS')
+	local markers = markers and markers or '.git,.svn,.hg,.root'
+	local markers = string.split(markers, ',')
+	path = os.path.absolute(path)
+	while true do
+		for _, marker in ipairs(markers) do
+			local test = os.path.join(path, marker)
+			if os.path.exists(test) then
+				return path
+			end
+		end
+		local parent, _ = os.path.split(path)
+		if path == parent then break end
+		path = parent
+	end
+	return nil
+end
+
+
+-----------------------------------------------------------------------
+-- cd to parent directories which contains keyword
+-- #args == 0   -> returns to vcs root
+-- #args == 1   -> returns to parent dir starts with args[1]
+-- #args == 2   -> returns string.replace($PWD, args[1], args[2])
+-----------------------------------------------------------------------
+function cd_backward(args, options, pwd)
+	local nargs = #args
+	local pwd = (pwd ~= nil) and pwd or os.pwd()
+	if nargs == 0 then
+		return find_vcs_root(pwd)
+	elseif nargs == 1 then
+		local test = windows and pwd:gsub('\\', '/') or pwd
+		local key = '/' .. args[1]
+		if not key:match('%u') then
+			test = test:lower()
+		end
+		local pos, _ = test:rfind(key)
+		if not pos then
+			return nil
+		end
+		local ends = test:find('/', pos + key:len())
+		if not ends then
+			ends = test:len()
+		end
+		local path = pwd:sub(1, (not ends) and test:len() or ends)
+		return os.path.normpath(path)
+	else
+		local test = windows and pwd:gsub('\\', '/') or pwd
+		local src = args[1]
+		local dst = args[2]
+		if not src:match('%u') then
+			test = test:lower()
+		end
+		local start, ends = test:rfind(src)
+		if not start then
+			return pwd
+		end
+		local lhs = pwd:sub(1, start - 1)
+		local rhs = pwd:sub(ends + 1)
+		return lhs .. dst .. rhs
+	end
 end
 
 
@@ -1247,7 +1529,7 @@ function main(argv)
 		elseif options['-d'] then
 			path = cd_detour(args, options)
 		elseif #args == 0 then
-			path = os.path.expand('~')
+			path = nil
 		else
 			path = z_cd(args)
 			if path == nil and Z_MATCHMODE ~= 0 then

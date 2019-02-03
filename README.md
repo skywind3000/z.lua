@@ -26,7 +26,8 @@ For example, `z foo bar` would match `/foo/bar` but not `/bar/foo`.
 - New "$_ZL_ADD_ONCE" to allow updating database only if `$PWD` changed.
 - Enhanced matching mode with "$_ZL_MATCH_MODE" set to 1.
 - Interactive selection enables you to choose where to go before cd.
-- Support fzf for selecting from multiple results.
+- Support fzf for selecting from multiple results (optional).
+- Quickly go back to a parent directory instead of typing "cd ../../..".
 
 
 ## Examples
@@ -241,13 +242,69 @@ From version 1.1.0, a new option `"-I"` will allow you to use fzf to select when
 
 When we use `"z -I vim"`，12 paths contains keyword "vim" has been matched and ordered by their frecent value, the higher frecent comes with the higher rank. Then without cd to the highest ranked path, z.lua passes all the candidates to fzf. And you can use fzf to select where you want to go, or ESC to quit.
 
-Of course, you can always give more keywords to `z` command to match your destination precisely. This feature provide you another way to do that.
+Of course, you can always give more keywords to `z` command to match your destination precisely. `"z -I"` is similar to `"z -i"`, but use fzf. Both `"-i"` and `"-I"` provide you another way for path navigation.
 
 Usually, `z -I` can be aliased to `zf` (z + fuzzy finder) for convenience. If there are only one path matched, `z -I` will jump to it directly, fzf will only be invoked for multiple matches.
 
 `"z -I ."` or `"zf ."` can be used to use fzf select from entire database.
 
 NOTE: For fish shell, this feature requires fish 2.7.0 or above. You can specify fzf executable in `$_ZL_FZF` environment variable, `"fzf"` will be called by default.
+
+## Jump Backwards
+
+New option `"-b"` can quickly go back to a specific parent directory in bash instead of typing "cd ../../.." redundantly.
+
+- **(No argument)** `cd` into the project root:
+
+  Use `z -b` with no argument, it will look for the project (checkout) directory (the one with `.git`/`.hg`/`.svn` in it) and then `cd` into it.
+
+- **(One argument)** `cd` into the closest parent having its name begin with whatever the value you passed in:
+
+  If you are in this path `/home/user/project/src/org/main/site/utils/file/reader/whatever` and you want to go to `site` directory quickly, 
+
+  then just type: `z -b site`
+
+  In fact, You can simply type `z -b <starting few letters>` like `z -b s` or `z -b si`.
+  If there are more than one directories with same name up in the hierarchy, `z -b` will take you to the closest. 
+
+- **(Two arguments)** replace the first value with the second one (in the current path).
+
+Let's start by alising `z -b` to `zb`:
+
+```bash
+# go all the way up to the project root (in this case, the one that has .git in it)
+~/github/lorem/src/public$ zb
+  => cd ~/github/lorem
+
+# cd into to the first parent directory named g*
+~/github/vimium/src/public$ zb g
+  => cd ~/github
+
+# substitute jekyll with ghost
+~/github/jekyll/test$ zb jekyll ghost
+  => cd ~/github/ghost/test
+```
+
+Backward jumping can also be used with `$_ZL_ECHO` option (echo $pwd), which makes it possible to combine them with other tools (without actually changing the working directory):
+
+```bash
+# Assuming we are in ~/github/vim/src/libvterm
+# Enable $_ZL_ECHO to emit a pwd command after cd
+$ _ZL_ECHO=1
+
+# see what's in my project root
+$ ls -l `zb`
+  => ls -l ~/github/vim
+
+# check log in "<project root>/logs"
+$ tail -f `zb`/logs/error.log
+  => tail -f ~/github/vim/logs/error.log
+
+# list some parent directory
+$ ls -l `zb git`
+  => ls -l ~/github
+
+```
 
 
 ## Tips
@@ -258,6 +315,7 @@ Recommended aliases you may find useful:
 alias zc='z -c'      # restrict matches to subdirs of $PWD
 alias zz='z -i'      # cd with interactive selection
 alias zf='z -I'      # use fzf to select in multiple matches
+alias zb='z -b'      # quickly cd to the parent directory
 ```
 
 
@@ -309,6 +367,8 @@ awk -F '\t' '{print $2 "|" $1 "|" 0}' $FN >> ~/.zlua
 
 ## History
 
+- 1.3.0 (2019-02-04): Backward jumping, prevent "cd ../../.." repeatly.
+- 1.2.0 (2019-02-03): Upgrading string lib and path lib.
 - 1.1.0 (2019-02-02): New option '-I' to use fzf to select from multiple matches.
 - 1.0.0 (2019-02-01): Fixed minor issues and make it stable.
 - 0.5.0 (2019-01-21): supports fish shell (Daniel Lewan).
@@ -319,12 +379,13 @@ awk -F '\t' '{print $2 "|" $1 "|" 0}' $FN >> ~/.zlua
 - 0.1.0 (2018-04-30): supports windows cmd, cmder and conemu.
 - 0.0.0 (2018-03-21): initial commit, compatible with original z.sh.
 
-## Credit
+## Thanks
 
-Releated projects:
+Thanks to @rupa for inspiring me to start this project.
+Thanks to @vigneshwaranr and @shyiko for inspiring me the backward jumping.
+Thanks to @TeddyDD for fish shell porting.
 
-- [rupa/z](https://github.com/rupa/z): origin z.sh implementation
-- [JannesMeyer/z.ps](https://github.com/JannesMeyer/z.ps): z for powershell
+And many others.
 
 
 ## License
