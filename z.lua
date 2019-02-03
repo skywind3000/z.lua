@@ -2075,7 +2075,6 @@ if /i "%RunMode%"=="-n" (
 ]]
 
 local script_init_powershell = [[
-
 function Init-ZLua {
 
    # Prevent repeating init
@@ -2174,9 +2173,9 @@ function Init-ZLua {
             break loop
          }
          $first = $args[0]
-         $env:PWD = ([string] $PWD)
       }
 
+      $env:PWD = ([string] $PWD)
       if ($arg_mode -eq "-h") {
          & $script:LuaExe $script:LuaScript -h
       } elseif ($arg_mode -eq "-l" -or $args.Length -eq 0) {
