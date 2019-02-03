@@ -1187,15 +1187,25 @@ function z_remove(path)
 	local M = data_load(DATA_FILE)
 	local X = {}
 	M = data_filter(M)
+	local insensitive = path_case_insensitive()
 	for _, path in pairs(paths) do
 		path = os.path.abspath(path)
-		remove[path] = 1
+		if not insensitive then
+			remove[path] = 1
+		else
+			remove[path:lower()] = 1
+		end
 	end
 	for i = 1, #M do
 		local item = M[i]
-		if not remove[item.name] then
-			table.insert(X, item)
-			-- print('include:'..item.name)
+		if not insensitive then
+			if not remove[item.name] then
+				table.insert(X, item)
+			end
+		else
+			if not remove[item.name:lower()] then
+				table.insert(X, item)
+			end
 		end
 	end
 	data_save(DATA_FILE, X)
