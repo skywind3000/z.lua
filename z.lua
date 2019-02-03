@@ -4,7 +4,7 @@
 -- z.lua - z.sh implementation in lua, by skywind 2018, 2019
 -- Licensed under MIT license.
 --
--- Version 1.1.0, Last Modified: 2019/02/02 14:51
+-- Version 1.2.0, Last Modified: 2019/02/03 17:46
 --
 -- * 10x times faster than fasd and autojump
 -- * 3x times faster than rupa/z
@@ -87,6 +87,7 @@ local in_module = pcall(debug.getlocal, 4, 1) and true or false
 local utils = {}
 os.path = {}
 os.argv = arg ~= nil and arg or {}
+os.path.sep = windows and '\\' or '/'
 
 
 -----------------------------------------------------------------------
@@ -110,7 +111,7 @@ os.LOG_NAME = os.getenv('_ZL_LOG_NAME')
 
 
 -----------------------------------------------------------------------
--- split string
+-- string lib
 -----------------------------------------------------------------------
 function string:split(sSeparator, nMax, bRegexp)
 	assert(sSeparator ~= '')
@@ -120,29 +121,73 @@ function string:split(sSeparator, nMax, bRegexp)
 		local bPlain = not bRegexp
 		nMax = nMax or -1
 		local nField, nStart = 1, 1
-		local nFirst,nLast = self:find(sSeparator, nStart, bPlain)
+		local nFirst, nLast = self:find(sSeparator, nStart, bPlain)
 		while nFirst and nMax ~= 0 do
-			aRecord[nField] = self:sub(nStart, nFirst-1)
-			nField = nField+1
-			nStart = nLast+1
-			nFirst,nLast = self:find(sSeparator, nStart, bPlain)
-			nMax = nMax-1
+			aRecord[nField] = self:sub(nStart, nFirst - 1)
+			nField = nField + 1
+			nStart = nLast + 1
+			nFirst, nLast = self:find(sSeparator, nStart, bPlain)
+			nMax = nMax - 1
 		end
 		aRecord[nField] = self:sub(nStart)
+	else
+		aRecord[1] = ''
 	end
 	return aRecord
 end
 
-
------------------------------------------------------------------------
--- string starts with
------------------------------------------------------------------------
 function string:startswith(text)
 	local size = text:len()
 	if self:sub(1, size) == text then
 		return true
 	end
 	return false
+end
+
+function string:lstrip()
+	if self == nil then return nil end
+	local s = self:gsub('^%s+', '')
+	return s
+end
+
+function string:rstrip()
+	if self == nil then return nil end
+	local s = self:gsub('%s+$', '')
+	return s
+end
+
+function string:strip()
+	return self:lstrip():rstrip()
+end
+
+function string:rfind(key)
+	if keyword == '' then
+		return self:len(), 0
+	end
+	local length = self:len()
+	local start, ends = self:reverse():find(key:reverse())
+	if start == nil then
+		return nil
+	end
+	return (length - ends + 1), (length - start + 1)
+end
+
+function string:join(parts)
+	if parts == nil or #parts == 0 then
+		return ''
+	end
+	local size = #parts
+	local text = ''
+	local index = 1
+	while index <= size do
+		if index == 1 then
+			text = text .. parts[index]
+		else
+			text = text .. self .. parts[index]
+		end
+		index = index + 1
+	end
+	return text
 end
 
 
@@ -379,19 +424,19 @@ end
 -----------------------------------------------------------------------
 -- is absolute path
 -----------------------------------------------------------------------
-function os.path.isabs(pathname)
-	local h1 = pathname:sub(1, 1)
-	if windows then
-		local h2 = pathname:sub(2, 2)
-		local h3 = pathname:sub(3, 3)
-		if h1 == '/' or h1 == '\\' then
-			return true
-		end
-		if h2 == ':' and (h3 == '/' or h3 == '\\') then
-			return true
-		end
-	elseif h1 == '/' then
+function os.path.isabs(path)
+	if path == nil or path == '' then 
+		return false
+	elseif path:sub(1, 1) == '/' then
 		return true
+	end
+	if windows then
+		local head = path:sub(1, 1)
+		if head == '\\' then
+			return true
+		elseif path:match('^%a:[/\\]') ~= nil then
+			return true
+		end
 	end
 	return false
 end
@@ -408,6 +453,82 @@ function os.path.norm(pathname)
 		pathname = pathname:gsub('/', '\\')
 	end
 	return pathname
+end
+
+
+-----------------------------------------------------------------------
+-- normalize . and ..
+-----------------------------------------------------------------------
+function os.path.normpath(path)
+	if os.path.sep ~= '/' then
+		path = path:gsub('\\', '/')
+	end
+	path = path:gsub('/+', '/')
+	local srcpath = path
+	local basedir = ''
+	local isabs = false
+	if windows and path:sub(2, 2) == ':' then
+		basedir = path:sub(1, 2)
+		path = path:sub(3, -1)
+	end
+	if path:sub(1, 1) == '/' then
+		basedir = basedir .. '/'
+		isabs = true
+		path = path:sub(2, -1)
+	end
+	local parts = path:split('/')
+	local output = {}
+	for _, path in ipairs(parts) do
+		if path == '.' or path == '' then
+		elseif path == '..' then
+			local size = #output
+			if size == 0 then
+				if not isabs then
+					table.insert(output, '..')
+				end
+			elseif output[size] == '..' then
+				table.insert(output, '..')
+			else
+				table.remove(output, size)
+			end
+		else
+			table.insert(output, path)
+		end
+	end
+	path = basedir .. string.join('/', output)
+	if windows then path = path:gsub('/', '\\') end
+	return path == '' and '.' or path
+end
+
+
+-----------------------------------------------------------------------
+-- join two path
+-----------------------------------------------------------------------
+function os.path.join(path1, path2)
+	if path2 == nil or path2 == '' then
+		return path1
+	elseif os.path.isabs(path2) then
+		return path2
+	elseif path1 == nil or path1 == '' then
+		return path2
+	end
+	local postsep = true
+	local len1 = path1:len()
+	local len2 = path2:len()
+	if path1:sub(-1, -1) == '/' then
+		postsep = false
+	elseif windows then
+		if path1:sub(-1, -1) == '\\' then
+			postsep = false
+		elseif len1 == 2 and path1:sub(2, 2) == ':' then
+			postsep = false
+		end
+	end
+	if postsep then
+		return path1 .. os.path.sep .. path2
+	else
+		return path1 .. path2
+	end
 end
 
 
