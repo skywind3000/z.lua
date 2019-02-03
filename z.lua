@@ -4,7 +4,7 @@
 -- z.lua - z.sh implementation in lua, by skywind 2018, 2019
 -- Licensed under MIT license.
 --
--- Version 1.3.0, Last Modified: 2019/02/04 00:06
+-- Version 1.4.0, Last Modified: 2019/02/04 00:06
 --
 -- * 10x times faster than fasd and autojump
 -- * 3x times faster than rupa/z
@@ -2082,12 +2082,12 @@ function Init-ZLua {
       return
    }
 
-   if (!$script:LuaExe) {
-      $script:LuaExe = "lua.exe"
+   if (!$script:ZLUA_LUAEXE) {
+      $script:ZLUA_LUAEXE = "lua.exe"
    }
 
-   if (!$script:LuaScript) {
-      $script:LuaScript = "z.lua"
+   if (!$script:ZLUA_SCRIPT) {
+      $script:ZLUA_SCRIPT = "z.lua"
    }
 
    if (!$env:_ZL_CD) {
@@ -2109,17 +2109,17 @@ function Init-ZLua {
       if ($args[0] -eq "--add") {
          $_, $rest = $args
          $env:_ZL_RANDOM = Get-Random
-         & $script:LuaExe $script:LuaScript --add $rest
+         & $script:ZLUA_LUAEXE $script:ZLUA_SCRIPT --add $rest
          return
       } elseif ($args[0] -eq "--complete") {
          $_, $rest = $args
-         & $script:LuaExe $script:LuaScript --complete $rest
+         & $script:ZLUA_LUAEXE $script:ZLUA_SCRIPT --complete $rest
          return
       }
 
       $first = $args[0]
       :loop while ($first) {
-         switch ($first) {
+         switch -casesensitive ($first) {
             "-l" {
                $arg_mode = "-l"
                break
@@ -2176,14 +2176,15 @@ function Init-ZLua {
       }
 
       $env:PWD = ([string] $PWD)
+
       if ($arg_mode -eq "-h") {
-         & $script:LuaExe $script:LuaScript -h
+         & $script:ZLUA_LUAEXE $script:ZLUA_SCRIPT -h
       } elseif ($arg_mode -eq "-l" -or $args.Length -eq 0) {
-         & $script:LuaExe $script:LuaScript -l $arg_subdir $arg_type $arg_strip $args
+         & $script:ZLUA_LUAEXE $script:ZLUA_SCRIPT -l $arg_subdir $arg_type $arg_strip $args
       } elseif ($arg_mode -ne "") {
-         & $script:LuaExe $script:LuaScript $arg_mode $arg_subdir $arg_type $arg_inter $args
+         & $script:ZLUA_LUAEXE $script:ZLUA_SCRIPT $arg_mode $arg_subdir $arg_type $arg_inter $args
       } else {
-         $dest = & $script:LuaExe $script:LuaScript --cd $arg_type $arg_subdir $arg_inter $args
+         $dest = & $script:ZLUA_LUAEXE $script:ZLUA_SCRIPT --cd $arg_type $arg_subdir $arg_inter $args
          if ($dest) {
             & $env:_ZL_CD "$dest"
             if ($env:_ZL_ECHO) {
@@ -2216,12 +2217,12 @@ Init-ZLua
 ]]
 
 -----------------------------------------------------------------------
--- initialize cmd
+-- initialize cmd/powershell
 -----------------------------------------------------------------------
 function z_windows_init(opts)
 	if opts.powershell ~= nil then
-		print('$LuaExe = "' .. os.interpreter() .. '"')
-		print('$LuaScript = "' .. os.scriptname() .. '"')
+		print('$ZLUA_LUAEXE = "' .. os.interpreter() .. '"')
+		print('$ZLUA_SCRIPT = "' .. os.scriptname() .. '"')
 		if opts.enhanced ~= nil then
 			print('$env:_ZL_MATCH_MODE = 1')
 		end
