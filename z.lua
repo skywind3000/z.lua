@@ -613,13 +613,16 @@ function os.path.split(path)
 	end
 	local head = path:sub(1, pos)
 	local tail = path:sub(pos + 1)
-	local test = string.rep('/', head:len())
-	if head ~= test then
-		head = head:gsub('/+$', '')
-	elseif windows then
-		test = string.rep('\\', head:len())
+	if not windows then
+		local test = string.rep('/', head:len())
 		if head ~= test then
-			head = head:gsub('\\+$', '')
+			head = head:gsub('/+$', '')
+		end
+	else
+		local t1 = string.rep('/', head:len())
+		local t2 = string.rep('\\', head:len())
+		if head ~= t1 and head ~= t2 then
+			head = head:gsub('[/\\]+$', '')
 		end
 	end
 	return head, tail

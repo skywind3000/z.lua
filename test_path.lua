@@ -1,10 +1,21 @@
 local zmod = require('z')
 local windows = os.path.sep == '\\'
 
+-----------------------------------------------------------------------
+-- logo
+-----------------------------------------------------------------------
+function print_title(text)
+	print(string.rep('-', 72))
+	print('-- '.. text)
+	print(string.rep('-', 72))
+end
+
 
 -----------------------------------------------------------------------
--- test normpath
+-- os.path.normpath
 -----------------------------------------------------------------------
+print_title('os.path.normpath')
+
 function assert_posix(path, result)
 	local x = os.path.normpath(path)
 	print('[test] normpath: ('..path..') -> (' .. result .. ')')
@@ -15,15 +26,6 @@ function assert_posix(path, result)
 		print('passed')
 		print()
 	end
-end
-
-function test_normpath_posix()
-	assert_posix("", ".")
-	assert_posix("/", "/")
-	assert_posix("///", "/")
-	assert_posix("///foo/.//bar//", "/foo/bar")
-	assert_posix("///foo/.//bar//.//..//.//baz", "/foo/baz")
-	assert_posix("///..//./foo/.//bar", "/foo/bar")
 end
 
 function assert_windows(path, result)
@@ -38,7 +40,14 @@ function assert_windows(path, result)
 	end
 end
 
-function test_normpath_windows()
+assert_posix("", ".")
+assert_posix("/", "/")
+assert_posix("///", "/")
+assert_posix("///foo/.//bar//", "/foo/bar")
+assert_posix("///foo/.//bar//.//..//.//baz", "/foo/baz")
+assert_posix("///..//./foo/.//bar", "/foo/bar")
+
+if windows then
 	assert_windows('A//////././//.//B',  'A\\B')
 	assert_windows('A/./B',  'A\\B')
 	assert_windows('A/foo/../B',  'A\\B')
@@ -60,16 +69,14 @@ function test_normpath_windows()
 	assert_windows('C:////a/b',  'C:\\a\\b')
 end
 
-test_normpath_posix()
-
-if windows then
-	test_normpath_windows()
-end
+print()
 
 
 -----------------------------------------------------------------------
--- test path join
+-- os.path.join
 -----------------------------------------------------------------------
+print_title('os.path.join')
+
 function assert_join_posix(segments, result, isnt)
 	print('[test] join: '..zmod.dump(segments)..' -> (' .. result .. ')')
 	local path = ''
@@ -91,13 +98,11 @@ function assert_join_windows(segments, result)
 	assert_join_posix(segments, result, 1)
 end
 
-function test_join_posix()
-	assert_join_posix({"/foo", "bar", "/bar", "baz"}, "/bar/baz")
-	assert_join_posix({"/foo", "bar", "baz"}, "/foo/bar/baz")
-	assert_join_posix({"/foo/", "bar/", "baz/"}, "/foo/bar/baz/")
-end
+assert_join_posix({"/foo", "bar", "/bar", "baz"}, "/bar/baz")
+assert_join_posix({"/foo", "bar", "baz"}, "/foo/bar/baz")
+assert_join_posix({"/foo/", "bar/", "baz/"}, "/foo/bar/baz/")
 
-function test_join_windows()
+if windows then
 	assert_join_windows({""}, '')
 	assert_join_windows({"", "", ""}, '')
 	assert_join_windows({"a"}, 'a')
@@ -150,9 +155,39 @@ function test_join_windows()
 	end
 end
 
-test_join_posix()
+print()
+
+
+-----------------------------------------------------------------------
+-- os.path.split
+-----------------------------------------------------------------------
+print_title('os.path.split')
+function assert_split(path, sep1, sep2)
+	print('[test] split: "' .. path ..'" -> ("' .. sep1 .. '", "' .. sep2 .. '")')
+	local x, y = os.path.split(path)
+	if x ~= sep1 or y ~= sep2 then
+		print('failed: ("'..x..'", "'..y..'")')
+		os.exit()
+	else
+		print('passed')
+	end
+end
+
+assert_split("", "", "")
+assert_split(".", "", ".")
+assert_split("/foo/bar", "/foo", "bar")
+assert_split("/", "/", "")
+assert_split("foo", "", "foo")
+assert_split("////foo", "////", "foo")
+assert_split("//foo//bar", "//foo", "bar")
 
 if windows then
-	test_join_windows()
+	assert_split("c:\\foo\\bar", 'c:\\foo', 'bar')
+	assert_split("\\\\conky\\mountpoint\\foo\\bar", '\\\\conky\\mountpoint\\foo', 'bar')
+	assert_split("c:\\", "c:\\", '')
+	assert_split("c:/", "c:/", '')
+	assert_split("c:test", "c:", 'test')
+	assert_split("c:", "c:", '')
+	-- assert_split("\\\\conky\\mountpoint\\", "\\\\conky\\mountpoint\\", '')
 end
 
