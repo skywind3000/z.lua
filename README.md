@@ -16,18 +16,16 @@ For example, `z foo bar` would match `/foo/bar` but not `/bar/foo`.
 
 ## Features
 
-- **10x** times faster than **fasd** and **autojump**
-- **3x** times faster than **z.sh**
+- **10x** times faster than **fasd** and **autojump**, **3x** times faster than **z.sh**.
 - Available for **posix shells**: bash, zsh, dash, sh, ash, busybox and etc.
-- Supports Windows Power Shell and cmd (with clink/cmder/conemu).
-- Supports fish shell (2.4.0 +)
-- Self contained, no dependence on awk/gawk
-- Compatible with lua 5.1, 5.2 and 5.3+
-- New "$_ZL_ADD_ONCE" to allow updating database only if `$PWD` changed.
-- Enhanced matching mode with "$_ZL_MATCH_MODE" set to 1.
+- Available for Fish Shell, Power Shell and Windows cmd.
+- Enhanced matching mode takes you to where ever you want precisely.
+- Allow updating database only if `$PWD` changed with "$_ZL_ADD_ONCE" set to 1.
 - Interactive selection enables you to choose where to go before cd.
-- Support fzf for selecting from multiple results (optional).
+- Interactive selection with FZF (optional).
 - Quickly go back to a parent directory instead of typing "cd ../../..".
+- Compatible with Lua 5.1, 5.2 and 5.3+
+- Self contained, distributed as a single `z.lua` script, no other dependence.
 
 
 ## Examples
@@ -126,7 +124,7 @@ To z.lua, a directory that has low ranking but has been accessed recently will q
 
 ## Default Matching
 
-By default, z.lua uses default matching method similar to the original z.sh. Paths must be match all of the regexes in order.
+By default, z.lua uses default matching algorithm similar to the original z.sh. Paths must be match all of the regexes in order.
 
 - cd to a directory contains foo:
 
@@ -374,12 +372,12 @@ awk -F '\t' '{print $2 "|" $1 "|" 0}' $FN >> ~/.zlua
 
 ## History
 
-- 1.4.0 (2019-02-04): supports Power Shell ([@manhong2112](https://github.com/manhong2112))
+- 1.4.0 (2019-02-04): Ported to Power Shell ([@manhong2112](https://github.com/manhong2112))
 - 1.3.0 (2019-02-04): Backward jumping, prevent "cd ../../.." repeatly.
 - 1.2.0 (2019-02-03): Upgrade string lib and path lib.
 - 1.1.0 (2019-02-02): New option '-I' to use fzf to select from multiple matches.
 - 1.0.0 (2019-02-01): Fixed minor issues and make it stable.
-- 0.5.0 (2019-01-21): supports Fish Shell ([@TeddyDD](https://github.com/TeddyDD)).
+- 0.5.0 (2019-01-21): Ported to Fish Shell ([@TeddyDD](https://github.com/TeddyDD)).
 - 0.4.1 (2019-01-20): Don't return failed exit code when $_ZL_ECHO is unbind (Mario Rodas).
 - 0.4.0 (2019-01-17): new enhanced matching algorithm，can be enabled by appending `enhanced` keyword after `--init`.
 - 0.3.0 (2018-12-26): new option `-i` to enable interactive selection.
