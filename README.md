@@ -218,7 +218,7 @@ To enable this, you can set `$_ZL_ADD_ONCE` to `1` before init z.lua. Or you can
 ````bash
 eval "$(lua /path/to/z.lua --init bash once)"
 eval "$(lua /path/to/z.lua --init zsh once)"
-source (lua /path/to/z.lua --init fish | psub)
+source (lua /path/to/z.lua --init fish once | psub)
 ````
 
 It could be much faster on slow hardware or Cygwin/MSYS.
