@@ -50,13 +50,23 @@ z -i foo    # cd with interactive selection
 
       eval "$(lua /path/to/z.lua --init bash)"
 
+  the default matching algorithm is similar to z.sh to keep compatible, you may like the enhanced matching algorithm for productivity:
+
+      eval "$(lua /path/to/z.lua --init bash enhanced once)"
+
+  and perhaps this:
+
+      export _ZL_ECHO=1
+
+  if you want `z.lua` print the new directory after cd.
+
 - zsh:
 
   put something like this in your `.zshrc`:
 
       eval "$(lua /path/to/z.lua --init zsh)"
 
-  It can also be initialized from "skywind3000/z.lua" with your zsh plugin managers (antigen / oh-my-zsh).
+  Options like "enhanced" and "echo" can be used after `--init` too. It can also be initialized from "skywind3000/z.lua" with your zsh plugin managers (antigen / oh-my-zsh).
 
 - posix shells:
 
