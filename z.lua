@@ -2145,6 +2145,14 @@ function Init-ZLua {
          $_, $rest = $args
          & $script:ZLUA_LUAEXE $script:ZLUA_SCRIPT --complete $rest
          return
+      } elseif ($args[0] -eq "--update") {
+         $str_pwd = ([string] $PWD)
+         if ((!$env:_ZL_ADD_ONCE) -or
+               ($env:_ZL_ADD_ONCE -and ($script:_zlua_previous -ne $str_pwd))) {
+            $script:_zlua_previous = $str_pwd
+            _zlua --add $str_pwd
+         }
+         return
       }
 
       $first = $args[0]
@@ -2228,15 +2236,9 @@ function Init-ZLua {
 
    if (!$env:_ZL_NO_PROMPT_COMMAND) {
       $script:_zlua_orig_prompt = ([ref] $function:prompt)
-      $script:_zlua_previous = ""
       function global:prompt {
          & $script:_zlua_orig_prompt.value
-         $str_pwd = ([string] $PWD)
-         if ((!$env:_ZL_ADD_ONCE) -or
-               ($env:_ZL_ADD_ONCE -and ($script:_zlua_previous -ne $str_pwd))) {
-            $script:_zlua_previous = $str_pwd
-            _zlua --add $str_pwd
-         }
+         _zlua --update
       }
    }
 
