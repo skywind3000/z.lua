@@ -1,15 +1,14 @@
 #! /usr/bin/env lua
 --=====================================================================
 --
--- z.lua - z.sh implementation in lua, by skywind 2018, 2019
+-- z.lua - a cd command that learns, by skywind 2018, 2019
 -- Licensed under MIT license.
 --
 -- Version 1.4.0, Last Modified: 2019/02/04 00:06
 --
--- * 10x times faster than fasd and autojump
--- * 3x times faster than rupa/z
+-- * 10x faster than fasd and autojump, 3x faster than z.sh
 -- * available for posix shells: bash, zsh, sh, ash, dash, busybox
--- * supports windows
+-- * available for fish shell, power shell and windows cmd
 -- * compatible with lua 5.1, 5.2 and 5.3+
 --
 -- USE:
@@ -22,14 +21,16 @@
 --     * z -e foo   # echo the best match, don't cd
 --     * z -x path  # remove path from history
 --     * z -i foo   # cd with interactive selection
+--     * z -I foo   # cd with interactive selection using fzf
+--     * z -b foo   # cd to the parent directory starting with foo
 --
 -- Bash Install:
 --     * put something like this in your .bashrc:
 --         eval "$(lua /path/to/z.lua --init bash)"
 --
--- Bash Fast Mode:
+-- Bash Enhanced Mode:
 --     * put something like this in your .bashrc:
---         eval "$(lua /path/to/z.lua --init bash fast)"
+--         eval "$(lua /path/to/z.lua --init bash enhanced)"
 --
 -- Zsh Install:
 --     * put something like this in your .zshrc:
@@ -38,6 +39,15 @@
 -- Posix Shell Install:
 --     * put something like this in your .profile:
 --         eval "$(lua /path/to/z.lua --init posix)"
+--
+-- Fish Shell Install:
+--     * put something like this in your config file:
+--         source (lua /path/to/z.lua --init fish | psub)
+--
+-- Power Shell Install:
+--
+--     * put something like this in your config file:
+--         iex ($(lua /path/to/z.lua --init powershell) -join "`n")
 --
 -- Windows Install (with Clink):
 --     * copy z.lua and z.cmd to clink's home directory
@@ -2282,12 +2292,15 @@ function z_help()
 	local cmd = Z_CMD .. ' '
 	print(cmd .. 'foo       # cd to most frecent dir matching foo')
 	print(cmd .. 'foo bar   # cd to most frecent dir matching foo and bar')
-	print(cmd .. '-r bar    # cd to highest ranked dir matching foo')
-	print(cmd .. '-t bar    # cd to most recently accessed dir matching foo')
-	print(cmd .. '-l bar    # list matches instead of cd')
+	print(cmd .. '-r foo    # cd to highest ranked dir matching foo')
+	print(cmd .. '-t foo    # cd to most recently accessed dir matching foo')
+	print(cmd .. '-l foo    # list matches instead of cd')
 	print(cmd .. '-c foo    # restrict matches to subdirs of $PWD')
 	print(cmd .. '-e foo    # echo the best match, don\'t cd')
 	print(cmd .. '-x path   # remove path from history')
+	print(cmd .. '-i foo    # cd with interactive selection')
+	print(cmd .. '-I foo    # cd with interactive selection using fzf')
+	print(cmd .. '-b foo    # cd to the parent directory starting with foo')
 end
 
 
