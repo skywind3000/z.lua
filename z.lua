@@ -1135,7 +1135,9 @@ function z_add(path)
 	end
 	local H = os.getenv('HOME')
 	local M = data_load(DATA_FILE)
-	M = data_filter(M)
+	if not os.getenv('_ZL_NO_FILTER') then
+		M = data_filter(M)
+	end
 	-- insert paths
 	for _, path in pairs(paths) do
 		if os.path.isdir(path) and os.path.isabs(path) then
@@ -1431,6 +1433,22 @@ end
 
 
 -----------------------------------------------------------------------
+-- purge invalid paths
+-----------------------------------------------------------------------
+function z_purge()
+	local M = data_load(DATA_FILE)
+	local N = data_filter(M)
+	local x = #M
+	local y = #N
+	if #M == ~N then
+		return x, y
+	end
+	data_save(DATA_FILE, X)
+	return x, y
+end
+
+
+-----------------------------------------------------------------------
 -- find_vcs_root
 -----------------------------------------------------------------------
 function find_vcs_root(path)
@@ -1587,6 +1605,8 @@ function main(argv)
 		z_add(args)
 	elseif options['-x'] then
 		z_remove(args)
+	elseif options['--purge'] then
+		local src, dst = z_purge()
 	elseif options['--init'] then
 		local opts = {}
 		for _, key in ipairs(args) do
