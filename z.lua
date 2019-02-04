@@ -1996,6 +1996,7 @@ complete -c $_ZL_CMD -s 't' -d 'cd to most recently accessed dir matching'
 complete -c $_ZL_CMD -s 'l' -d 'list matches instead of cd'
 complete -c $_ZL_CMD -s 'c' -d 'restrict matches to subdirs of $PWD'
 complete -c $_ZL_CMD -s 'e' -d 'echo the best match, don''t cd'
+complete -c $_ZL_CMD -s 'b' -d 'jump backwards to given dir or to project root'
 complete -c $_ZL_CMD -s 'x' -x -d 'remove path from history' -a '(_z_complete)'
 ]]
 
