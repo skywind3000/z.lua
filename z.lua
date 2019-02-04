@@ -1455,21 +1455,37 @@ function cd_backward(args, options, pwd)
 	if nargs == 0 then
 		return find_vcs_root(pwd)
 	elseif nargs == 1 then
-		local test = windows and pwd:gsub('\\', '/') or pwd
-		local key = '/' .. args[1]
-		if not key:match('%u') then
-			test = test:lower()
+		if args[1]:sub(1, 2) == '..' then
+			local size = args[1]:len() - 1
+			if args[1]:match('^%.%.+$') then
+				size = args[1]:len() - 1
+			elseif args[1]:match('^%.%.%d+$') then
+				size = tonumber(args[1]:sub(3))
+			else
+				return nil
+			end
+			local path = pwd
+			for index = 1, size do
+				path = os.path.join(path, '..')
+			end
+			return os.path.normpath(path)
+		else
+			local test = windows and pwd:gsub('\\', '/') or pwd
+			local key = '/' .. args[1]
+			if not key:match('%u') then
+				test = test:lower()
+			end
+			local pos, _ = test:rfind(key)
+			if not pos then
+				return nil
+			end
+			local ends = test:find('/', pos + key:len())
+			if not ends then
+				ends = test:len()
+			end
+			local path = pwd:sub(1, (not ends) and test:len() or ends)
+			return os.path.normpath(path)
 		end
-		local pos, _ = test:rfind(key)
-		if not pos then
-			return nil
-		end
-		local ends = test:find('/', pos + key:len())
-		if not ends then
-			ends = test:len()
-		end
-		local path = pwd:sub(1, (not ends) and test:len() or ends)
-		return os.path.normpath(path)
 	else
 		local test = windows and pwd:gsub('\\', '/') or pwd
 		local src = args[1]
