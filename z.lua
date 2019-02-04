@@ -1440,10 +1440,10 @@ function z_purge()
 	local N = data_filter(M)
 	local x = #M
 	local y = #N
-	if #M == ~N then
+	if x == y then
 		return x, y
 	end
-	data_save(DATA_FILE, X)
+	data_save(DATA_FILE, N)
 	return x, y
 end
 
