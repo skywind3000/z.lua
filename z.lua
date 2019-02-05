@@ -4,7 +4,7 @@
 -- z.lua - a cd command that learns, by skywind 2018, 2019
 -- Licensed under MIT license.
 --
--- Version 1.4.0, Last Modified: 2019/02/04 00:06
+-- Version 1.4.1, Last Modified: 2019/02/04 00:06
 --
 -- * 10x faster than fasd and autojump, 3x faster than z.sh
 -- * available for posix shells: bash, zsh, sh, ash, dash, busybox
@@ -810,20 +810,6 @@ function math.random_init()
 	local rnd = os.getenv('_ZL_RANDOM')
 	if rnd ~= nil then
 		seed = seed .. rnd
-	end
-	if not windows then
-		local fp = io.open('/dev/random', 'rb')
-		if fp ~= nil then
-			seed = seed .. fp:read(10)
-			fp:close()
-		end
-	else
-		if math.random_inited == nil then
-			math.random_inited = 1
-			local name = os.tmpname()
-			os.remove(name)
-			seed = seed .. name
-		end
 	end
 	seed = seed .. tostring(os.clock() * 10000000)
 	local number = 0
