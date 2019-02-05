@@ -321,6 +321,8 @@ $ ls -l `zb git`
 
 ```
 
+**Bonus**: `zb ..` equals to `cd ..`, `zb ...` equals to `cd ../..` and `zb ....` equals to `cd ../../..`, and so on. Finally, `zb ..20` equals to `cd (..)x20`.
+
 
 ## Tips
 
@@ -394,6 +396,13 @@ awk -F '\t' '{print $2 "|" $1 "|" 0}' $FN >> ~/.zlua
 - 0.2.0 (2018-11-25): new option `$_ZL_ADD_ONCE` to enable updating datafile only if `$PWD` changed.
 - 0.1.0 (2018-04-30): supports windows cmd, cmder and conemu.
 - 0.0.0 (2018-03-21): initial commit, compatible with original z.sh.
+
+
+## Reputation
+
+- "I like this in principal. I’m pretty damn predictable at the command line and far too lazy to make shortcuts"
+- "Anyway, z.lua is a promising project. If you only need directory jumping, it may be the best choice."
+- "I can finally have autojump-like functionality on my Raspberry Pi 1 without waiting 30 seconds every time I open a new shell. Thanks z.lua devs."
 
 ## Thanks
 
