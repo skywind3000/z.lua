@@ -1877,7 +1877,7 @@ if command -v fzf >/dev/null 2>&1; then
 
 	_zlua_fzf_complete() {
 		local query="${COMP_WORDS[COMP_CWORD]}"
-		selected=$(_zlua --complete | $zlua_fzf --query "$query")
+		local selected=$(_zlua --complete | $zlua_fzf --query "$query")
 
 		printf '\e[5n'
 
