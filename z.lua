@@ -1407,7 +1407,7 @@ function z_cd(patterns)
 			if not os.getenv('_ZL_FZF_FULLSCR') then
 				cmd = cmd .. ' --height 35%'
 			end
-			cmd = cmd .. ' < ' .. tmpname
+			cmd = cmd .. ' < "' .. tmpname .. '"'
 		else
 			tmpname = os.tmpname():gsub('\\', ''):gsub('%.', '')
 			tmpname = os.getenv('TMP') .. '\\zlua_' .. tmpname .. '.txt'
