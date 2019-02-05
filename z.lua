@@ -2134,157 +2134,94 @@ if /i "%RunMode%"=="-n" (
 :end
 ]]
 
-local script_init_powershell = [[
-function Init-ZLua {
 
-   # Prevent repeating init
-   if ($global:_zlua_inited) {
-      return
-   }
-
-   if (!$script:ZLUA_LUAEXE) {
-      $script:ZLUA_LUAEXE = "lua.exe"
-   }
-
-   if (!$script:ZLUA_SCRIPT) {
-      $script:ZLUA_SCRIPT = "z.lua"
-   }
-
-   if (!$env:_ZL_CD) {
-      $env:_ZL_CD = "Push-Location"
-   }
-
-   if (!$env:_ZL_CMD) {
-      $env:_ZL_CMD = "z"
-   }
-
-   function global:_zlua {
-      $arg_mode = ""
-      $arg_type = ""
-      $arg_subdir = ""
-      $arg_inter = ""
-      $arg_strip = ""
-
-
-      if ($args[0] -eq "--add") {
-         $_, $rest = $args
-         $env:_ZL_RANDOM = Get-Random
-         & $script:ZLUA_LUAEXE $script:ZLUA_SCRIPT --add $rest
-         return
-      } elseif ($args[0] -eq "--complete") {
-         $_, $rest = $args
-         & $script:ZLUA_LUAEXE $script:ZLUA_SCRIPT --complete $rest
-         return
-      } elseif ($args[0] -eq "--update") {
-         $str_pwd = ([string] $PWD)
-         if ((!$env:_ZL_ADD_ONCE) -or
-               ($env:_ZL_ADD_ONCE -and ($script:_zlua_previous -ne $str_pwd))) {
-            $script:_zlua_previous = $str_pwd
-            _zlua --add $str_pwd
-         }
-         return
-      }
-
-      $first = $args[0]
-      :loop while ($first) {
-         switch -casesensitive ($first) {
-            "-l" {
-               $arg_mode = "-l"
-               break
-            }
-            "-e" {
-               $arg_mode = "-e"
-               break
-            }
-            "-x" {
-               $arg_mode = "-x"
-               break
-            }
-            "-t" {
-               $arg_type = "-t"
-               break
-            }
-            "-r" {
-               $arg_type = "-r"
-               break
-            }
-            "-c" {
-               $arg_subdir="-c"
-               break
-            }
-            "-s" {
-               $arg_strip="-s"
-               break
-            }
-            "-i" {
-               $arg_inter="-i"
-               break
-            }
-            "-I" {
-               $arg_inter="-I"
-               break
-            }
-            "-h" {
-               $arg_mode="-h"
-               break
-            }
-            "--help" {
-               $arg_mode="-h"
-               break
-            }
-            Default {
-               break loop
-            }
-         }
-         $_, $args = $args
-         if(!$args) {
-            break loop
-         }
-         $first = $args[0]
-      }
-
-      $env:PWD = ([string] $PWD)
-
-      if ($arg_mode -eq "-h") {
-         & $script:ZLUA_LUAEXE $script:ZLUA_SCRIPT -h
-      } elseif ($arg_mode -eq "-l" -or $args.Length -eq 0) {
-         & $script:ZLUA_LUAEXE $script:ZLUA_SCRIPT -l $arg_subdir $arg_type $arg_strip $args
-      } elseif ($arg_mode -ne "") {
-         & $script:ZLUA_LUAEXE $script:ZLUA_SCRIPT $arg_mode $arg_subdir $arg_type $arg_inter $args
-      } else {
-         $dest = & $script:ZLUA_LUAEXE $script:ZLUA_SCRIPT --cd $arg_type $arg_subdir $arg_inter $args
-         if ($dest) {
-            & $env:_ZL_CD "$dest"
-            if ($env:_ZL_ECHO) {
-               Write-Host $PWD
-            }
-         }
-      }
-   }
-
-   Set-Alias $env:_ZL_CMD _zlua -Scope Global
-
-   if (!$env:_ZL_NO_PROMPT_COMMAND) {
-      $script:_zlua_orig_prompt = ([ref] $function:prompt)
-      function global:prompt {
-         & $script:_zlua_orig_prompt.value
-         _zlua --update
-      }
-   }
-
-   $global:_zlua_inited = $True
+-----------------------------------------------------------------------
+-- powershell
+-----------------------------------------------------------------------
+local script_zlua_powershell = [[
+function global:_zlua {
+	$arg_mode = ""
+	$arg_type = ""
+	$arg_subdir = ""
+	$arg_inter = ""
+	$arg_strip = ""
+	if ($args[0] -eq "--add") {
+		$_, $rest = $args
+		$env:_ZL_RANDOM = Get-Random
+		& $script:ZLUA_LUAEXE $script:ZLUA_SCRIPT --add $rest
+		return
+	} elseif ($args[0] -eq "--complete") {
+		$_, $rest = $args
+		& $script:ZLUA_LUAEXE $script:ZLUA_SCRIPT --complete $rest
+		return
+	} elseif ($args[0] -eq "--update") {
+		$str_pwd = ([string] $PWD)
+		if ((!$env:_ZL_ADD_ONCE) -or
+			($env:_ZL_ADD_ONCE -and ($script:_zlua_previous -ne $str_pwd))) {
+			$script:_zlua_previous = $str_pwd
+			_zlua --add $str_pwd
+		}
+		return
+	}
+	:loop while ($args) {
+		switch -casesensitive ($args[0]) {
+			"-l" { $arg_mode = "-l"; break }
+			"-e" { $arg_mode = "-e"; break }
+			"-x" { $arg_mode = "-x"; break }
+			"-t" { $arg_type = "-t"; break }
+			"-r" { $arg_type = "-r"; break }
+			"-c" { $arg_subdir="-c"; break }
+			"-s" { $arg_strip="-s"; break }
+			"-i" { $arg_inter="-i"; break }
+			"-I" { $arg_inter="-I"; break }
+			"-h" { $arg_mode="-h"; break }
+			"--help" { $arg_mode="-h"; break }
+			Default { break loop }
+		}
+		$_, $args = $args
+		if (!$args) { break loop }
+	}
+	$env:PWD = ([string] $PWD)
+	if ($arg_mode -eq "-h") {
+		& $script:ZLUA_LUAEXE $script:ZLUA_SCRIPT -h
+	} elseif ($arg_mode -eq "-l" -or $args.Length -eq 0) {
+		& $script:ZLUA_LUAEXE $script:ZLUA_SCRIPT -l $arg_subdir $arg_type $arg_strip $args
+	} elseif ($arg_mode -ne "") {
+		& $script:ZLUA_LUAEXE $script:ZLUA_SCRIPT $arg_mode $arg_subdir $arg_type $arg_inter $args
+	} else {
+		$dest = & $script:ZLUA_LUAEXE $script:ZLUA_SCRIPT --cd $arg_type $arg_subdir $arg_inter $args
+		if ($dest) {
+			if ($env:_ZL_CD) { & $env:_ZL_CD "$dest" }
+			else { & "Push-Location" "$dest" }
+			if ($env:_ZL_ECHO) { Write-Host $PWD }
+		}
+	}
 }
 
-Init-ZLua
+if ($env:_ZL_CMD) { Set-Alias $env:_ZL_CMD _zlua -Scope Global }
+else { Set-Alias z _zlua -Scope Global }
 ]]
+
+local script_init_powershell = [[
+if (!$env:_ZL_NO_PROMPT_COMMAND -and (!$global:_zlua_inited)) {
+	$script:_zlua_orig_prompt = ([ref] $function:prompt)
+	$global:_zlua_inited = $True
+	function global:prompt {
+		& $script:_zlua_orig_prompt.value
+		_zlua --update
+	}
+}
+]]
+
 
 -----------------------------------------------------------------------
 -- initialize cmd/powershell
 -----------------------------------------------------------------------
 function z_windows_init(opts)
 	if opts.powershell ~= nil then
-		print('$ZLUA_LUAEXE = "' .. os.interpreter() .. '"')
-		print('$ZLUA_SCRIPT = "' .. os.scriptname() .. '"')
+		print('$script:ZLUA_LUAEXE = "' .. os.interpreter() .. '"')
+		print('$script:ZLUA_SCRIPT = "' .. os.scriptname() .. '"')
+		print(script_zlua_powershell)
 		if opts.enhanced ~= nil then
 			print('$env:_ZL_MATCH_MODE = 1')
 		end
@@ -2336,3 +2273,6 @@ if not pcall(debug.getlocal, 4, 1) then
 		main()
 	end
 end
+
+
+
