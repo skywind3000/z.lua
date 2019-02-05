@@ -598,7 +598,7 @@ function os.path.split(path)
 		local p2 = path:rfind('\\')
 		if pos == nil and p2 ~= nil then
 			pos = p2
-		elseif p1 ~= nil and p2 ~= nil then
+		elseif pos ~= nil and p2 ~= nil then
 			pos = (pos < p2) and pos or p2
 		end
 		if path:match('^%a:[/\\]') and pos == nil then
@@ -876,7 +876,7 @@ function data_load(filename)
 	local M = {}
 	local N = {}
 	local insensitive = path_case_insensitive()
-	fp = io.open(os.path.expand(filename), 'r')
+	local fp = io.open(os.path.expand(filename), 'r')
 	if fp == nil then
 		return {}
 	end
@@ -1049,7 +1049,7 @@ function path_match(pathname, patterns, matchlast)
 	local matchlast = matchlast ~= nil and matchlast or false
 	for i = 1, #patterns do
 		local pat = patterns[i]
-		start, endup = pathname:find(pat, pos)
+		local start, endup = pathname:find(pat, pos)
 		if start == nil or endup == nil then
 			return false
 		end
@@ -1065,7 +1065,7 @@ function path_match(pathname, patterns, matchlast)
 			last = string.match(pathname, ".*([/\\].*)")
 		end
 		if last then
-			start, endup = last:find(pat, 1)
+			local start, endup = last:find(pat, 1)
 			if start == nil or endup == nil then
 				return false
 			end
