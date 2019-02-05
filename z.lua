@@ -32,6 +32,10 @@
 --     * put something like this in your .bashrc:
 --         eval "$(lua /path/to/z.lua --init bash enhanced)"
 --
+-- Bash fzf tab completion Mode:
+--     * put something like this in your .bashrc:
+--         eval "$(lua /path/to/z.lua --init bash fzf)"
+--
 -- Zsh Install:
 --     * put something like this in your .zshrc:
 --         eval "$(lua /path/to/z.lua --init zsh)"
@@ -1925,7 +1929,9 @@ function z_shell_init(opts)
 			end
 		end
 		print(script_complete_bash)
-		print(script_fzf_complete_bash)
+		if opts.fzf ~= nil then
+			print(script_fzf_complete_bash)
+		end
 	elseif opts.zsh ~= nil then
 		if prompt_hook then
 			print(once and script_init_zsh_once or script_init_zsh)
