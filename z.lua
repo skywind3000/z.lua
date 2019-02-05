@@ -32,6 +32,10 @@
 --     * put something like this in your .bashrc:
 --         eval "$(lua /path/to/z.lua --init bash enhanced)"
 --
+-- Bash fzf tab completion Mode:
+--     * put something like this in your .bashrc:
+--         eval "$(lua /path/to/z.lua --init bash fzf)"
+--
 -- Zsh Install:
 --     * put something like this in your .zshrc:
 --         eval "$(lua /path/to/z.lua --init zsh)"
@@ -1866,6 +1870,27 @@ if [ -n "$BASH_VERSION" ]; then
 fi
 ]]
 
+local script_fzf_complete_bash = [[
+if command -v fzf >/dev/null 2>&1; then
+	# To redraw line after fzf closes (printf '\e[5n')
+	bind '"\e[0n": redraw-current-line'
+
+	_zlua_fzf_complete() {
+		local query="${COMP_WORDS[COMP_CWORD]}"
+		local selected=$(_zlua --complete | $zlua_fzf --query "$query")
+
+		printf '\e[5n'
+
+		if [ -n "$selected" ]; then
+			COMPREPLY=("$selected")
+			return 0
+		fi
+	}
+
+	complete -o bashdefault -F _zlua_fzf_complete ${_ZL_CMD:-z}
+fi
+]]
+
 local script_complete_zsh = [[
 _zlua_zsh_tab_completion() {
 	# tab completion
@@ -1901,6 +1926,14 @@ function z_shell_init(opts)
 			end
 		end
 		print(script_complete_bash)
+		if opts.fzf ~= nil then
+			fzf_cmd = "fzf --reverse --inline-info +s"
+			if not os.getenv('_ZL_FZF_FULLSCR') then
+				fzf_cmd = fzf_cmd .. ' --height 35%'
+			end
+			print('zlua_fzf="' .. fzf_cmd .. '"')
+			print(script_fzf_complete_bash)
+		end
 	elseif opts.zsh ~= nil then
 		if prompt_hook then
 			print(once and script_init_zsh_once or script_init_zsh)
