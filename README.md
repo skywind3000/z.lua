@@ -203,7 +203,7 @@ If no match is found, it will fall back to default matching method.
 
       cd foo
 
-  So, in the enhanced matching method, you can always use `z` like `cd` to change directory even if the new directory is untracked (haven't been accessed).
+  So, in the enhanced matching method, you can always use `z` like `cd` to change directory even if the new directory is untracked (hasn't been accessed).
 
 - Skip the current directory:
 
