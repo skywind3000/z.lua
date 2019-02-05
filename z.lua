@@ -1866,6 +1866,30 @@ if [ -n "$BASH_VERSION" ]; then
 fi
 ]]
 
+local script_fzf_complete_bash = [[
+if command -v fzf >/dev/null 2>&1; then
+	# To redraw line after fzf closes (printf '\e[5n')
+	bind '"\e[0n": redraw-current-line'
+
+	_zlua_fzf_complete() {
+		local query="${COMP_WORDS[COMP_CWORD]}"
+
+		fzf="fzf --reverse --inline-info +s --height 35%"
+
+		selected=$(_zlua --complete | $fzf --query "$query")
+
+		printf '\e[5n'
+
+		if [ -n "$selected" ]; then
+			COMPREPLY=("$selected")
+			return 0
+		fi
+	}
+
+	complete -o bashdefault -F _zlua_fzf_complete ${_ZL_CMD:-z}
+fi
+]]
+
 local script_complete_zsh = [[
 _zlua_zsh_tab_completion() {
 	# tab completion
@@ -1901,6 +1925,7 @@ function z_shell_init(opts)
 			end
 		end
 		print(script_complete_bash)
+		print(script_fzf_complete_bash)
 	elseif opts.zsh ~= nil then
 		if prompt_hook then
 			print(once and script_init_zsh_once or script_init_zsh)
