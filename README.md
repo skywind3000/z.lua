@@ -60,6 +60,10 @@ z -i foo    # cd with interactive selection
 
   if you want `z.lua` print the new directory after cd.
 
+  If you want `fzf` tab completion use:
+
+      eval "$(lua /path/to/z.lua --init bash fzf)"
+
 - zsh:
 
   put something like this in your `.zshrc`:
