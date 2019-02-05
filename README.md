@@ -86,7 +86,7 @@ z -i foo    # cd with interactive selection
 
       lua /path/to/z.lua --init fish > ~/.config/fish/conf.d/z.fish
 
-  This is another way to initiaze z.lua in fish shell, but remember to regenerate z.fish if z.lua has been updated or moved.
+  This is another way to initialize z.lua in fish shell, but remember to regenerate z.fish if z.lua has been updated or moved.
 
 - Power Shell:
 
@@ -233,7 +233,7 @@ source (lua /path/to/z.lua --init fish once | psub)
 
 It could be much faster on slow hardware or Cygwin/MSYS.
 
-## Interective Selection
+## Interactive Selection
 
 When there are multiple matches found, using `z -i` will display a list:
 
@@ -284,7 +284,7 @@ New option `"-b"` can quickly go back to a specific parent directory in bash ins
 
 - **(Two arguments)** replace the first value with the second one (in the current path).
 
-Let's start by alising `z -b` to `zb`:
+Let's start by aliasing `z -b` to `zb`:
 
 ```bash
 # go all the way up to the project root (in this case, the one that has .git in it)
