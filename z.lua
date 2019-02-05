@@ -77,15 +77,15 @@
 -- Module Header
 -----------------------------------------------------------------------
 local modname = 'z'
-local M = {}
-_G[modname] = M
-package.loaded[modname] = M  --return modname
-setmetatable(M,{__index = _G})
+local MM = {}
+_G[modname] = MM
+package.loaded[modname] = MM  --return modname
+setmetatable(MM, {__index = _G})
 
 if _ENV ~= nil then
-	_ENV[modname] = M
+	_ENV[modname] = MM
 else
-	setfenv(1, M)
+	setfenv(1, MM)
 end
 
 
@@ -171,7 +171,7 @@ function string:strip()
 end
 
 function string:rfind(key)
-	if keyword == '' then
+	if key == '' then
 		return self:len(), 0
 	end
 	local length = self:len()
@@ -234,14 +234,13 @@ end
 -----------------------------------------------------------------------
 function printT(table, level)
 	key = ""
-	local func = function(table, level)end
+	local func = function(table, level) end
 	func = function(table, level)
 		level = level or 1
 		local indent = ""
 		for i = 1, level do
 			indent = indent.."  "
 		end
-
 		if key ~= "" then
 			print(indent..key.." ".."=".." ".."{")
 		else
