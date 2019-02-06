@@ -1768,7 +1768,7 @@ _zlua() {
 		esac
 		shift
 	done
-	if [ "$arg_mode" = "-h" ] || [ "$arg_mode" == "--purge" ]; then
+	if [ "$arg_mode" = "-h" ] || [ "$arg_mode" = "--purge" ]; then
 		"$ZLUA_LUAEXE" "$ZLUA_SCRIPT" $arg_mode
 	elif [ "$arg_mode" = "-l" ] || [ "$#" -eq 0 ]; then
 		"$ZLUA_LUAEXE" "$ZLUA_SCRIPT" -l $arg_subdir $arg_type $arg_strip "$@"
