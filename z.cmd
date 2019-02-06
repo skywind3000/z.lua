@@ -77,6 +77,11 @@ if /i "%1"=="-h" (
 	goto end
 )
 
+if /i "%1"=="--purge" (
+	call "%LuaExe%" "%LuaScript%" --purge
+	goto end
+)
+
 :check
 
 if /i "%1"=="" (
