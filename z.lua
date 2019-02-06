@@ -2008,7 +2008,7 @@ function _zlua
 	end
 	if test "$arg_mode" = "-h"
 		_zlua_call "$ZLUA_LUAEXE" "$ZLUA_SCRIPT" -h
-	else if test "$arg_mode" == "--purge"
+	else if test "$arg_mode" = "--purge"
 		_zlua_call "$ZLUA_LUAEXE" "$ZLUA_SCRIPT" --purge
 	else if test "$arg_mode" = "-l"
 		_zlua_call "$ZLUA_LUAEXE" "$ZLUA_SCRIPT" -l $arg_subdir $arg_type $arg_strip $argv
