@@ -28,6 +28,9 @@ else if type -q lua5.2
 	lua5.2 $_zlua_dir/z.lua --init fish enhanced once echo | source
 else if type -q lua5.1
 	lua5.1 $_zlua_dir/z.lua --init fish enhanced once echo | source
+else
+	echo "init z.lua failed, not find lua in your system"
+	return
 end
 
 
