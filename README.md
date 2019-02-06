@@ -39,6 +39,8 @@ z -l foo    # list matches instead of cd
 z -c foo    # restrict matches to subdirs of $PWD
 z -e foo    # echo the best match, don't cd
 z -i foo    # cd with interactive selection
+z -I foo    # cd with interactive selection using fzf
+z -b foo    # cd to the parent directory starting with foo
 ```
 
 
@@ -387,6 +389,14 @@ FN="$HOME/.local/share/autojump/autojump.txt"
 awk -F '\t' '{print $2 "|" $1 "|" 0}' $FN >> ~/.zlua
 ```
 
+## Reputation
+
+- "I like this in principal. I’m pretty damn predictable at the command line and far too lazy to make shortcuts"
+- "It feels far more intuitive and it's so incredibly convenient to be able to jump between folders I'm working in without having to traverse an entire tree. The shell used to feel so constraining for me, but tools like this are making me enjoy it so much more. "
+- "I can finally have autojump-like functionality on my Raspberry Pi 1 without waiting 30 seconds every time I open a new shell. Thanks z.lua devs."
+- "Anyway, z.lua is a promising project. If you only need directory jumping, it may be the best choice."
+
+
 ## History
 
 - 1.4.2 (2019-02-06): you can disabled path validation by `$_ZL_NO_CHECK`, and use `z --purge` to clear bad paths manually.
@@ -405,11 +415,6 @@ awk -F '\t' '{print $2 "|" $1 "|" 0}' $FN >> ~/.zlua
 - 0.0.0 (2018-03-21): initial commit, compatible with original z.sh.
 
 
-## Reputation
-
-- "I like this in principal. I’m pretty damn predictable at the command line and far too lazy to make shortcuts"
-- "Anyway, z.lua is a promising project. If you only need directory jumping, it may be the best choice."
-- "I can finally have autojump-like functionality on my Raspberry Pi 1 without waiting 30 seconds every time I open a new shell. Thanks z.lua devs."
 
 ## Thanks
 
