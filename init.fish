@@ -6,7 +6,7 @@ if test -z "$_ZL_DATA"
 	else
 		set -U _ZL_DATA_DIR "$XDG_DATA_HOME/zlua"
 	end
-	set -U _ZL_DATA "$_ZL_DATA_DIR/data.txt"
+	set -U _ZL_DATA "$_ZL_DATA_DIR/zlua.txt"
 end
 
 if test ! -e "$_ZL_DATA"
