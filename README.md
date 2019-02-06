@@ -44,7 +44,7 @@ z -i foo    # cd with interactive selection
 
 ## Install
 
-- bash:
+- Bash:
 
   put something like this in your `.bashrc`:
 
@@ -64,7 +64,7 @@ z -i foo    # cd with interactive selection
 
       eval "$(lua /path/to/z.lua --init bash enhanced once fzf)"
 
-- zsh:
+- Zsh:
 
   put something like this in your `.zshrc`:
 
@@ -72,7 +72,7 @@ z -i foo    # cd with interactive selection
 
   Options like "enhanced" and "echo" can be used after `--init` too. It can also be initialized from "skywind3000/z.lua" with your zsh plugin managers (antigen / oh-my-zsh).
 
-- posix shells:
+- Posix Shells:
 
   put something like this in your `.profile`:
 
@@ -80,7 +80,7 @@ z -i foo    # cd with interactive selection
 
   (sh, ash, dash and busybox have been tested)
 
-- fish:
+- Fish Shell:
 
   Create `~/.config/fish/conf.d/z.fish` with following code
 

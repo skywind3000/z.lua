@@ -13,15 +13,15 @@ z.lua 是一个快速路径切换工具，它会跟踪你在 shell 下访问过�
 ## Features
 
 - 性能比 **z.sh** 快三倍，比 **fasd** / **autojump** 快十倍以上。
-- 支持 Posix Shell（bash, zsh, dash, sh, ash, busybox）及 Fish Shell。
-- 支持 Power Shell 和 Windows cmd，cmder 和 ConEmu。
-- 无依赖，不会像 fasd/z.sh 那样对 awk/gawk 及 shell 有特殊的版本要求。
+- 支持 Posix Shell：bash, zsh, dash, sh, ash, busybox 等等。
+- 支持 Fish Shell，Power Shell 和 Windows cmd。
+- 使用增强匹配算法，更准确的带你去到你想去的地方。
+- 低占用，能够仅在当前路径改变时才更新数据库（将 `$_ZL_ADD_ONCE` 设成 1）。
+- 交互选择模式，如果有多个匹配结果的话，跳转前允许你进行选择。
+- 交互选择模式，支持使用 fzf 进行可视化结果筛选（可选）。
+- 快速跳转到父目录，或者项目根目录，代替反复 “cd ../../.." 。
 - 兼容 lua 5.1, 5.2 和 5.3 以上版本。
-- 新增：环境变量 "$_ZL_ADD_ONCE" 设成 1 的话性仅当前路径改变时才更新数据库。
-- 新增：增强匹配模式，将环境变量 "$_ZL_MATCH_MODE" 设置成 1 可以启用。
-- 新增：交互选择模式，如果有多个匹配结果的话，跳转前允许你进行选择。
-- 新增：支持 fzf 来进行多结果筛选，见后面文档。
-- 新增：快速跳转到父目录，代替反复 “cd ../../.." 。
+- 自包含且无额外依赖，单个 `z.lua` 文件完成所有工作。
 
 
 ## Examples
