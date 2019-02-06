@@ -94,6 +94,10 @@ z -b foo    # cd to the parent directory starting with foo
 
   This is another way to initialize z.lua in fish shell, but remember to regenerate z.fish if z.lua has been updated or moved.
 
+  Package managers like oh-my-fish and fisher are supported, you can install z.lua from url: 
+
+      omf install https://github.com/skywind3000/z.lua     # install z.lua in oh-my-fish
+
 - Power Shell:
 
   put something like this in your `profile.ps1`:
