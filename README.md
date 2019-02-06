@@ -123,6 +123,7 @@ z -i foo    # cd with interactive selection
 - set `$_ZL_CD` to specify your own cd command.
 - set `$_ZL_ECHO` to 1 to display new directory name after cd.
 - set `$_ZL_MATCH_MODE` to 1 to enable enhanced matching.
+- set `$_ZL_NO_CHECK` to 1 to disable path validation, use `z --purge` to clean
 
 ## Aging
 
@@ -388,6 +389,7 @@ awk -F '\t' '{print $2 "|" $1 "|" 0}' $FN >> ~/.zlua
 
 ## History
 
+- 1.4.2 (2019-02-06): you can disabled path validation by `$_ZL_NO_CHECK`, and use `z --purge` to clear bad paths manually.
 - 1.4.1 (2019-02-06): fzf tab-completion in bash (@[BarbUk](https://github.com/BarbUk)), fixed hang in fish shell (close [#29](https://github.com/skywind3000/z.lua/issues/29)).
 - 1.4.0 (2019-02-04): Ported to Power Shell ([@manhong2112](https://github.com/manhong2112))
 - 1.3.0 (2019-02-04): Backward jumping, prevent "cd ../../.." repeatly.

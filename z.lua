@@ -4,7 +4,7 @@
 -- z.lua - a cd command that learns, by skywind 2018, 2019
 -- Licensed under MIT license.
 --
--- Version 1.4.1, Last Modified: 2019/02/04 00:06
+-- Version 1.4.2, Last Modified: 2019/02/06 20:23
 --
 -- * 10x faster than fasd and autojump, 3x faster than z.sh
 -- * available for posix shells: bash, zsh, sh, ash, dash, busybox
@@ -73,6 +73,7 @@
 --   set $_ZL_ECHO to 1 to display new directory name after cd.
 --   set $_ZL_MAXAGE to define a aging threshold (default is 5000).
 --   set $_ZL_MATCH_MODE to 1 to enable enhanced matching mode.
+--   set $_ZL_NO_CHECK to 1 to disable path validation. z --purge to clear.
 --
 --=====================================================================
 
@@ -1124,7 +1125,7 @@ function z_add(path)
 	end
 	local H = os.getenv('HOME')
 	local M = data_load(DATA_FILE)
-	if not os.getenv('_ZL_NO_FILTER') then
+	if not os.getenv('_ZL_NO_CHECK') then
 		M = data_filter(M)
 	end
 	-- insert paths
@@ -1596,6 +1597,9 @@ function main(argv)
 		z_remove(args)
 	elseif options['--purge'] then
 		local src, dst = z_purge()
+		local fp = io.stderr
+		fp:write('purge: ' .. tostring(src) .. ' record(s) remaining, ')
+		fp:write(tostring(src - dst) .. ' invalid record(s) removed.\n')
 	elseif options['--init'] then
 		local opts = {}
 		for _, key in ipairs(args) do
@@ -1759,12 +1763,13 @@ _zlua() {
 			-i) local arg_inter="-i" ;;
 			-I) local arg_inter="-I" ;;
 			-h|--help) local arg_mode="-h" ;;
+			--purge) local arg_mode="--purge" ;;
 			*) break ;;
 		esac
 		shift
 	done
-	if [ "$arg_mode" = "-h" ]; then
-		"$ZLUA_LUAEXE" "$ZLUA_SCRIPT" -h
+	if [ "$arg_mode" = "-h" ] || [ "$arg_mode" == "--purge" ]; then
+		"$ZLUA_LUAEXE" "$ZLUA_SCRIPT" $arg_mode
 	elif [ "$arg_mode" = "-l" ] || [ "$#" -eq 0 ]; then
 		"$ZLUA_LUAEXE" "$ZLUA_SCRIPT" -l $arg_subdir $arg_type $arg_strip "$@"
 	elif [ -n "$arg_mode" ]; then
@@ -1953,6 +1958,12 @@ function z_shell_init(opts)
 	if opts.enhanced ~= nil then
 		print('export _ZL_MATCH_MODE=1')
 	end
+	if opts.nc then
+		print('export _ZL_NO_CHECK=1')
+	end
+	if opts.echo then
+		print('_ZL_ECHO=1')
+	end
 end
 
 
@@ -1990,12 +2001,15 @@ function _zlua
 			case "-I"; set arg_inter "-I"
 			case "-h"; set arg_mode "-h"
 			case "--help"; set arg_mode "-h"
+			case "--purge"; set arg_mode "--purge"
 			case '*'; break
 		end
 		set -e argv[1]
 	end
 	if test "$arg_mode" = "-h"
 		_zlua_call "$ZLUA_LUAEXE" "$ZLUA_SCRIPT" -h
+	else if test "$arg_mode" == "--purge"
+		_zlua_call "$ZLUA_LUAEXE" "$ZLUA_SCRIPT" --purge
 	else if test "$arg_mode" = "-l"
 		_zlua_call "$ZLUA_LUAEXE" "$ZLUA_SCRIPT" -l $arg_subdir $arg_type $arg_strip $argv
 	else if test (count $argv) -eq 0
@@ -2063,6 +2077,12 @@ function z_fish_init(opts)
 	if opts.enhanced ~= nil then
 		print('set -x _ZL_MATCH_MODE 1')
 	end
+	if opts.echo then
+		print('set -x _ZL_ECHO 1')
+	end
+	if opts.nc then
+		print('set -x _ZL_NO_CHECK 1')
+	end
 end
 
 
@@ -2126,6 +2146,10 @@ if /i "%1"=="-s" (
 )
 if /i "%1"=="-h" (
 	call "%LuaExe%" "%LuaScript%" -h
+	goto end
+)
+if /i "%1"=="--purge" (
+	call "%LuaExe%" "%LuaScript%" --purge
 	goto end
 )
 :check
@@ -2194,14 +2218,15 @@ function global:_zlua {
 			"-I" { $arg_inter="-I"; break }
 			"-h" { $arg_mode="-h"; break }
 			"--help" { $arg_mode="-h"; break }
+			"--purge" { $arg_mode="--purge"; break }
 			Default { break loop }
 		}
 		$_, $args = $args
 		if (!$args) { break loop }
 	}
 	$env:PWD = ([string] $PWD)
-	if ($arg_mode -eq "-h") {
-		& $script:ZLUA_LUAEXE $script:ZLUA_SCRIPT -h
+	if ($arg_mode -eq "-h" -or $arg_mode -eq "--purge") {
+		& $script:ZLUA_LUAEXE $script:ZLUA_SCRIPT $arg_mode
 	} elseif ($arg_mode -eq "-l" -or $args.Length -eq 0) {
 		& $script:ZLUA_LUAEXE $script:ZLUA_SCRIPT -l $arg_subdir $arg_type $arg_strip $args
 	} elseif ($arg_mode -ne "") {
@@ -2245,6 +2270,12 @@ function z_windows_init(opts)
 		end
 		if opts.once ~= nil then
 			print('$env:_ZL_ADD_ONCE = 1')
+		end
+		if opts.echo ~= nil then
+			print('$env:_ZL_ECHO = 1')
+		end
+		if opts.nc ~= nil then
+			print('$env:_ZL_NO_CHECK = 1')
 		end
 		print(script_init_powershell)
 	else
