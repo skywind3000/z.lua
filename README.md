@@ -24,6 +24,7 @@ For example, `z foo bar` would match `/foo/bar` but not `/bar/foo`.
 - Interactive selection enables you to choose where to go before cd.
 - Interactive selection with FZF (optional).
 - Quickly go back to a parent directory instead of typing "cd ../../..".
+- Corresponding experience in different shells and systems. 
 - Compatible with Lua 5.1, 5.2 and 5.3+
 - Self contained, distributed as a single `z.lua` script, no other dependence.
 
