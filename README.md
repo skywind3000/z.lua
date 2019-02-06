@@ -58,11 +58,11 @@ z -i foo    # cd with interactive selection
 
       export _ZL_ECHO=1
 
-  if you want `z.lua` print the new directory after cd.
+  if you want `z.lua` print the new directory after cd. 
 
   If you want `fzf` tab completion use:
 
-      eval "$(lua /path/to/z.lua --init bash fzf)"
+      eval "$(lua /path/to/z.lua --init bash enhanced once fzf)"
 
 - zsh:
 
@@ -388,6 +388,7 @@ awk -F '\t' '{print $2 "|" $1 "|" 0}' $FN >> ~/.zlua
 
 ## History
 
+- 1.4.1 (2019-02-06): fzf tab-completion in bash (@[BarbUk](https://github.com/BarbUk)), fixed hang in fish shell (close [#29](https://github.com/skywind3000/z.lua/issues/29)).
 - 1.4.0 (2019-02-04): Ported to Power Shell ([@manhong2112](https://github.com/manhong2112))
 - 1.3.0 (2019-02-04): Backward jumping, prevent "cd ../../.." repeatly.
 - 1.2.0 (2019-02-03): Upgrade string lib and path lib.
