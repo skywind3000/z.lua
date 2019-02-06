@@ -24,7 +24,7 @@ For example, `z foo bar` would match `/foo/bar` but not `/bar/foo`.
 - Interactive selection enables you to choose where to go before cd.
 - Interactive selection with FZF (optional).
 - Quickly go back to a parent directory instead of typing "cd ../../..".
-- Corresponding experience in different shells and systems. 
+- Corresponding experience in different shells and operating systems. 
 - Compatible with Lua 5.1, 5.2 and 5.3+
 - Self contained, distributed as a single `z.lua` script, no other dependence.
 
@@ -95,9 +95,9 @@ z -b foo    # cd to the parent directory starting with foo
 
   This is another way to initialize z.lua in fish shell, but remember to regenerate z.fish if z.lua has been updated or moved.
 
-  Package managers like oh-my-fish and fisher are supported, you can install z.lua from url: 
+  Package managers like oh-my-fish are currently supported, you can install z.lua from url: 
 
-      omf install https://github.com/skywind3000/z.lua     # install z.lua in oh-my-fish
+      omf install https://github.com/skywind3000/z.lua
 
 - Power Shell:
 
