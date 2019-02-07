@@ -1126,7 +1126,7 @@ function z_add(path)
 	local H = os.getenv('HOME')
 	local M = data_load(DATA_FILE)
 	local nc = os.getenv('_ZL_NO_CHECK')
-	if nc ~= nil and nc ~= '' then
+	if nc == nil or nc == '' or nc == '0' then
 		M = data_filter(M)
 	end
 	-- insert paths
