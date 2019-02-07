@@ -415,6 +415,14 @@ awk -F '\t' '{print $2 "|" $1 "|" 0}' $FN >> ~/.zlua
 - 0.1.0 (2018-04-30): supports windows cmd, cmder and conemu.
 - 0.0.0 (2018-03-21): initial commit, compatible with original z.sh.
 
+## Help
+
+This project needs help for the tasks below:
+
+- [ ] Completion: Actually I got little knowledge in completion, and need help to improve it.
+- [ ] Completion: Implement completion for Power Shell.
+- [ ] Completion: Implement completion for different arguments.
+- [ ] Packaging: make it possible to be installed easily in different systems or popular plugin managers.
 
 
 ## Thanks
@@ -425,6 +433,7 @@ awk -F '\t' '{print $2 "|" $1 "|" 0}' $FN >> ~/.zlua
 - Thanks to [@manhong2112](https://github.com/manhong2112) for Power Shell porting.
 
 And many others.
+
 
 
 ## License
