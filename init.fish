@@ -18,7 +18,7 @@ end
 
 set -x _ZL_DATA "$_ZL_DATA"
 
-set _zlua_dir (dirname (readlink (status --current-filename)))
+set _zlua_dir (dirname (status --current-filename))
 
 if type -q lua
 	lua $_zlua_dir/z.lua --init fish enhanced once echo | source
