@@ -18,16 +18,16 @@ end
 
 set -x _ZL_DATA "$_ZL_DATA"
 
-# set _zlua_dir (dirname (status --current-filename))
+set _zlua_dir (dirname (readlink (status --current-filename)))
 
 if type -q lua
-	lua $path/z.lua --init fish enhanced once echo | source
+	lua $_zlua_dir/z.lua --init fish enhanced once echo | source
 else if type -q lua5.3
-	lua5.3 $path/z.lua --init fish enhanced once echo | source
+	lua5.3 $_zlua_dir/z.lua --init fish enhanced once echo | source
 else if type -q lua5.2
-	lua5.2 $path/z.lua --init fish enhanced once echo | source
+	lua5.2 $_zlua_dir/z.lua --init fish enhanced once echo | source
 else if type -q lua5.1
-	lua5.1 $path/z.lua --init fish enhanced once echo | source
+	lua5.1 $_zlua_dir/z.lua --init fish enhanced once echo | source
 else
 	echo "init z.lua failed, not find lua in your system"
 end
