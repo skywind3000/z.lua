@@ -1862,7 +1862,7 @@ fi
 ]]
 
 local script_fzf_complete_bash = [[
-if command -v fzf >/dev/null 2>&1; then
+if [ "$TERM" != "dumb" ] && command -v fzf >/dev/null 2>&1; then
 	# To redraw line after fzf closes (printf '\e[5n')
 	bind '"\e[0n": redraw-current-line'
 
