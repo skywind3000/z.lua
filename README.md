@@ -73,7 +73,7 @@ z -b foo    # cd to the parent directory starting with foo
 
       eval "$(lua /path/to/z.lua --init zsh)"
 
-  Options like "enhanced" and "echo" can be used after `--init` too. It can also be initialized from "skywind3000/z.lua" with your zsh plugin managers (antigen / oh-my-zsh).
+  Options like "enhanced" and "once" can be used after `--init` too. It can also be initialized from "skywind3000/z.lua" with your zsh plugin managers (antigen / oh-my-zsh).
 
 - Posix Shells:
 
