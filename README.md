@@ -277,20 +277,9 @@ NOTE: For fish shell, this feature requires fish 2.7.0 or above. You can specify
 
 New option `"-b"` can quickly go back to a specific parent directory in bash instead of typing "cd ../../.." redundantly.
 
-- **(No argument)** `cd` into the project root:
-
-  Use `z -b` with no argument, it will look for the project (checkout) directory (the one with `.git`/`.hg`/`.svn` in it) and then `cd` into it.
-
-- **(One argument)** `cd` into the closest parent having its name begin with whatever the value you passed in:
-
-  If you are in this path `/home/user/project/src/org/main/site/utils/file/reader/whatever` and you want to go to `site` directory quickly, 
-
-  then just type: `z -b site`
-
-  In fact, You can simply type `z -b <starting few letters>` like `z -b s` or `z -b si`.
-  If there are more than one directories with same name up in the hierarchy, `z -b` will take you to the closest. 
-
-- **(Two arguments)** replace the first value with the second one (in the current path).
+- **(No argument)**: `cd` into the project root, the project root is one of the parent directory with `.git`/`.hg`/`.svn` in it
+- **(One argument)**: `cd` into the closest parent having its name begin with the keyword you passed in.
+- **(Two arguments)**: replace the first value with the second one (in the current path).
 
 Let's start by aliasing `z -b` to `zb`:
 
@@ -302,6 +291,10 @@ Let's start by aliasing `z -b` to `zb`:
 # cd into to the first parent directory named g*
 ~/github/vimium/src/public$ zb g
   => cd ~/github
+
+# goto the site directory quickly
+~/github/demo/src/org/main/site/utils/file/reader/whatever$ zb si
+  => cd ~/github/demo/src/org/main/site
 
 # substitute jekyll with ghost
 ~/github/jekyll/test$ zb jekyll ghost
