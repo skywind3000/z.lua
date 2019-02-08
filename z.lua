@@ -1367,7 +1367,12 @@ function z_cd(patterns)
 		return os.path.expand('~')
 	end
 	if os.path.isabs(last) and os.path.isdir(last) then
-		return os.path.norm(last)
+		local size = #patterns
+		if size <= 1 then
+			return os.path.norm(last)
+		elseif last ~= '/' and last ~= '\\' then
+			return os.path.norm(last)
+		end
 	end
 	local M = z_match(patterns, Z_METHOD, Z_SUBDIR)
 	if M == nil then
