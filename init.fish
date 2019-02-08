@@ -5,6 +5,8 @@ if test -z "$XDG_DATA_HOME"
 else
 	set -U _ZL_DATA_DIR "$XDG_DATA_HOME/zlua"
 end
+
+set -x _ZL_DATA "$_ZL_DATA_DIR/zlua.txt" 2> /dev/null
 set -U _ZL_DATA "$_ZL_DATA_DIR/zlua.txt" 2> /dev/null
 
 if test ! -e "$_ZL_DATA"
