@@ -4,7 +4,7 @@
 -- z.lua - a cd command that learns, by skywind 2018, 2019
 -- Licensed under MIT license.
 --
--- Version 1.4.2, Last Modified: 2019/02/06 20:23
+-- Version 1.4.3, Last Modified: 2019/02/08 11:35
 --
 -- * 10x faster than fasd and autojump, 3x faster than z.sh
 -- * available for posix shells: bash, zsh, sh, ash, dash, busybox
@@ -422,6 +422,15 @@ end
 -- dir exists
 -----------------------------------------------------------------------
 function os.path.isdir(pathname)
+	if pathname == '/' then
+		return true
+	elseif windows then
+		if pathname == '\\' then
+			return true
+		elseif pathname:match('^%a:[/\\]$') then
+			return true
+		end
+	end
 	local name = pathname .. '/'
 	local ok, err, code = os.rename(name, name)
 	if not ok then
