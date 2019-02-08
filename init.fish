@@ -13,7 +13,6 @@ if test ! -e "$_ZL_DATA"
 	if test ! -e "$_ZL_DATA_DIR"
 		mkdir -p -m 700 "$_ZL_DATA_DIR" 2> /dev/null
 	end
-	touch "$_ZL_DATA"
 end
 
 set -x _ZL_DATA "$_ZL_DATA"
