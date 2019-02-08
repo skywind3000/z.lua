@@ -1,13 +1,11 @@
 #! /usr/bin/env fish
 
-if test -z "$_ZL_DATA"
-	if test -z "$XDG_DATA_HOME"
-		set -U _ZL_DATA_DIR "$HOME/.local/share/zlua"
-	else
-		set -U _ZL_DATA_DIR "$XDG_DATA_HOME/zlua"
-	end
-	set -U _ZL_DATA "$_ZL_DATA_DIR/zlua.txt"
+if test -z "$XDG_DATA_HOME"
+	set -U _ZL_DATA_DIR "$HOME/.local/share/zlua"
+else
+	set -U _ZL_DATA_DIR "$XDG_DATA_HOME/zlua"
 end
+set -U _ZL_DATA "$_ZL_DATA_DIR/zlua.txt"
 
 if test ! -e "$_ZL_DATA"
 	if test ! -e "$_ZL_DATA_DIR"
