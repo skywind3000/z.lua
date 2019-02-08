@@ -5,7 +5,7 @@ if test -z "$XDG_DATA_HOME"
 else
 	set -U _ZL_DATA_DIR "$XDG_DATA_HOME/zlua"
 end
-set -U _ZL_DATA "$_ZL_DATA_DIR/zlua.txt"
+set -U _ZL_DATA "$_ZL_DATA_DIR/zlua.txt" 2> /dev/null
 
 if test ! -e "$_ZL_DATA"
 	if test ! -e "$_ZL_DATA_DIR"
@@ -33,8 +33,8 @@ if test -e $_zlua_dir/z.lua
 	alias zz='z -i'      # cd with interactive selection
 	alias zf='z -I'      # use fzf to select in multiple matches
 	alias zb='z -b'      # quickly cd to the parent directory
-	set -U ZLUA_SCRIPT "$ZLUA_SCRIPT"
-	set -U ZLUA_LUAEXE "$ZLUA_LUAEXE"
+	set -U ZLUA_SCRIPT "$ZLUA_SCRIPT"  2> /dev/null
+	set -U ZLUA_LUAEXE "$ZLUA_LUAEXE"  2> /dev/null
 end
 
 
