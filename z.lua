@@ -1790,12 +1790,12 @@ _zlua() {
 	elif [ -n "$arg_mode" ]; then
 		"$ZLUA_LUAEXE" "$ZLUA_SCRIPT" $arg_mode $arg_subdir $arg_type $arg_inter "$@"
 	else
-		local dest=$("$ZLUA_LUAEXE" "$ZLUA_SCRIPT" --cd $arg_type $arg_subdir $arg_inter "$@")
-		if [ -n "$dest" ] && [ -d "$dest" ]; then
+		local zdest=$("$ZLUA_LUAEXE" "$ZLUA_SCRIPT" --cd $arg_type $arg_subdir $arg_inter "$@")
+		if [ -n "$zdest" ] && [ -d "$zdest" ]; then
 			if [ -z "$_ZL_CD" ]; then
-				builtin cd "$dest"
+				builtin cd "$zdest"
 			else
-				$_ZL_CD "$dest"
+				$_ZL_CD "$zdest"
 			fi
 			if [ -n "$_ZL_ECHO" ]; then pwd; fi
 		fi
@@ -1916,11 +1916,16 @@ function z_shell_init(opts)
 	print('ZLUA_SCRIPT="' .. os.scriptname() .. '"')
 	print('ZLUA_LUAEXE="' .. os.interpreter() .. '"')
 	print('')
-	if not opts.legacy then
+	if not opts.posix then
 		print(script_zlua)
 	else
-		local script = script_zlua:gsub('local ', ''):gsub('builtin ', '')
-		print(script)
+		if opts.new or opts.modern then
+			print(script_zlua)
+		else
+			local script = script_zlua:gsub('local ', '')
+			script = script:gsub('builtin ', '')
+			print(script)
+		end
 	end
 
 	local prompt_hook = (os.getenv("_ZL_NO_PROMPT_COMMAND") == nil)

@@ -81,11 +81,11 @@ z -b foo    # cd to the parent directory starting with foo
 
       eval "$(lua /path/to/z.lua --init posix)"
 
-  For very old shells like ksh (Korn Shell), some keywords like `local` and `builtin` are unsupported, you can use:
+  For new posix shells like dash/ash, you can use:
 
-      eval "$(lua /path/to/z.lua --init posix legacy)"
+      eval "$(lua /path/to/z.lua --init posix new)"
 
-  To generate old posix compatible script.
+  To take advantage of keywords `local` and `builtin`.
 
 - Fish Shell:
 
@@ -397,7 +397,7 @@ awk -F '\t' '{print $2 "|" $1 "|" 0}' $FN >> ~/.zlua
 
 ## History
 
-- 1.4.4 (2019-02-10): supports legacy posix shells like ksh, init with `z.lua --init posix legacy`.
+- 1.4.4 (2019-02-10): supports legacy posix shells like ksh.
 - 1.4.3 (2019-02-08): fixed minor issues.
 - 1.4.2 (2019-02-06): you can disabled path validation by `$_ZL_NO_CHECK`, and use `z --purge` to clear bad paths manually.
 - 1.4.1 (2019-02-06): fzf tab-completion in bash (@[BarbUk](https://github.com/BarbUk)), fixed hang in fish shell (close [#29](https://github.com/skywind3000/z.lua/issues/29)).
