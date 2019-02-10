@@ -385,14 +385,9 @@ function os.path.abspath(path)
 			if test ~= nil and test ~= '' then
 				return test
 			end
-		end
-		if os.path.isdir(path) then
-			if os.path.exists('/bin/sh') and os.path.exists('/bin/pwd') then
-				local cmd = "/bin/sh -c 'cd \"" ..path .."\"; /bin/pwd'"
-				test = os.call(cmd)
-				if test ~= nil and test ~= '' then
-					return test
-				end
+			test = os.call('realpath \'' .. path .. '\' 2> /dev/null')
+			if test ~= nil and test ~= '' then
+				return test
 			end
 		end
 		local test = os.path.which('perl')
