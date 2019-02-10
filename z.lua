@@ -4,7 +4,7 @@
 -- z.lua - a cd command that learns, by skywind 2018, 2019
 -- Licensed under MIT license.
 --
--- Version 1.4.3, Last Modified: 2019/02/08 11:35
+-- Version 1.4.4, Last Modified: 2019/02/10 12:56
 --
 -- * 10x faster than fasd and autojump, 3x faster than z.sh
 -- * available for posix shells: bash, zsh, sh, ash, dash, busybox
@@ -1916,7 +1916,12 @@ function z_shell_init(opts)
 	print('ZLUA_SCRIPT="' .. os.scriptname() .. '"')
 	print('ZLUA_LUAEXE="' .. os.interpreter() .. '"')
 	print('')
-	print(script_zlua)
+	if not opts.legacy then
+		print(script_zlua)
+	else
+		local script = script_zlua:gsub('local ', ''):gsub('builtin ', '')
+		print(script)
+	end
 
 	local prompt_hook = (os.getenv("_ZL_NO_PROMPT_COMMAND") == nil)
 	local once = (os.getenv("_ZL_ADD_ONCE") ~= nil) or opts.once ~= nil
