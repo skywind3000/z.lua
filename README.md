@@ -17,7 +17,7 @@ For example, `z foo bar` would match `/foo/bar` but not `/bar/foo`.
 ## Features
 
 - **10x** times faster than **fasd** and **autojump**, **3x** times faster than **z.sh**.
-- Available for **posix shells**: bash, zsh, dash, sh, ash, busybox and etc.
+- Available for **posix shells**: bash, zsh, dash, sh, ash, ksh, busybox and etc.
 - Available for Fish Shell, Power Shell and Windows cmd.
 - Enhanced matching mode takes you to where ever you want precisely.
 - Allow updating database only if `$PWD` changed with "$_ZL_ADD_ONCE" set to 1.
@@ -81,7 +81,11 @@ z -b foo    # cd to the parent directory starting with foo
 
       eval "$(lua /path/to/z.lua --init posix)"
 
-  (sh, ash, dash and busybox have been tested)
+  For very old shells like ksh (Korn Shell), some keywords like `local` and `builtin` are unsupported, you can use:
+
+      eval "$(lua /path/to/z.lua --init posix legacy)"
+
+  To generate old posix compatible script.
 
 - Fish Shell:
 
@@ -393,6 +397,7 @@ awk -F '\t' '{print $2 "|" $1 "|" 0}' $FN >> ~/.zlua
 
 ## History
 
+- 1.4.4 (2019-02-10): supports legacy posix shells like ksh, init with `z.lua --init posix legacy`.
 - 1.4.3 (2019-02-08): fixed minor issues.
 - 1.4.2 (2019-02-06): you can disabled path validation by `$_ZL_NO_CHECK`, and use `z --purge` to clear bad paths manually.
 - 1.4.1 (2019-02-06): fzf tab-completion in bash (@[BarbUk](https://github.com/BarbUk)), fixed hang in fish shell (close [#29](https://github.com/skywind3000/z.lua/issues/29)).
