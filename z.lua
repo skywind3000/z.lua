@@ -1878,7 +1878,7 @@ if [ "$TERM" != "dumb" ] && command -v fzf >/dev/null 2>&1; then
 
 	_zlua_fzf_complete() {
 		local query="${COMP_WORDS[COMP_CWORD]}"
-		local selected=$(_zlua | sed "s|$HOME|\~|" | $zlua_fzf --query "$query")
+		local selected=$(_zlua | sed "s|$HOME|\~|" | $zlua_fzf --query "$query" | sed 's/^[0-9,.]* *//')
 
 		if [ -n "$selected" ]; then
 			COMPREPLY=( "$selected" )
