@@ -1893,7 +1893,7 @@ if [ "$TERM" != "dumb" ] && command -v fzf >/dev/null 2>&1; then
 		fi
 	}
 
-	complete -o bashdefault -F _zlua_fzf_complete ${_ZL_CMD:-z}
+	complete -o bashdefault -o nospace -F _zlua_fzf_complete ${_ZL_CMD:-z}
 fi
 ]]
 
