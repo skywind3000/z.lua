@@ -81,7 +81,7 @@ z -b foo    # cd to the parent directory starting with foo
 
       eval "$(lua /path/to/z.lua --init posix)"
 
-  For very old shells like ksh (Korn Shell), some keywords like `local` and `builtin` are unsupported, you can use:
+  For old shells like ksh (Korn Shell), some features are missing, you can try:
 
       eval "$(lua /path/to/z.lua --init posix legacy)"
 
