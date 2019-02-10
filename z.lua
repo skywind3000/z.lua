@@ -1886,9 +1886,10 @@ if [ "$TERM" != "dumb" ] && command -v fzf >/dev/null 2>&1; then
 		local selected=$(_zlua | sed "s|$HOME|\~|" | $zlua_fzf --query "$query")
 
 		if [ -n "$selected" ]; then
-			COMPREPLY=("$selected")
-			return 0
+			COMPREPLY=( "$selected" )
 		fi
+
+		printf '\e[5n'
 	}
 
 	complete -o bashdefault -o nospace -F _zlua_fzf_complete ${_ZL_CMD:-z}
