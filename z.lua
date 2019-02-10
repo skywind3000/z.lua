@@ -4,7 +4,7 @@
 -- z.lua - a cd command that learns, by skywind 2018, 2019
 -- Licensed under MIT license.
 --
--- Version 1.4.4, Last Modified: 2019/02/10 15:07
+-- Version 1.4.5, Last Modified: 2019/02/10 21:53
 --
 -- * 10x faster than fasd and autojump, 3x faster than z.sh
 -- * available for posix shells: bash, zsh, sh, ash, dash, busybox
@@ -1910,8 +1910,11 @@ function z_shell_init(opts)
 	print('ZLUA_SCRIPT="' .. os.scriptname() .. '"')
 	print('ZLUA_LUAEXE="' .. os.interpreter() .. '"')
 	print('')
-	if not opts.legacy then
+	if not opts.posix then
 		print(script_zlua)
+	elseif not opts.legacy then
+		local script = script_zlua:gsub('builtin ', '')
+		print(script)
 	else
 		local script = script_zlua:gsub('local ', ''):gsub('builtin ', '')
 		print(script)
@@ -1953,7 +1956,6 @@ function z_shell_init(opts)
 			end
 			print(script)
 		end
-		print('_ZL_NO_BUILTIN_CD=1')
 	else
 		if prompt_hook then
 			print('if [ -n "$BASH_VERSION" ]; then')
@@ -1970,7 +1972,7 @@ function z_shell_init(opts)
 			-- print(script_complete_zsh)
 			print('else')
 			print(once and script_init_posix_once or script_init_posix)
-			print('_ZL_NO_BUILTIN_CD=1')
+			print('builtin() { cd "$2"; }')
 			print('fi')
 		end
 	end
@@ -2097,7 +2099,7 @@ function z_fish_init(opts)
 		print('set -x _ZL_MATCH_MODE 1')
 	end
 	if opts.echo then
-		print('set -x _ZL_ECHO 1')
+		print('set _ZL_ECHO 1')
 	end
 	if opts.nc then
 		print('set -x _ZL_NO_CHECK 1')
