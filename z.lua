@@ -1883,9 +1883,7 @@ if [ "$TERM" != "dumb" ] && command -v fzf >/dev/null 2>&1; then
 
 	_zlua_fzf_complete() {
 		local query="${COMP_WORDS[COMP_CWORD]}"
-		local selected=$(_zlua --complete | $zlua_fzf --query "$query")
-
-		printf '\e[5n'
+		local selected=$(_zlua | sed "s|$HOME|\~|" | $zlua_fzf --query "$query")
 
 		if [ -n "$selected" ]; then
 			COMPREPLY=("$selected")
@@ -1938,7 +1936,7 @@ function z_shell_init(opts)
 		end
 		print(script_complete_bash)
 		if opts.fzf ~= nil then
-			fzf_cmd = "fzf --reverse --inline-info +s"
+			fzf_cmd = "fzf --nth 2 --reverse --inline-info +s --tac"
 			if not os.getenv('_ZL_FZF_FULLSCR') then
 				fzf_cmd = fzf_cmd .. ' --height 35%'
 			end
