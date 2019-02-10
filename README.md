@@ -401,7 +401,7 @@ awk -F '\t' '{print $2 "|" $1 "|" 0}' $FN >> ~/.zlua
 - 1.4.4 (2019-02-10): supports legacy posix shells like ksh, init with `z.lua --init posix legacy`.
 - 1.4.3 (2019-02-08): fixed minor issues.
 - 1.4.2 (2019-02-06): you can disabled path validation by `$_ZL_NO_CHECK`, and use `z --purge` to clear bad paths manually.
-- 1.4.1 (2019-02-06): fzf tab-completion in bash (@[BarbUk](https://github.com/BarbUk)), fixed hang in fish shell (close [#29](https://github.com/skywind3000/z.lua/issues/29)).
+- 1.4.1 (2019-02-06): fzf tab-completion in bash ([@BarbUk](https://github.com/BarbUk)), fixed hang in fish shell (close [#29](https://github.com/skywind3000/z.lua/issues/29)).
 - 1.4.0 (2019-02-04): Ported to Power Shell ([@manhong2112](https://github.com/manhong2112))
 - 1.3.0 (2019-02-04): Backward jumping, prevent "cd ../../.." repeatly.
 - 1.2.0 (2019-02-03): Upgrade string lib and path lib.
@@ -431,7 +431,7 @@ This project needs help for the tasks below:
 - Thanks to [@vigneshwaranr](https://github.com/vigneshwaranr) and [@shyiko](https://github.com/shyiko) for inspiring me the backward jumping.
 - Thanks to [@TeddyDD](https://github.com/TeddyDD) for Fish Shell porting.
 - Thanks to [@manhong2112](https://github.com/manhong2112) for Power Shell porting.
-- Thanks to @[BarbUk](https://github.com/BarbUk) for fzf completion in Bash.
+- Thanks to [@BarbUk](https://github.com/BarbUk) for fzf completion in Bash.
 
 And many others.
 
