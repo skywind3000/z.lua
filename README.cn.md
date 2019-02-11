@@ -421,11 +421,11 @@ sys     0m0.030s
 
 ## Why Lua ?
 
-更好的兼容性，最开始我想要在我的路由器和 Nas 系统上使用 z.sh，但是它依赖的 awk 版本比较高，这两个系统上的 awk 都是一个 busybox 的经过裁剪的 awk ，z.sh 完全无法正常工作。使用 shell 开发还有一个问题是严重依赖 shell 的版本，很多逻辑既要在 zsh 下可以运行，又要在 dash 下能跑，用 lua 开发的话，核心逻辑全部写成 lua 不用考虑太多琐碎的兼容性。
+更好的兼容性，最开始我想要在我的路由器和 Nas 系统上使用 z.sh，但是它依赖的 awk 版本比较高，这两个系统上的 awk 都是一个 busybox 的经过裁剪的 awk ，z.sh 完全无法正常工作。使用 shell 开发还有一个问题是严重依赖 shell 的版本，很多逻辑既要在 zsh 下可以运行，又要在 dash 下能跑，用 lua 开发的话，核心逻辑全部写成 lua 不用考虑太多琐碎的兼容性，可以为各种 shell 提供完全一致的体验。
 
 描述力强，可以更好的实现核心功能，同时速度更快，纯 shell 开发的话，太多语句是通过子进程 shell 的模式运行，所以性能很差，而 Python 开发的话启动速度又太慢，我在 Cygwin/msys 下用 z.sh 都觉得很卡，autojump/fasd 卡到不能用。
 
-最关键的一点，Lua 可以方便的兼容 Windows cmd 以及 cmder 和 ConEmu。
+最关键的一点，Lua 速度很快 200 KB 的可执行程序，启动速度是 python 的 3倍，perl 的 2 倍，很多命令行工具 go/rust 写成，动不动就 2MB / 3MB，他们都还没有完成加载，lua 脚本可能都运行完了。
 
 
 ## Credit
