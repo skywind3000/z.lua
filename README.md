@@ -22,7 +22,7 @@ For example, `z foo bar` would match `/foo/bar` but not `/bar/foo`.
 - Enhanced matching mode takes you to where ever you want precisely.
 - Allow updating database only if `$PWD` changed with "$_ZL_ADD_ONCE" set to 1.
 - Interactive selection enables you to choose where to go before cd.
-- Interactive selection with FZF (optional).
+- Intergrated with FZF (optional) for interactive selection and bash completion.
 - Quickly go back to a parent directory instead of typing "cd ../../..".
 - Corresponding experience in different shells and operating systems. 
 - Compatible with Lua 5.1, 5.2 and 5.3+
@@ -277,6 +277,7 @@ Usually, `z -I` can be aliased to `zf` (z + fuzzy finder) for convenience. If th
 
 NOTE: For fish shell, this feature requires fish 2.7.0 or above. You can specify fzf executable in `$_ZL_FZF` environment variable, `"fzf"` will be called by default.
 
+
 ## Jump Backwards
 
 New option `"-b"` can quickly go back to a specific parent directory in bash instead of typing "cd ../../.." redundantly.
@@ -329,6 +330,29 @@ $ ls -l `zb git`
 **Bonus**: `zb ..` equals to `cd ..`, `zb ...` equals to `cd ../..` and `zb ....` equals to `cd ../../..`, and so on. Finally, `zb ..20` equals to `cd (..)x20`.
 
 
+## Completion
+
+For zsh/fish, completion can be triggered by `z foo<tab>`. and a list of candidates will display in zsh / fish:
+
+![](images/complete-1.png)
+
+Press `<tab>` again, you can select your destination in a visualized way.
+
+Bash is not as powerful as zsh/fish, so we introduced fzf-completion for bash, initialize your z.lua like this:
+
+```bash
+eval "$(lua /path/to/z.lua --init bash enhanced once echo fzf)"
+```
+
+Then press `<tab>` after `z xxx`:
+
+![](images/complete-2.png)
+
+With the help of fzf, completion in bash is much easier now.
+
+NOTE: To enable this, command `fzf` must be found in `$PATH` before initialization.
+
+
 ## Tips
 
 Recommended aliases you may find useful:
@@ -338,6 +362,20 @@ alias zc='z -c'      # restrict matches to subdirs of $PWD
 alias zz='z -i'      # cd with interactive selection
 alias zf='z -I'      # use fzf to select in multiple matches
 alias zb='z -b'      # quickly cd to the parent directory
+```
+
+Import data from z.sh：
+
+
+```bash
+cat ~/.z >> ~/.zlua
+```
+
+Import data from autojump：
+
+```bash
+FN="$HOME/.local/share/autojump/autojump.txt"
+awk -F '\t' '{print $2 "|" $1 "|" 0}' $FN >> ~/.zlua
 ```
 
 
@@ -371,21 +409,6 @@ sys     0m0.030s
 As you see, z.lua is the fastest one and requires less resource.
 
 
-## Import Database
-
-You can import your datafile from z.sh by：
-
-
-```bash
-cat ~/.z >> ~/.zlua
-```
-
-Import datafile from autojump by：
-
-```bash
-FN="$HOME/.local/share/autojump/autojump.txt"
-awk -F '\t' '{print $2 "|" $1 "|" 0}' $FN >> ~/.zlua
-```
 
 ## Reputation
 

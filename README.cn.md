@@ -18,7 +18,7 @@ z.lua 是一个快速路径切换工具，它会跟踪你在 shell 下访问过�
 - 使用增强匹配算法，更准确的带你去到你想去的地方。
 - 低占用，能够仅在当前路径改变时才更新数据库（将 `$_ZL_ADD_ONCE` 设成 1）。
 - 交互选择模式，如果有多个匹配结果的话，跳转前允许你进行选择。
-- 交互选择模式，支持使用 fzf 进行可视化结果筛选（可选）。
+- 集成 fzf （可选），可以用来做可视化选择或者 bash 参数补全。
 - 快速跳转到父目录，或者项目根目录，代替反复 “cd ../../.." 。
 - 兼容 lua 5.1, 5.2 和 5.3 以上版本。
 - 自包含且无额外依赖，单个 `z.lua` 文件完成所有工作。
@@ -312,6 +312,30 @@ $ ls -l `zb git`
 **Bonus**：`zb ..` 相当于 `cd ..`，`zb ...` 相当于 `cd ../..`，而 `zb ....` 相当于 `cd ../../..` 等等。 最后 `zb ..20` 等同于调用 `cd ..` 二十次。
 
 
+## 补全功能
+
+zsh/fish 的补全系统是比较完善的，使用 `z foo<tab>` 就能触发补全，显示一个列表：
+
+![](images/complete-1.png)
+
+再次按 `<tab>` 键，就可以用可视化的方式对列表进行选择。
+
+在 bash 下面补全系统没有那么强大，所以 z.lua 引入了 fzf 补全，初始化使用：
+
+```bash
+eval "$(lua /path/to/z.lua --init bash enhanced once echo fzf)"
+```
+
+然后你在 bash 中，输入部分关键字后按 tab，就能把匹配的路径列出来：
+
+![](images/complete-2.png)
+
+有了 fzf 的帮助，bash 下补全也非常方便了。
+
+注意：该功能在初始化 z.lua 之前，会检测 $PATH 中是否有 fzf 这个程序，有的话才启用。
+
+
+
 ## Tips
 
 推荐一些常用的命令别名:
@@ -322,6 +346,21 @@ alias zz='z -i'      # 使用交互式选择模式
 alias zf='z -I'      # 使用 fzf 对多个结果进行选择
 alias zb='z -b'      # 快速回到父目录
 ```
+
+导入 z.sh 的数据：
+
+
+```bash
+cat ~/.z >> ~/.zlua
+```
+
+导入 autojump 的数据：
+
+```bash
+FN="$HOME/.local/share/autojump/autojump.txt"
+awk -F '\t' '{print $2 "|" $1 "|" 0}' $FN >> ~/.zlua
+```
+
 
 
 
@@ -360,22 +399,6 @@ sys     0m0.030s
 描述力强，可以更好的实现核心功能，同时速度更快，纯 shell 开发的话，太多语句是通过子进程 shell 的模式运行，所以性能很差，而 Python 开发的话启动速度又太慢，我在 Cygwin/msys 下用 z.sh 都觉得很卡，autojump/fasd 卡到不能用。
 
 最关键的一点，Lua 可以方便的兼容 Windows cmd 以及 cmder 和 ConEmu。
-
-## Import database
-
-导入 z.sh 的数据文件很简单，格式是一样的：
-
-
-```bash
-cat ~/.z >> ~/.zlua
-```
-
-导入 autojump 数据文件需要稍微转换下：
-
-```bash
-FN="$HOME/.local/share/autojump/autojump.txt"
-awk -F '\t' '{print $2 "|" $1 "|" 0}' $FN >> ~/.zlua
-```
 
 
 ## Credit
