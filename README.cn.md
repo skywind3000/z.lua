@@ -339,7 +339,7 @@ eval "$(lua /path/to/z.lua --init bash enhanced once echo fzf)"
 
 ![](images/complete-2.png)
 
-有了 fzf 的帮助，bash 下补全也非常方便了。
+有了 fzf 的帮助，bash 下补全也非常方便了。注意看左边的权重，fzf 搜索过滤的顺序是有讲究的，Frecent 权重越高的越靠前，不是乱排序的，更不是简单的按字符串字母排序。这里完全保证权重越高的路径越靠近光标。
 
 注意：该功能在初始化 z.lua 之前，会检测 $PATH 中是否有 fzf 这个程序，有的话才启用。
 
