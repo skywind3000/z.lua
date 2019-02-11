@@ -352,6 +352,22 @@ With the help of fzf, completion in bash is much easier now.
 
 NOTE: To enable this, command `fzf` must be found in `$PATH` before initialization.
 
+## Most Recently Accessed Path
+
+We always use `cd -` to go back to last accessed directory, but with the help of `fzf` we can achieve this productively:
+
+```bash
+alias zh=`z -t -I .`
+```
+
+The new alias `zh` (jump to history) uses a parameter `-t` to sort the result by time and `-I` to use `fzf` for selection. the result is:
+
+![](images/mru.png)
+
+The first column indicates how many seconds ago you have visited, and the second column is the path name. With `zh`, you can type some character to use string matching in fzf, or use `<Up>`/`<Down>` (as well as `CTRL+j/k`) to move the selector (red `>`) up and down. 
+
+At last, press `<enter>` to accept or `<ESC>` to give up.
+
 
 ## Tips
 
@@ -362,6 +378,7 @@ alias zc='z -c'      # restrict matches to subdirs of $PWD
 alias zz='z -i'      # cd with interactive selection
 alias zf='z -I'      # use fzf to select in multiple matches
 alias zb='z -b'      # quickly cd to the parent directory
+alias zh='zf -t .'   # cd to MRU.
 ```
 
 Import data from z.sh：
