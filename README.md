@@ -338,7 +338,7 @@ For zsh/fish, completion can be triggered by `z foo<tab>`. and a list of candida
 
 Press `<tab>` again, you can select your destination in a visualized way.
 
-Bash is not as powerful as zsh/fish, so we introduced fzf-completion for bash, initialize your z.lua like this:
+Bash is not as powerful as zsh/fish, so we introduced fzf-completion for bash, initialize your z.lua and append `fzf` keyword after `--init`:
 
 ```bash
 eval "$(lua /path/to/z.lua --init bash enhanced once echo fzf)"

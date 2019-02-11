@@ -320,7 +320,7 @@ zsh/fish 的补全系统是比较完善的，使用 `z foo<tab>` 就能触发补
 
 再次按 `<tab>` 键，就可以用可视化的方式对列表进行选择。
 
-在 bash 下面补全系统没有那么强大，所以 z.lua 引入了 fzf 补全，初始化使用：
+在 bash 下面补全系统没有那么强大，所以 z.lua 引入了 fzf 补全，初始化时在 `--init` 后追加 `fzf` 关键字：
 
 ```bash
 eval "$(lua /path/to/z.lua --init bash enhanced once echo fzf)"
