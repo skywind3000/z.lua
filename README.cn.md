@@ -311,6 +311,15 @@ $ ls -l `zb git`
 
 **Bonus**：`zb ..` 相当于 `cd ..`，`zb ...` 相当于 `cd ../..`，而 `zb ....` 相当于 `cd ../../..` 等等。 最后 `zb ..20` 等同于调用 `cd ..` 二十次。
 
+环境变量 `$_ZL_ROOT_MARKERS` 是一个逗号分隔的列表，用来识别项目根目录，可以重定义成：
+
+
+```bash
+export _ZL_ROOT_MARKERS=".git,.svn,.hg,.root,package.json"
+```
+
+这样在用 `zb` 时，可以回到包含 `.root`文件，或者 `package.json` 文件的父目录。
+
 
 ## 补全功能
 
