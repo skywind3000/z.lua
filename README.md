@@ -368,6 +368,8 @@ The first column indicates how many seconds ago you have visited, and the second
 
 At last, press `<enter>` to accept or `<ESC>` to give up.
 
+Remember to enable the [enhanced matching](#enhanced-matching) algorithm, the current working directory can be skipped with it.
+
 
 ## Tips
 
