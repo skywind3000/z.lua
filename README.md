@@ -335,7 +335,7 @@ Environment variable `$_ZL_ROOT_MARKERS` is a comma separated list for project r
 export _ZL_ROOT_MARKERS=".git,.svn,.hg,.root,package.json"
 ```
 
-If you want `zb` jump back to a parent directory contains a `.root` or `package.json`.
+If you want `zb` jump back to a parent directory contains a `.root` or `package.json` in it.
 
 
 ## Completion
