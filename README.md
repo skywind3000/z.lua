@@ -365,7 +365,7 @@ NOTE: To enable this, command `fzf` must be found in `$PATH` before initializati
 We always use `cd -` to go back to last accessed directory, but with the help of `fzf` we can achieve this productively:
 
 ```bash
-alias zh=`z -t -I .`
+alias zh='z -t -I .'
 ```
 
 The new alias `zh` (jump to history) uses a parameter `-t` to sort the result by time and `-I` to use `fzf` for selection. the result is:

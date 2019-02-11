@@ -350,7 +350,7 @@ eval "$(lua /path/to/z.lua --init bash enhanced once echo fzf)"
 
 
 ```bash
-alias zh=`z -t -I .`
+alias zh='z -t -I .'
 ```
 
 首先定义个新的别名 `zh`（回到历史路径的意思），我们使用了 `-t` 参数来告诉 `z.lua` 按照时间戳作为权重进行排序，同时 `-I` 启用 fzf 进行搜索，最后的句号代表任意路径。
