@@ -28,6 +28,6 @@ alias zz='z -i'
 alias zc='z -c'
 alias zf='z -I'
 alias zb='z -b'
-alias zh='z -I -t'
+alias zh='z -I -t .'
 alias zzc='zz -c'
 
