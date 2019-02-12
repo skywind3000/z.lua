@@ -124,7 +124,7 @@ z -b foo    # cd to the parent directory starting with foo
 - set `$_ZL_CMD` in .bashrc/.zshrc to change the command (default z).
 - set `$_ZL_DATA` in .bashrc/.zshrc to change the datafile (default ~/.zlua).
 - set `$_ZL_NO_PROMPT_COMMAND` if you're handling PROMPT_COMMAND yourself.
-- set `$_ZL_EXCLUDE` to an array of directories to exclude.
+- set `$_ZL_EXCLUDE_DIRS` to a comma separated list of dirs to exclude.
 - set `$_ZL_ADD_ONCE` to '1' to update database only if `$PWD` changed.
 - set `$_ZL_MAXAGE` to define a aging threshold (default is 5000).
 - set `$_ZL_CD` to specify your own cd command.

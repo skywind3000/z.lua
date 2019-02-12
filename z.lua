@@ -4,7 +4,7 @@
 -- z.lua - a cd command that learns, by skywind 2018, 2019
 -- Licensed under MIT license.
 --
--- Version 1.4.5, Last Modified: 2019/02/10 21:53
+-- Version 1.4.6, Last Modified: 2019/02/12 19:19
 --
 -- * 10x faster than fasd and autojump, 3x faster than z.sh
 -- * available for posix shells: bash, zsh, sh, ash, dash, busybox
@@ -67,7 +67,7 @@
 --   set $_ZL_CMD in .bashrc/.zshrc to change the command (default z).
 --   set $_ZL_DATA in .bashrc/.zshrc to change the datafile (default ~/.zlua).
 --   set $_ZL_NO_PROMPT_COMMAND if you're handling PROMPT_COMMAND yourself.
---   set $_ZL_EXCLUDE to an array of directories to exclude.
+--   set $_ZL_EXCLUDE_DIRS to a comma separated list of dirs to exclude.
 --   set $_ZL_ADD_ONCE to 1 to update database only if $PWD changed.
 --   set $_ZL_CD to specify your own cd command
 --   set $_ZL_ECHO to 1 to display new directory name after cd.
@@ -1649,7 +1649,7 @@ end
 function z_init()
 	local _zl_data = os.getenv('_ZL_DATA')
 	local _zl_maxage = os.getenv('_ZL_MAXAGE')
-	local _zl_exclude = os.getenv('_ZL_EXCLUDE')
+	local _zl_exclude = os.getenv('_ZL_EXCLUDE_DIRS')
 	local _zl_cmd = os.getenv('_ZL_CMD')
 	local _zl_matchname = os.getenv('_ZL_MATCH_NAME')
 	local _zl_skippwd = os.getenv('_ZL_SKIP_PWD')
@@ -1674,7 +1674,7 @@ function z_init()
 		end
 	end
 	if _zl_exclude ~= nil and _zl_exclude ~= "" then
-		local part = _zl_exclude:split(windows and ';' or ':')
+		local part = _zl_exclude:split(',')
 		local insensitive = path_case_insensitive()
 		for _, name in ipairs(part) do
 			if insensitive then
