@@ -1683,7 +1683,7 @@ function z_init()
 			if windows then
 				name = os.path.norm(name)
 			end
-			Z_EXCLUDE[name] = 1
+			table.insert(Z_EXCLUDE, name)
 		end
 	end
 	if _zl_cmd ~= nil then
