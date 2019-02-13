@@ -1881,8 +1881,8 @@ if [ "$TERM" != "dumb" ] && command -v fzf >/dev/null 2>&1; then
 	# To redraw line after fzf closes (printf '\e[5n')
 	bind '"\e[0n": redraw-current-line'
 	_zlua_fzf_complete() {
-		local args=("${COMP_WORDS[@]:1}")
-		local selected=$(_zlua -l "${args[@]}" | sed "s|$HOME|\~|" | $zlua_fzf | sed 's/^[0-9,.]* *//')
+		local query="${COMP_WORDS[COMP_CWORD]}"
+		local selected=$(_zlua | sed "s|$HOME|\~|" | $zlua_fzf --query "$query" | sed 's/^[0-9,.]* *//')
 		if [ -n "$selected" ]; then
 			COMPREPLY=( "$selected" )
 		fi
