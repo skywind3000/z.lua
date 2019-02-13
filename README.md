@@ -446,6 +446,7 @@ As you see, z.lua is the fastest one and requires less resource.
 
 ## History
 
+- 1.4.7 (2019-02-13): Be aware of all arguments in fzf completion, don't use regex in backward jumping (use plain text).
 - 1.4.6 (2019-02-12): change: `_ZL_EXCLUDE_DIRS` to a comma separated list of dirs to exclude.
 - 1.4.5 (2019-02-10): improve bash fzf completion and posix compatibility.
 - 1.4.4 (2019-02-10): supports legacy posix shells like ksh, init with `z.lua --init posix legacy`.

@@ -4,7 +4,7 @@
 -- z.lua - a cd command that learns, by skywind 2018, 2019
 -- Licensed under MIT license.
 --
--- Version 1.4.6, Last Modified: 2019/02/12 19:19
+-- Version 1.4.7, Last Modified: 2019/02/13 16:57
 --
 -- * 10x faster than fasd and autojump, 3x faster than z.sh
 -- * available for posix shells: bash, zsh, sh, ash, dash, busybox
@@ -180,7 +180,7 @@ function string:rfind(key)
 		return self:len(), 0
 	end
 	local length = self:len()
-	local start, ends = self:reverse():find(key:reverse())
+	local start, ends = self:reverse():find(key:reverse(), 1, true)
 	if start == nil then
 		return nil
 	end
@@ -1499,7 +1499,7 @@ function cd_backward(args, options, pwd)
 			return os.path.normpath(path)
 		else
 			local test = windows and pwd:gsub('\\', '/') or pwd
-			local key = '/' .. args[1]
+			local key = windows and args[1]:lower() or args[1]
 			if not key:match('%u') then
 				test = test:lower()
 			end
@@ -1507,7 +1507,12 @@ function cd_backward(args, options, pwd)
 			if not pos then
 				return nil
 			end
-			local ends = test:find('/', pos + key:len())
+			if pos > 1 then
+				if test:sub(pos - 1, pos - 1) ~= '/' then
+					return nil
+				end
+			end
+			local ends = test:find('/', pos + key:len(), 0, true)
 			if not ends then
 				ends = test:len()
 			end
@@ -1875,18 +1880,14 @@ local script_fzf_complete_bash = [[
 if [ "$TERM" != "dumb" ] && command -v fzf >/dev/null 2>&1; then
 	# To redraw line after fzf closes (printf '\e[5n')
 	bind '"\e[0n": redraw-current-line'
-
 	_zlua_fzf_complete() {
-		local query="${COMP_WORDS[COMP_CWORD]}"
-		local selected=$(_zlua | sed "s|$HOME|\~|" | $zlua_fzf --query "$query" | sed 's/^[0-9,.]* *//')
-
+		local args=("${COMP_WORDS[@]:1}")
+		local selected=$(_zlua -l "${args[@]}" | sed "s|$HOME|\~|" | $zlua_fzf | sed 's/^[0-9,.]* *//')
 		if [ -n "$selected" ]; then
 			COMPREPLY=( "$selected" )
 		fi
-
 		printf '\e[5n'
 	}
-
 	complete -o bashdefault -o nospace -F _zlua_fzf_complete ${_ZL_CMD:-z}
 fi
 ]]
@@ -1901,6 +1902,7 @@ _zlua_zsh_tab_completion() {
 }
 compctl -U -K _zlua_zsh_tab_completion _zlua
 ]]
+
 
 
 -----------------------------------------------------------------------
