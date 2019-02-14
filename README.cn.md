@@ -287,27 +287,7 @@ PS：你可以使用 `$_ZL_FZF` 环境变量来精确指明 fzf 的可执行路�
   => cd ~/github/ghost/test
 ```
 
-向后跳转同样也支持环境变量 `$_ZL_ECHO`（用来显示跳转结果），这样为搭配其他工具提供了可能性（并不需要改变当前工作目录）：
-
-
-```bash
-# 假设我们位于 ~/github/vim/src/libvterm
-# 打开 $_ZL_ECHO 用于在每次跳转后调用一次 pwd 显示当前目录
-$ _ZL_ECHO=1
-
-# 看看我项目根目录（有 .git 那个）目录里有什么？
-$ ls -l `zb`
-  => ls -l ~/github/vim
-
-# 检查 "<项目根目录>/logs" 下面的日志
-$ tail -f `zb`/logs/error.log
-  => tail -f ~/github/vim/logs/error.log
-
-# 查看一下某一级父目录里有些啥
-$ ls -l `zb git`
-  => ls -l ~/github
-
-```
+向后跳转同样也支持环境变量 `$_ZL_ECHO`（用来显示跳转结果），这样可以搭配其他工具，在目标目录内执行命令，而并不需要改变当前工作目录（比如：``ls `zb git` ``）。
 
 **Bonus**：`zb ..` 相当于 `cd ..`，`zb ...` 相当于 `cd ../..`，而 `zb ....` 相当于 `cd ../../..` 等等。 最后 `zb ..20` 等同于调用 `cd ..` 二十次。
 

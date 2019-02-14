@@ -306,26 +306,8 @@ Let's start by aliasing `z -b` to `zb`:
   => cd ~/github/ghost/test
 ```
 
-Backward jumping can also be used with `$_ZL_ECHO` option (echo $pwd), which makes it possible to combine them with other tools (without actually changing the working directory):
+Backward jumping can also be used with `$_ZL_ECHO` option (echo $PWD after cd), which makes it possible to combine them with other tools without actually changing the working directory (eg. ``ls `zb git` ``). 
 
-```bash
-# Assuming we are in ~/github/vim/src/libvterm
-# Enable $_ZL_ECHO to emit a pwd command after cd
-$ _ZL_ECHO=1
-
-# see what's in my project root
-$ ls -l `zb`
-  => ls -l ~/github/vim
-
-# check log in "<project root>/logs"
-$ tail -f `zb`/logs/error.log
-  => tail -f ~/github/vim/logs/error.log
-
-# list some parent directory
-$ ls -l `zb git`
-  => ls -l ~/github
-
-```
 
 **Bonus**: `zb ..` equals to `cd ..`, `zb ...` equals to `cd ../..` and `zb ....` equals to `cd ../../..`, and so on. Finally, `zb ..20` equals to `cd (..)x20`.
 
