@@ -446,6 +446,7 @@ As you see, z.lua is the fastest one and requires less resource.
 
 ## History
 
+- 1.4.8 (2019-02-14): fixed minor issues in backward jumping.
 - 1.4.7 (2019-02-13): Don't use regex in backward jumping (use plain text instead).
 - 1.4.6 (2019-02-12): change: `_ZL_EXCLUDE_DIRS` to a comma separated list of dirs to exclude.
 - 1.4.5 (2019-02-10): improve bash fzf completion and posix compatibility.

@@ -4,7 +4,7 @@
 -- z.lua - a cd command that learns, by skywind 2018, 2019
 -- Licensed under MIT license.
 --
--- Version 1.4.7, Last Modified: 2019/02/13 20:30
+-- Version 1.4.8, Last Modified: 2019/02/14 10:19
 --
 -- * 10x faster than fasd and autojump, 3x faster than z.sh
 -- * available for posix shells: bash, zsh, sh, ash, dash, busybox
@@ -1503,21 +1503,23 @@ function cd_backward(args, options, pwd)
 			if not key:match('%u') then
 				test = test:lower()
 			end
-			local pos, _ = test:rfind(key)
-			if not pos then
-				return nil
+			local pos, ends = test:rfind('/' .. key)
+			if pos then
+				ends = test:find('/', pos + key:len() + 1, true)
+				ends = ends and ends or test:len()
+				return os.path.normpath(pwd:sub(1, ends))
+			elseif windows and test:startswith(key) then
+				ends = test:find('/', key:len(), true)
+				ends = ends and ends or test:len()
+				return os.path.normpath(pwd:sub(1, ends))
 			end
-			if pos > 1 then
-				if test:sub(pos - 1, pos - 1) ~= '/' then
-					return nil
-				end
+			pos = test:rfind(key)
+			if pos then
+				ends = test:find('/', pos + key:len(), true)
+				ends = ends and ends or test:len()
+				return os.path.normpath(pwd:sub(1, ends))
 			end
-			local ends = test:find('/', pos + key:len(), 0, true)
-			if not ends then
-				ends = test:len()
-			end
-			local path = pwd:sub(1, (not ends) and test:len() or ends)
-			return os.path.normpath(path)
+			return nil
 		end
 	else
 		local test = windows and pwd:gsub('\\', '/') or pwd
