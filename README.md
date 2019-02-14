@@ -308,9 +308,6 @@ Let's start by aliasing `z -b` to `zb`:
 
 Backward jumping can also be used with `$_ZL_ECHO` option (echo $PWD after cd), which makes it possible to combine them with other tools without actually changing the working directory (eg. ``ls `zb git` ``). 
 
-
-**Bonus**: `zb ..` equals to `cd ..`, `zb ...` equals to `cd ../..` and `zb ....` equals to `cd ../../..`, and so on. Finally, `zb ..20` equals to `cd (..)x20`.
-
 Environment variable `$_ZL_ROOT_MARKERS` is a comma separated list for project root locating, and can be redefined as:
 
 ```bash
@@ -318,6 +315,8 @@ export _ZL_ROOT_MARKERS=".git,.svn,.hg,.root,package.json"
 ```
 
 If you want `zb` jump back to a parent directory contains a `.root` or `package.json` in it.
+
+**Bonus**: `zb ..` equals to `cd ..`, `zb ...` equals to `cd ../..` and `zb ....` equals to `cd ../../..`, and so on. Finally, `zb ..20` equals to `cd (..)x20`.
 
 
 ## Completion
