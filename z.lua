@@ -625,7 +625,7 @@ function os.path.split(path)
 		return path:sub(1, 1), path:sub(2)
 	elseif windows then
 		local drive = path:match('^%a:') and path:sub(1, 2) or ''
-		if pos == 3 then
+		if pos == 3 and drive ~= '' then
 			return path:sub(1, 3), path:sub(4)
 		end
 	end
