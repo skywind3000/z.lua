@@ -357,7 +357,7 @@ The first column indicates how many seconds ago you have visited, and the second
 
 At last, press `<enter>` to accept or `<ESC>` to give up. 
 
-Version `v1.5.1` has introduced a simulated "dir stack", which can be manipulated by `z -`, `z --` and `z -{num}`:
+Version `v1.5.1` has introduced a simulated "dirstack", which can be manipulated by `z -`, `z --` and `z -{num}`:
 
 ```bash
 # display current dir stack
@@ -376,6 +376,8 @@ $ z -2
 $ z -
   => cd -
 ```
+
+The dirstack is calculated from z.lua's database, and has no dependency on shells or systems. You will not lost records after re-login, and history can be shared across shells and sessions.
 
 Remember to enable the [enhanced matching](#enhanced-matching) algorithm, the current working directory can be skipped with it.
 
