@@ -4,7 +4,7 @@
 -- z.lua - a cd command that learns, by skywind 2018, 2019
 -- Licensed under MIT license.
 --
--- Version 1.5.0, Last Modified: 2019/02/14 22:57
+-- Version 1.5.1, Last Modified: 2019/02/15 11:26
 --
 -- * 10x faster than fasd and autojump, 3x faster than z.sh
 -- * available for posix shells: bash, zsh, sh, ash, dash, busybox
@@ -122,7 +122,6 @@ Z_MATCHNAME = false
 Z_SKIPPWD = false
 
 os.LOG_NAME = os.getenv('_ZL_LOG_NAME')
-
 
 
 -----------------------------------------------------------------------
@@ -779,8 +778,16 @@ function os.getopt(argv)
 			if head ~= '-' then
 				break
 			end
-			local part = arg:split('=')
-			options[part[1]] = part[2] ~= nil and part[2] or ''
+			if arg == '-' then
+				options['-'] = ''
+			elseif arg == '--' then
+				options['-'] = '-'
+			elseif arg:match('^-%d+$') then
+				options['-'] = arg:sub(2)
+			else
+				local part = arg:split('=')
+				options[part[1]] = part[2] ~= nil and part[2] or ''
+			end
 		end
 		index = index + 1
 	end
@@ -1540,16 +1547,28 @@ end
 
 
 -----------------------------------------------------------------------
--- cd forward
+-- cd minus: "z -", "z --", "z -2"
 -----------------------------------------------------------------------
-function cd_forward(args, options)
-end
-
-
------------------------------------------------------------------------
--- cd detour
------------------------------------------------------------------------
-function cd_forward(args, options)
+function cd_minus(args, options)
+	Z_SKIPPWD = true
+	local M = z_match({}, 'time', Z_SUBDIR)
+	local size = #M
+	if options['-'] == '-' then
+		for i, item in ipairs(M) do
+			if i > 10 then break end
+			io.stderr:write(' ' .. tostring(i - 1) .. '  ' .. item.name .. '\n')
+		end
+	else
+		local level = 0
+		local num = options['-']
+		if num and num ~= '' then
+			level = tonumber(num)
+		end
+		if level >= 0 and level < size then
+			return M[level + 1].name
+		end
+	end
+	return nil
 end
 
 
@@ -1588,10 +1607,8 @@ function main(argv)
 		local path = ''
 		if options['-b'] then
 			path = cd_backward(args, options)
-		elseif options['-f'] then
-			path = cd_forward(args, options)
-		elseif options['-d'] then
-			path = cd_detour(args, options)
+		elseif options['-'] then
+			path = cd_minus(args, options)
 		elseif #args == 0 then
 			path = nil
 		else
@@ -2049,8 +2066,8 @@ function _zlua
 			else
 				_zlua_call "$_ZL_CD" "$dest"
 			end
+			if test -n "$_ZL_ECHO"; pwd; end
 		end
-		if test -n "$_ZL_ECHO"; pwd; end
 	end
 end
 
