@@ -108,4 +108,5 @@ if /i "%RunMode%"=="-n" (
 )
 
 :end
+echo.
 
