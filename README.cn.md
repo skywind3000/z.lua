@@ -341,6 +341,26 @@ alias zh='z -I -t .'
 
 第一列数据代表该路径多少秒以前访问过，第二列是路径名称。此时，你可以试着敲几个字母，用 fzf 的字符串模糊匹配进行定位，或者用光标键的上和下（CTRL+J/K 也可以）来上下移动，最后按回车 cd 过去，或者 ESC 放弃。
 
+版本 `v1.5.1` 引入了模拟 "dir stack" 可以通过： `z -`，`z --` 和 `z -{num}` 来操作:
+
+```bash
+# 显示当前的 dir stack
+$ z --    
+ 0  /home/skywind/work/match/memory-match
+ 1  /home/skywind/.local/etc
+ 2  /home/skywind/software/vifm-0.9.1
+ 3  /home/skywind/work
+ 4  /home/skywind/work/match
+
+# cd 到栈里 2 号路径
+$ z -2
+  => cd /home/skywind/software/vifm-0.9.1
+
+# 弹出栈顶 (cd 到上一次的老路径)，和 "z -0" 相同
+$ z -
+  => cd -
+```
+
 注意：最好把增强匹配模式打开，这样查看历史路径时可以把当前路径过滤掉。
 
 ## Tips

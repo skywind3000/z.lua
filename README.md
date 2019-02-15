@@ -355,9 +355,30 @@ The new alias `zh` (jump to history) uses a parameter `-t` to sort the result by
 
 The first column indicates how many seconds ago you have visited, and the second column is the path name. With `zh`, you can type some character to use string matching in fzf, or use `<Up>`/`<Down>` (as well as `CTRL+j/k`) to move the selector (red `>`) up and down. 
 
-At last, press `<enter>` to accept or `<ESC>` to give up.
+At last, press `<enter>` to accept or `<ESC>` to give up. 
+
+Version `v1.5.1` has introduced a simulated "dir stack", which can be manipulated by `z -`, `z --` and `z -{num}`:
+
+```bash
+# display current dir stack
+$ z --    
+ 0  /home/skywind/work/match/memory-match
+ 1  /home/skywind/.local/etc
+ 2  /home/skywind/software/vifm-0.9.1
+ 3  /home/skywind/work
+ 4  /home/skywind/work/match
+
+# cd to the 2nd directory in the stack
+$ z -2
+  => cd /home/skywind/software/vifm-0.9.1
+
+# popup stacktop (cd to previous directory), same as "z -0"
+$ z -
+  => cd -
+```
 
 Remember to enable the [enhanced matching](#enhanced-matching) algorithm, the current working directory can be skipped with it.
+
 
 
 ## Tips
@@ -427,6 +448,7 @@ As you see, z.lua is the fastest one and requires less resource.
 
 ## History
 
+- 1.5.1 (2019-02-15): new: simulated dir stack by `z -`, `z --` and `z -{num}`.
 - 1.5.0 (2019-02-14): fixed minor issues in backward jumping.
 - 1.4.7 (2019-02-13): Don't use regex in backward jumping (use plain text instead).
 - 1.4.6 (2019-02-12): change: `_ZL_EXCLUDE_DIRS` to a comma separated list of dirs to exclude.
