@@ -4,7 +4,7 @@
 -- z.lua - a cd command that learns, by skywind 2018, 2019
 -- Licensed under MIT license.
 --
--- Version 1.5.1, Last Modified: 2019/02/15 11:26
+-- Version 1.5.2, Last Modified: 2019/02/16 14:25
 --
 -- * 10x faster than fasd and autojump, 3x faster than z.sh
 -- * available for posix shells: bash, zsh, sh, ash, dash, busybox
@@ -1900,8 +1900,7 @@ if [ "$TERM" != "dumb" ] && command -v fzf >/dev/null 2>&1; then
 	# To redraw line after fzf closes (printf '\e[5n')
 	bind '"\e[0n": redraw-current-line'
 	_zlua_fzf_complete() {
-		local query="${COMP_WORDS[COMP_CWORD]}"
-		local selected=$(_zlua | sed "s|$HOME|\~|" | $zlua_fzf --query "$query" | sed 's/^[0-9,.]* *//')
+		local selected=$(_zlua -l "${COMP_WORDS[@]:1}" | sed "s|$HOME|\~|" | $zlua_fzf | sed 's/^[0-9,.]* *//')
 		if [ -n "$selected" ]; then
 			COMPREPLY=( "$selected" )
 		fi

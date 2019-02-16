@@ -343,21 +343,7 @@ NOTE: To enable this, command `fzf` must be found in `$PATH` before initializati
 
 ## Most Recently Accessed Path
 
-We always use `cd -` to go back to last accessed directory, but with the help of `fzf` we can achieve this productively:
-
-```bash
-alias zh='z -I -t .'
-```
-
-The new alias `zh` (jump to history) uses a parameter `-t` to sort the result by time and `-I` to use `fzf` for selection. the result is:
-
-![](images/mru.png)
-
-The first column indicates how many seconds ago you have visited, and the second column is the path name. With `zh`, you can type some character to use string matching in fzf, or use `<Up>`/`<Down>` (as well as `CTRL+j/k`) to move the selector (red `>`) up and down. 
-
-At last, press `<enter>` to accept or `<ESC>` to give up. 
-
-Version `v1.5.1` has introduced a simulated "dirstack", which can be manipulated by `z -`, `z --` and `z -{num}`:
+`z.lua` provides a fast way to visit MRU directories without typing any keyword. That is `dirstack`, which records recently visited paths and can be manipulated by `z -`, `z --` and `z -{num}`:
 
 ```bash
 # display current dir stack
@@ -377,7 +363,24 @@ $ z -
   => cd -
 ```
 
-The dirstack is calculated from z.lua's database, and has no dependency on shells or systems. You will not lost records after re-login, and history can be shared across shells and sessions.
+The `dirstack` is calculated from z.lua's database, and has no dependency on shells or systems. You will not lost records after re-login, and history can be shared across shells and sessions.
+
+There is another way to access MRU directories interactively by utilizing parameter `-I` (fzf) and `-t` (sort by time):
+
+```bash
+alias zh='z -I -t .'
+```
+
+The new alias `zh` (jump to history) uses a parameter `-t` to sort the result by time and `-I` to use `fzf` for selection. the result is:
+
+![](images/mru.png)
+
+The first column indicates how many seconds ago you have visited, and the second column is the path name. With `zh`, you can type some character to use string matching in fzf, or use `<Up>`/`<Down>` (as well as `CTRL+j/k`) to move the selector (red `>`) up and down. 
+
+At last, press `<enter>` to accept or `<ESC>` to give up. 
+
+Version `v1.5.1` has introduced a simulated "dirstack", which can be manipulated by `z -`, `z --` and `z -{num}`:
+
 
 Remember to enable the [enhanced matching](#enhanced-matching) algorithm, the current working directory can be skipped with it.
 
@@ -450,6 +453,7 @@ As you see, z.lua is the fastest one and requires less resource.
 
 ## History
 
+- 1.5.2 (2019-02-16): be aware of all arguments in fzf completion.
 - 1.5.1 (2019-02-15): new: simulated dir stack by `z -`, `z --` and `z -{num}`.
 - 1.5.0 (2019-02-14): fixed minor issues in backward jumping.
 - 1.4.7 (2019-02-13): Don't use regex in backward jumping (use plain text instead).
