@@ -243,9 +243,7 @@ eval "$(lua /path/to/z.lua --init zsh once)"
 source (lua /path/to/z.lua --init fish once | psub)
 ````
 
-When `add once` mode is off (default), z.lua will consider the time you spent in the directory (like z.sh), and when this mode is on, z.lua will consider the times you accessed the directory (like autojump).
-
-It could be much faster on slow hardware or Cygwin/MSYS. 
+When `add once` mode is off (default), z.lua will consider the time you spent in the directory (like z.sh). When this mode is on, z.lua will consider the times you accessed the directory (like autojump), and tt could be much faster on slow hardware like RaspberryPi or Cygwin/MSYS. 
 
 
 ## Interactive Selection
