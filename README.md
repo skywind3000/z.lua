@@ -379,9 +379,6 @@ The first column indicates how many seconds ago you have visited, and the second
 
 At last, press `<enter>` to accept or `<ESC>` to give up. 
 
-Version `v1.5.1` has introduced a simulated "dirstack", which can be manipulated by `z -`, `z --` and `z -{num}`:
-
-
 Remember to enable the [enhanced matching](#enhanced-matching) algorithm, the current working directory can be skipped with it.
 
 
