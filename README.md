@@ -451,6 +451,7 @@ As you see, z.lua is the fastest one and requires less resource.
 
 ## History
 
+- 1.5.3 (2019-02-17): environment variable parsing is flaky, new `$_ZL_FZF_FLAG`.
 - 1.5.2 (2019-02-16): be aware of all arguments in fzf completion.
 - 1.5.1 (2019-02-15): new: simulated dir stack by `z -`, `z --` and `z -{num}`.
 - 1.5.0 (2019-02-14): fixed minor issues in backward jumping.

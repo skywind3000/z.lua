@@ -4,7 +4,7 @@
 -- z.lua - a cd command that learns, by skywind 2018, 2019
 -- Licensed under MIT license.
 --
--- Version 1.5.2, Last Modified: 2019/02/16 14:25
+-- Version 1.5.3, Last Modified: 2019/02/17 16:22
 --
 -- * 10x faster than fasd and autojump, 3x faster than z.sh
 -- * available for posix shells: bash, zsh, sh, ash, dash, busybox
@@ -758,6 +758,37 @@ end
 
 
 -----------------------------------------------------------------------
+-- get environ
+-----------------------------------------------------------------------
+function os.environ(name, default)
+	local value = os.getenv(name)
+	if value == nil then
+		return default
+	elseif type(default) == 'boolean' then
+		value = value:lower()
+		if value == '0' or value == '' or value == 'no' then
+			return false
+		elseif value == 'false' or value == 'n' or value == 'f' then
+			return false
+		else
+			return true
+		end
+	elseif type(default) == 'number' then
+		value = tonumber(value)
+		if value == nil then 
+			return default 
+		else
+			return value
+		end
+	elseif type(default) == 'string' then
+		return value
+	elseif type(default) == 'table' then
+		return value:sep(',')
+	end
+end
+
+
+-----------------------------------------------------------------------
 -- parse option
 -----------------------------------------------------------------------
 function os.getopt(argv)
@@ -1406,19 +1437,20 @@ function z_cd(patterns)
 		end
 		retval = M[index].name
 	elseif Z_INTERACTIVE == 2 then
-		local fzf = os.getenv('_ZL_FZF')
+		local fzf = os.environ('_ZL_FZF', 'fzf')
 		local tmpname = '/tmp/zlua.txt'
 		local cmd = '--nth 2.. --reverse --inline-info +s --tac'
-		local cmd = ((not fzf) and 'fzf' or fzf)  .. ' ' .. cmd
+		cmd = ((fzf == '') and 'fzf' or fzf)  .. ' ' .. cmd
+		cmd = cmd .. ' ' .. os.environ('_ZL_FZF_FLAG', '') .. ' '
 		if not windows then
 			tmpname = os.tmpname()
-			if not os.getenv('_ZL_FZF_FULLSCR') then
+			if not os.environ('_ZL_FZF_FULLSCR', false) then
 				cmd = cmd .. ' --height 35%'
 			end
 			cmd = cmd .. ' < "' .. tmpname .. '"'
 		else
 			tmpname = os.tmpname():gsub('\\', ''):gsub('%.', '')
-			tmpname = os.getenv('TMP') .. '\\zlua_' .. tmpname .. '.txt'
+			tmpname = os.environ('TMP', '') .. '\\zlua_' .. tmpname .. '.txt'
 			cmd = 'type "' .. tmpname .. '" | ' .. cmd
 		end
 		PRINT_MODE = tmpname
@@ -1710,7 +1742,7 @@ function z_init()
 			table.insert(Z_EXCLUDE, name)
 		end
 	end
-	if _zl_cmd ~= nil then
+	if _zl_cmd ~= nil and _zl_cmd ~= '' then
 		Z_CMD = _zl_cmd
 	end
 	if _zl_matchname ~= nil then
@@ -1740,7 +1772,7 @@ end
 -- initialize clink hooks
 -----------------------------------------------------------------------
 function z_clink_init()
-	local once = os.getenv("_ZL_ADD_ONCE")
+	local once = os.environ("_ZL_ADD_ONCE", false)
 	local previous = ''
 	function z_add_to_database()
 		pwd = clink.get_cwd()
@@ -1940,12 +1972,12 @@ function z_shell_init(opts)
 		print(script)
 	end
 
-	local prompt_hook = (os.getenv("_ZL_NO_PROMPT_COMMAND") == nil)
-	local once = (os.getenv("_ZL_ADD_ONCE") ~= nil) or opts.once ~= nil
+	local prompt_hook = (not os.environ("_ZL_NO_PROMPT_COMMAND", false))
+	local once = os.environ("_ZL_ADD_ONCE", false) or opts.once ~= nil
 
 	if opts.bash ~= nil then
 		if prompt_hook then
-			if opts.once then
+			if once then
 				print(script_init_bash_once)
 			elseif opts.fast then
 				print(script_init_bash_fast)
@@ -1956,9 +1988,10 @@ function z_shell_init(opts)
 		print(script_complete_bash)
 		if opts.fzf ~= nil then
 			fzf_cmd = "fzf --nth 2 --reverse --inline-info +s --tac"
-			if not os.getenv('_ZL_FZF_FULLSCR') then
+			if not os.environ('_ZL_FZF_FULLSCR', false) then
 				fzf_cmd = fzf_cmd .. ' --height 35%'
 			end
+			fzf_cmd = fzf_cmd .. ' ' .. os.environ('_ZL_FZF_FLAG', '') .. ' '
 			print('zlua_fzf="' .. fzf_cmd .. '"')
 			print(script_fzf_complete_bash)
 		end
