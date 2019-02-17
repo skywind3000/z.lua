@@ -19,11 +19,12 @@ For example, `z foo bar` would match `/foo/bar` but not `/bar/foo`.
 - **10x** times faster than **fasd** and **autojump**, **3x** times faster than **z.sh**.
 - Available for **posix shells**: bash, zsh, dash, sh, ash, ksh, busybox and etc.
 - Available for Fish Shell, Power Shell and Windows cmd.
-- Enhanced matching mode takes you to where ever you want precisely.
+- [Enhanced matching algorithm](#enhanced-matching) takes you to where ever you want precisely.
 - Allow updating database only if `$PWD` changed with "$_ZL_ADD_ONCE" set to 1.
 - Interactive selection enables you to choose where to go before cd.
-- Intergrated with FZF (optional) for interactive selection and bash completion.
+- Intergrated with FZF (optional) for interactive selection and completion.
 - Quickly go back to a parent directory instead of typing "cd ../../..".
+- Cooperate with [fz](https://github.com/changyuheng/fz) to provide better completion, see [FAQ](https://github.com/skywind3000/z.lua/wiki/FAQ#fzsh-for-better-completion).
 - Corresponding experience in different shells and operating systems. 
 - Compatible with Lua 5.1, 5.2 and 5.3+
 - Self contained, distributed as a single `z.lua` script, no other dependence.
@@ -262,6 +263,7 @@ And then you can input the number and choose where to go before actual cd. eg. i
 
 NOTE: for fish shell, this feature requires fish 2.7.0 or above.
 
+
 ## FZF Supports
 
 From version 1.1.0, a new option `"-I"` will allow you to use fzf to select when there are multiple matches. 
@@ -274,7 +276,7 @@ Of course, you can always give more keywords to `z` command to match your destin
 
 Usually, `z -I` can be aliased to `zf` (z + fuzzy finder) for convenience. If there are only one path matched, `z -I` will jump to it directly, fzf will only be invoked for multiple matches.
 
-`"z -I ."` or `"zf ."` can be used to use fzf select from entire database.
+`"z -I ."` or `"zf ."` can be used to use fzf select from entire database. Environment variable `_ZL_FZF_FLAG` is for passing additional arguments to fzf, you can try to set it to `-e` to use `exact` matching mode in fzf.
 
 NOTE: For fish shell, this feature requires fish 2.7.0 or above. You can specify fzf executable in `$_ZL_FZF` environment variable, `"fzf"` will be called by default.
 
@@ -338,9 +340,12 @@ Then press `<tab>` after `z xxx`:
 
 ![](images/complete-2.png)
 
-With the help of fzf, completion in bash is much easier now.
+With the help of fzf, completion in bash is much easier now. 
+
+`z.lua` can cooperate with [fz](https://github.com/changyuheng/fz) for **better completion** result in both bash and zsh, for more information see [FAQ](https://github.com/skywind3000/z.lua/wiki/FAQ#fzsh-for-better-completion).
 
 NOTE: To enable this, command `fzf` must be found in `$PATH` before initialization.
+
 
 ## Most Recently Accessed Path
 
@@ -372,7 +377,7 @@ There is another way to access MRU directories interactively by utilizing parame
 alias zh='z -I -t .'
 ```
 
-The new alias `zh` (jump to history) uses a parameter `-t` to sort the result by time and `-I` to use `fzf` for selection. the result is:
+The new alias `zh` (jump to history) is very easy to input:
 
 ![](images/mru.png)
 
@@ -389,8 +394,8 @@ Remember to enable the [enhanced matching](#enhanced-matching) algorithm, the cu
 Recommended aliases you may find useful:
 
 ```bash
-alias zc='z -c'      # restrict matches to subdirs of $PWD
-alias zz='z -i'      # cd with interactive selection
+alias zz='z -c'      # restrict matches to subdirs of $PWD
+alias zi='z -i'      # cd with interactive selection
 alias zf='z -I'      # use fzf to select in multiple matches
 alias zb='z -b'      # quickly cd to the parent directory
 ```
@@ -409,6 +414,7 @@ FN="$HOME/.local/share/autojump/autojump.txt"
 awk -F '\t' '{print $2 "|" $1 "|" 0}' $FN >> ~/.zlua
 ```
 
+Don't forget to read the [Frequently Asked Questions](https://github.com/skywind3000/z.lua/wiki/FAQ).
 
 
 ## Benchmark

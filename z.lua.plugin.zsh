@@ -20,6 +20,7 @@ if [[ -z "$ZLUA_EXEC" ]]; then
 	fi
 fi
 
+export _ZL_FZF_FLAG="-e"
 
 eval "$($ZLUA_EXEC $ZLUA_SCRIPT --init zsh once enhanced)"
 
