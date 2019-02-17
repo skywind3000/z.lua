@@ -35,7 +35,7 @@ For example, `z foo bar` would match `/foo/bar` but not `/bar/foo`.
 ```bash
 z foo       # cd to most frecent dir matching foo
 z foo bar   # cd to most frecent dir matching foo and bar
-z -r foo    # cd to highest ranked dir matching foo
+z -r foo    # cd to the highest ranked dir matching foo
 z -t foo    # cd to most recently accessed dir matching foo
 z -l foo    # list matches instead of cd
 z -c foo    # restrict matches to subdirs of $PWD
@@ -220,14 +220,14 @@ If no match is found, it will fall back to default matching method.
 
 - Skip the current directory:
 
-  when you are calling `z xxx` but the best match is the current directory, z.lua will choose the 2nd best match result for you. Assuming the database:
+  When you are calling `z xxx` but the best match is the current directory, z.lua will choose the 2nd best match result for you. Assuming the database:
 
       10   /Users/Great_Wall/.rbenv/versions/2.4.1/lib/ruby/gems
       20   /Library/Ruby/Gems/2.0.0/gems
 
   When I use `z gems` by default, it will take me to `/Library/Ruby/Gems/2.0.0/gems`, but it's not what I want, so I press up arrow and execute `z gems` again, it will take me to `/Users/Great_Wall/.rbenv/versions/2.4.1/lib/ruby/gems` and this what I want.
 
-  Of course I can always use `z env gems` to indicate what I want precisely. Skip the current directory means when you use `z xxx` you always want to change directory instead of stay in the same directory and do nothing if current directory is the best match.
+  Of course, I can always use `z env gems` to indicate what I want precisely. Skip the current directory means when you use `z xxx` you always want to change directory instead of stay in the same directory and do nothing if current directory is the best match.
 
 The default matching method is designed to be compatible with original z.sh, but the enhanced matching method is much more handy and exclusive to z.lua.
 
@@ -236,7 +236,7 @@ The default matching method is designed to be compatible with original z.sh, but
 
 By default, z.lua will add current directory to database each time before display command prompt (correspond with z.sh). But there is an option to allow z.lua add path only if current working directory changed.
 
-To enable this, you can set `$_ZL_ADD_ONCE` to `1` before init z.lua. Or you can init z.lua on linux like this:
+To enable this, you can set `$_ZL_ADD_ONCE` to `1` before init z.lua. Or you can initialize z.lua on linux like this:
 
 ````bash
 eval "$(lua /path/to/z.lua --init bash once)"
@@ -286,7 +286,7 @@ NOTE: For fish shell, this feature requires fish 2.7.0 or above. You can specify
 New option `"-b"` can quickly go back to a specific parent directory in bash instead of typing "cd ../../.." redundantly.
 
 - **(No argument)**: `cd` into the project root, the project root the nearest parent directory with `.git`/`.hg`/`.svn` in it
-- **(One argument)**: `cd` into the closest parent starting with keyword, if not find, goto the parent containing keyword.
+- **(One argument)**: `cd` into the closest parent starting with keyword, if not find, go to the parent containing keyword.
 - **(Two arguments)**: replace the first value with the second one (in the current path).
 
 Let's start by aliasing `z -b` to `zb`:
@@ -419,7 +419,7 @@ Don't forget to read the [Frequently Asked Questions](https://github.com/skywind
 
 ## Benchmark
 
-The slowest part is adding path to history data file. It will run every time when you press enter (installed in $PROMPT_COMMAND). so I profile it on my nas:
+The slowest part is adding path to history data file. It will run every time when you press enter (installed in $PROMPT_COMMAND). So I profile it on my NAS:
 
 ```bash
 $ time autojump --add /tmp
