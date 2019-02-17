@@ -1439,7 +1439,7 @@ function z_cd(patterns)
 	elseif Z_INTERACTIVE == 2 then
 		local fzf = os.environ('_ZL_FZF', 'fzf')
 		local tmpname = '/tmp/zlua.txt'
-		local cmd = '--nth 2.. --reverse --inline-info +s --tac'
+		local cmd = '--nth 2.. --reverse --inline-info +s --tac -e'
 		cmd = ((fzf == '') and 'fzf' or fzf)  .. ' ' .. cmd
 		cmd = cmd .. ' ' .. os.environ('_ZL_FZF_FLAG', '') .. ' '
 		if not windows then
@@ -1987,7 +1987,7 @@ function z_shell_init(opts)
 		end
 		print(script_complete_bash)
 		if opts.fzf ~= nil then
-			fzf_cmd = "fzf --nth 2 --reverse --inline-info +s --tac"
+			fzf_cmd = "fzf --nth 2 --reverse --inline-info +s --tac -e"
 			if not os.environ('_ZL_FZF_FULLSCR', false) then
 				fzf_cmd = fzf_cmd .. ' --height 35%'
 			end

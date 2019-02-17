@@ -276,7 +276,7 @@ Of course, you can always give more keywords to `z` command to match your destin
 
 Usually, `z -I` can be aliased to `zf` (z + fuzzy finder) for convenience. If there are only one path matched, `z -I` will jump to it directly, fzf will only be invoked for multiple matches.
 
-`"z -I ."` or `"zf ."` can be used to use fzf select from entire database. Environment variable `_ZL_FZF_FLAG` is for passing additional arguments to fzf, you can try to set it to `-e` to use `exact` matching mode in fzf.
+`"z -I ."` or `"zf ."` can be used to use fzf select from entire database. Environment variable `_ZL_FZF_FLAG` is for passing additional arguments to fzf.
 
 NOTE: For fish shell, this feature requires fish 2.7.0 or above. You can specify fzf executable in `$_ZL_FZF` environment variable, `"fzf"` will be called by default.
 
@@ -457,7 +457,7 @@ As you see, z.lua is the fastest one and requires less resource.
 
 ## History
 
-- 1.5.3 (2019-02-17): environment variable parsing is flaky, new `$_ZL_FZF_FLAG`.
+- 1.5.3 (2019-02-17): new `$_ZL_FZF_FLAG` for passing additional flags to fzf, add `-e` argument to fzf.
 - 1.5.2 (2019-02-16): be aware of all arguments in fzf completion.
 - 1.5.1 (2019-02-15): new: simulated dir stack by `z -`, `z --` and `z -{num}`.
 - 1.5.0 (2019-02-14): fixed minor issues in backward jumping.
