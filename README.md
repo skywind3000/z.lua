@@ -24,7 +24,6 @@ For example, `z foo bar` would match `/foo/bar` but not `/bar/foo`.
 - Interactive selection enables you to choose where to go before cd.
 - Intergrated with FZF (optional) for interactive selection and completion.
 - Quickly go back to a parent directory instead of typing "cd ../../..".
-- Cooperate with [fz](https://github.com/changyuheng/fz) to provide better completion, see [FAQ](https://github.com/skywind3000/z.lua/wiki/FAQ#fzsh-for-better-completion).
 - Corresponding experience in different shells and operating systems. 
 - Compatible with Lua 5.1, 5.2 and 5.3+
 - Self contained, distributed as a single `z.lua` script, no other dependence.
@@ -341,8 +340,6 @@ Then press `<tab>` after `z xxx`:
 ![](images/complete-2.png)
 
 With the help of fzf, completion in bash is much easier now. 
-
-`z.lua` can cooperate with [fz](https://github.com/changyuheng/fz) for **better completion** result in both bash and zsh, for more information see [FAQ](https://github.com/skywind3000/z.lua/wiki/FAQ#fzsh-for-better-completion).
 
 NOTE: To enable this, command `fzf` must be found in `$PATH` before initialization.
 
