@@ -286,7 +286,7 @@ NOTE: For fish shell, this feature requires fish 2.7.0 or above. You can specify
 
 New option `"-b"` can quickly go back to a specific parent directory in bash instead of typing "cd ../../.." redundantly.
 
-- **(No argument)**: `cd` into the project root, the project root the nearest parent directory with `.git`/`.hg`/`.svn` in it
+- **(No argument)**: `cd` into the project root, the project root the nearest parent directory with `.git`/`.hg`/`.svn` in it.
 - **(One argument)**: `cd` into the closest parent starting with keyword, if not find, go to the parent containing keyword.
 - **(Two arguments)**: replace the first value with the second one (in the current path).
 
