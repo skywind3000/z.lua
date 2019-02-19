@@ -269,7 +269,9 @@ From version 1.1.0, a new option `"-I"` will allow you to use fzf to select when
 
 ![](images/fzf.png)
 
-When we use `"z -I vim"`，12 paths contains keyword "vim" has been matched and ordered by their frecent value, the higher frecent comes with the higher rank. Then without cd to the highest ranked path, z.lua passes all the candidates to fzf. And you can use fzf to select where you want to go, or ESC to quit.
+When we use `"z -I vim"`，12 paths contains keyword "vim" has been matched and ordered by their frecent value, the higher frecent comes with the higher rank. Then without cd to the highest ranked path, z.lua passes all the candidates to fzf. 
+
+Now you can input some space separated keywords (no order required) or use `CTRL+J`/`CTRL+K` (same as `UP`/`DOWN`) to select where you want to go, or `ESC` / `CTRL`+`D`/`G` to give up. 
 
 Of course, you can always give more keywords to `z` command to match your destination precisely. `"z -I"` is similar to `"z -i"`, but use fzf. Both `"-i"` and `"-I"` provide you another way for path navigation.
 
