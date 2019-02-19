@@ -158,6 +158,10 @@ function string:startswith(text)
 	return false
 end
 
+function string:endswith(text)
+	return text == "" or self:sub(-#text) == text
+end
+
 function string:lstrip()
 	if self == nil then return nil end
 	local s = self:gsub('^%s+', '')
@@ -418,6 +422,8 @@ end
 function os.path.isdir(pathname)
 	if pathname == '/' then
 		return true
+	elseif pathname == '' then
+		return false
 	elseif windows then
 		if pathname == '\\' then
 			return true
@@ -425,15 +431,11 @@ function os.path.isdir(pathname)
 			return true
 		end
 	end
-	local name = pathname .. '/'
-	local ok, err, code = os.rename(name, name)
-	if not ok then
-		if code == 13 then
-			return true
-		end
-		return false
+	local name = pathname
+	if not name:endswith('/') then
+		name = name .. '/'
 	end
-	return true
+	return os.path.exists(name)
 end
 
 
@@ -445,6 +447,13 @@ function os.path.exists(name)
 	if not ok then
 		if code == 13 then
 			return true
+		end
+		if code == 30 then
+			local f = io.open(name,"r")
+			if f ~= nil then
+				io.close(f)
+				return true
+			end
 		end
 		return false
 	end
