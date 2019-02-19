@@ -341,6 +341,8 @@ Then press `<tab>` after `z xxx`:
 
 With the help of fzf, completion in bash is much easier now. 
 
+`z.lua` can cooperate with [fz](https://github.com/changyuheng/fz) for **better completion** result in both bash and zsh, for more information see [FAQ](https://github.com/skywind3000/z.lua/wiki/FAQ#fzsh-for-better-completion).
+
 NOTE: To enable this, command `fzf` must be found in `$PATH` before initialization.
 
 
@@ -454,6 +456,7 @@ As you see, z.lua is the fastest one and requires less resource.
 
 ## History
 
+- 1.5.4 (2019-02-19): fixed: file/path existence detection fails on read-only fs (closed [#49](https://github.com/skywind3000/z.lua/issues/49) by [@contrun](https://github.com/contrun)).
 - 1.5.3 (2019-02-17): new `$_ZL_FZF_FLAG` for passing additional flags to fzf, add `-e` argument to fzf.
 - 1.5.2 (2019-02-16): be aware of all arguments in fzf completion.
 - 1.5.1 (2019-02-15): new: simulated dir stack by `z -`, `z --` and `z -{num}`.
