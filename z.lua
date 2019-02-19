@@ -4,7 +4,7 @@
 -- z.lua - a cd command that learns, by skywind 2018, 2019
 -- Licensed under MIT license.
 --
--- Version 1.5.3, Last Modified: 2019/02/17 16:22
+-- Version 1.5.4, Last Modified: 2019/02/19 11:18
 --
 -- * 10x faster than fasd and autojump, 3x faster than z.sh
 -- * available for posix shells: bash, zsh, sh, ash, dash, busybox
@@ -432,7 +432,7 @@ function os.path.isdir(pathname)
 		end
 	end
 	local name = pathname
-	if not name:endswith('/') then
+	if (not name:endswith('/')) and (not name:endswith('\\')) then
 		name = name .. '/'
 	end
 	return os.path.exists(name)
@@ -1275,13 +1275,14 @@ function z_match(patterns, method, subdir)
 	subdir = subdir ~= nil and subdir or false
 	local M = data_load(DATA_FILE)
 	M = data_select(M, patterns, false)
+	M = data_filter(M)
 	if Z_MATCHNAME then
 		local N = data_select(M, patterns, true)
+		N = data_filter(N)
 		if #N > 0 then
 			M = N
 		end
 	end
-	M = data_filter(M)
 	M = data_update_frecent(M)
 	if method == 'time' then
 		current = os.time()
@@ -1334,7 +1335,7 @@ end
 -----------------------------------------------------------------------
 function z_print(M, weight, number)
 	local N = {}
-	local maxsize = 10
+	local maxsize = 9
 	local numsize = string.len(tostring(#M))
 	for _, item in pairs(M) do
 		local record = {}
