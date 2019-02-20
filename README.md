@@ -277,7 +277,9 @@ Of course, you can always give more keywords to `z` command to match your destin
 
 Usually, `z -I` can be aliased to `zf` (z + fuzzy finder) for convenience. If there are only one path matched, `z -I` will jump to it directly, fzf will only be invoked for multiple matches.
 
-`"z -I ."` or `"zf ."` can be used to use fzf select from entire database. Environment variable `_ZL_FZF_FLAG` is for passing additional arguments to fzf.
+`"z -I ."` or `"zf ."` can be used to use fzf select from entire database. Environment variable `_ZL_FZF_FLAG` is for overriding arguments of fzf. The default value is `+s -e`.
+
+For more information about this, please visit [wiki - effective with fzf](https://github.com/skywind3000/z.lua/wiki/Effective-with-fzf).
 
 NOTE: For fish shell, this feature requires fish 2.7.0 or above. You can specify fzf executable in `$_ZL_FZF` environment variable, `"fzf"` will be called by default.
 
