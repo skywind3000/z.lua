@@ -4,7 +4,7 @@
 -- z.lua - a cd command that learns, by skywind 2018, 2019
 -- Licensed under MIT license.
 --
--- Version 1.5.7, Last Modified: 2019/02/20 23:15
+-- Version 1.5.6, Last Modified: 2019/02/20 23:30
 --
 -- * 10x faster than fasd and autojump, 3x faster than z.sh
 -- * available for posix shells: bash, zsh, sh, ash, dash, busybox
@@ -2000,7 +2000,7 @@ function z_shell_init(opts)
 		end
 		print(script_complete_bash)
 		if opts.fzf ~= nil then
-			fzf_cmd = "fzf --nth 2 --reverse --inline-info --tac "
+			fzf_cmd = "fzf --nth 2.. --reverse --inline-info --tac "
 			if not os.environ('_ZL_FZF_FULLSCR', false) then
 				fzf_cmd = fzf_cmd .. ' --height 35%'
 			end
