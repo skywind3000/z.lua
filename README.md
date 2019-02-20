@@ -275,9 +275,7 @@ Now you can input some space separated keywords (no order required) or use `CTRL
 
 Of course, you can always give more keywords to `z` command to match your destination precisely. `"z -I"` is similar to `"z -i"`, but use fzf. Both `"-i"` and `"-I"` provide you another way for path navigation.
 
-Usually, `z -I` can be aliased to `zf` (z + fuzzy finder) for convenience. If there are only one path matched, `z -I` will jump to it directly, fzf will only be invoked for multiple matches.
-
-`"z -I ."` or `"zf ."` can be used to use fzf select from entire database. Environment variable `_ZL_FZF_FLAG` is for overriding arguments of fzf. The default value is `+s -e`.
+Usually, `z -I` can be aliased to `zf` (z + fuzzy finder) for convenience. If there are only one path matched, `z -I` will jump to it directly, fzf will only be invoked for multiple matches. `"z -I ."` or `"zf ."` can be used to use fzf select from entire database. 
 
 For more information about this, please visit [wiki - effective with fzf](https://github.com/skywind3000/z.lua/wiki/Effective-with-fzf).
 
