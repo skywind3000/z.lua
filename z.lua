@@ -4,7 +4,7 @@
 -- z.lua - a cd command that learns, by skywind 2018, 2019
 -- Licensed under MIT license.
 --
--- Version 1.5.4, Last Modified: 2019/02/19 11:18
+-- Version 1.5.5, Last Modified: 2019/02/20 12:07
 --
 -- * 10x faster than fasd and autojump, 3x faster than z.sh
 -- * available for posix shells: bash, zsh, sh, ash, dash, busybox
@@ -1448,9 +1448,10 @@ function z_cd(patterns)
 	elseif Z_INTERACTIVE == 2 then
 		local fzf = os.environ('_ZL_FZF', 'fzf')
 		local tmpname = '/tmp/zlua.txt'
-		local cmd = '--nth 2.. --reverse --inline-info +s --tac -e'
-		cmd = ((fzf == '') and 'fzf' or fzf)  .. ' ' .. cmd
-		cmd = cmd .. ' ' .. os.environ('_ZL_FZF_FLAG', '') .. ' '
+		local cmd = '--nth 2.. --reverse --inline-info --tac '
+		local flag = os.environ('_ZL_FZF_FLAG', '')
+		flag = (flag == '' or flag == nil) and '+s -e' or flag
+		cmd = ((fzf == '') and 'fzf' or fzf)  .. ' ' .. cmd .. ' ' .. flag
 		if not windows then
 			tmpname = os.tmpname()
 			if not os.environ('_ZL_FZF_FULLSCR', false) then
@@ -1996,11 +1997,13 @@ function z_shell_init(opts)
 		end
 		print(script_complete_bash)
 		if opts.fzf ~= nil then
-			fzf_cmd = "fzf --nth 2 --reverse --inline-info +s --tac -e"
+			fzf_cmd = "fzf --nth 2 --reverse --inline-info --tac "
 			if not os.environ('_ZL_FZF_FULLSCR', false) then
 				fzf_cmd = fzf_cmd .. ' --height 35%'
 			end
-			fzf_cmd = fzf_cmd .. ' ' .. os.environ('_ZL_FZF_FLAG', '') .. ' '
+			local flag = os.environ('_ZL_FZF_FLAG', '')
+			flag = (flag == '' or flag == nil) and '+s -e' or flag
+			fzf_cmd = fzf_cmd .. ' ' .. flag .. ' '
 			print('zlua_fzf="' .. fzf_cmd .. '"')
 			print(script_fzf_complete_bash)
 		end
