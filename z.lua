@@ -4,7 +4,7 @@
 -- z.lua - a cd command that learns, by skywind 2018, 2019
 -- Licensed under MIT license.
 --
--- Version 1.5.5, Last Modified: 2019/02/20 12:07
+-- Version 1.5.6, Last Modified: 2019/02/20 20:20
 --
 -- * 10x faster than fasd and autojump, 3x faster than z.sh
 -- * available for posix shells: bash, zsh, sh, ash, dash, busybox
@@ -1462,6 +1462,9 @@ function z_cd(patterns)
 			tmpname = os.tmpname():gsub('\\', ''):gsub('%.', '')
 			tmpname = os.environ('TMP', '') .. '\\zlua_' .. tmpname .. '.txt'
 			cmd = 'type "' .. tmpname .. '" | ' .. cmd
+		end
+		if os.environ('_ZL_FZF_SORT', false) then
+			table.sort(M, function (a, b) return a.name > b.name end)
 		end
 		PRINT_MODE = tmpname
 		z_print(M, true, false)
