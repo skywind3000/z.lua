@@ -458,7 +458,8 @@ As you see, z.lua is the fastest one and requires less resource.
 
 ## History
 
-- 1.5.6 (2019-02-20): new `$_ZL_FZF_SORT` to sort directories by alphabet in fzf
+- 1.5.7 (2019-02-20): improve the result of `$_ZL_FZF_SORT`.
+- 1.5.6 (2019-02-20): set `$_ZL_FZF_SORT` to 1 to sort directories by alphabet in fzf.
 - 1.5.5 (2019-02-20): `$_ZL_FZF_FLAG` can be used to override fzf flags, default to "+s -e".
 - 1.5.4 (2019-02-19): fixed: file/path existence detection fails on read-only fs (closed [#49](https://github.com/skywind3000/z.lua/issues/49) by [@contrun](https://github.com/contrun)).
 - 1.5.3 (2019-02-17): new `$_ZL_FZF_FLAG` for passing additional flags to fzf, add `-e` argument to fzf.
