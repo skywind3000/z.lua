@@ -458,6 +458,7 @@ As you see, z.lua is the fastest one and requires less resource.
 
 ## History
 
+- 1.5.8 (2019-02-21): new `$_ZL_FZF_HEIGHT` to control `--height` parameter in fzf.
 - 1.5.7 (2019-02-21): rename `$_ZL_FZF_SORT` to `$_ZL_INT_SORT` it will affect both `-i` and `-I`.
 - 1.5.6 (2019-02-20): set `$_ZL_FZF_SORT` to 1 to sort directories by alphabet in fzf.
 - 1.5.5 (2019-02-20): `$_ZL_FZF_FLAG` can be used to override fzf flags, default to "+s -e".

@@ -4,7 +4,7 @@
 -- z.lua - a cd command that learns, by skywind 2018, 2019
 -- Licensed under MIT license.
 --
--- Version 1.5.7, Last Modified: 2019/02/21 11:07
+-- Version 1.5.8, Last Modified: 2019/02/21 12:08
 --
 -- * 10x faster than fasd and autojump, 3x faster than z.sh
 -- * available for posix shells: bash, zsh, sh, ash, dash, busybox
@@ -1461,8 +1461,9 @@ function z_cd(patterns)
 		cmd = ((fzf == '') and 'fzf' or fzf)  .. ' ' .. cmd .. ' ' .. flag
 		if not windows then
 			tmpname = os.tmpname()
-			if not os.environ('_ZL_FZF_FULLSCR', false) then
-				cmd = cmd .. ' --height 35%'
+			local height = os.environ('_ZL_FZF_HEIGHT', '35%')
+			if height ~= nil and height ~= '' and height ~= '0' then
+				cmd = cmd .. ' --height ' .. height
 			end
 			cmd = cmd .. ' < "' .. tmpname .. '"'
 		else
@@ -2005,8 +2006,9 @@ function z_shell_init(opts)
 		print(script_complete_bash)
 		if opts.fzf ~= nil then
 			fzf_cmd = "fzf --nth 2.. --reverse --inline-info --tac "
-			if not os.environ('_ZL_FZF_FULLSCR', false) then
-				fzf_cmd = fzf_cmd .. ' --height 35%'
+			local height = os.environ('_ZL_FZF_HEIGHT', '35%')
+			if height ~= nil and height ~= '' and height ~= '0' then
+				fzf_cmd = fzf_cmd .. ' --height ' .. height .. ' '
 			end
 			local flag = os.environ('_ZL_FZF_FLAG', '')
 			flag = (flag == '' or flag == nil) and '+s -e' or flag
