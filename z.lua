@@ -4,7 +4,7 @@
 -- z.lua - a cd command that learns, by skywind 2018, 2019
 -- Licensed under MIT license.
 --
--- Version 1.5.6, Last Modified: 2019/02/20 23:30
+-- Version 1.5.7, Last Modified: 2019/02/21 11:07
 --
 -- * 10x faster than fasd and autojump, 3x faster than z.sh
 -- * available for posix shells: bash, zsh, sh, ash, dash, busybox
@@ -770,6 +770,10 @@ end
 -----------------------------------------------------------------------
 function os.environ(name, default)
 	local value = os.getenv(name)
+	if os.envmap ~= nil and type(os.envmap) == 'table' then
+		local t = os.envmap[name]
+		value = (t ~= nil and type(t) == 'string') and t or value
+	end
 	if value == nil then
 		return default
 	elseif type(default) == 'boolean' then
@@ -1427,6 +1431,9 @@ function z_cd(patterns)
 	elseif Z_INTERACTIVE == 0 then
 		return M[1].name
 	end
+	if os.environ('_ZL_INT_SORT', false) then
+		table.sort(M, function (a, b) return a.name < b.name end)
+	end
 	local retval = nil
 	if Z_INTERACTIVE == 1 then
 		PRINT_MODE = '<stderr>'
@@ -1462,9 +1469,6 @@ function z_cd(patterns)
 			tmpname = os.tmpname():gsub('\\', ''):gsub('%.', '')
 			tmpname = os.environ('TMP', '') .. '\\zlua_' .. tmpname .. '.txt'
 			cmd = 'type "' .. tmpname .. '" | ' .. cmd
-		end
-		if os.environ('_ZL_FZF_SORT', false) then
-			table.sort(M, function (a, b) return a.name < b.name end)
 		end
 		PRINT_MODE = tmpname
 		z_print(M, true, false)
