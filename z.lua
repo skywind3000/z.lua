@@ -4,7 +4,7 @@
 -- z.lua - a cd command that learns, by skywind 2018, 2019
 -- Licensed under MIT license.
 --
--- Version 1.5.8, Last Modified: 2019/02/21 12:08
+-- Version 1.5.9, Last Modified: 2019/02/25 23:17
 --
 -- * 10x faster than fasd and autojump, 3x faster than z.sh
 -- * available for posix shells: bash, zsh, sh, ash, dash, busybox
@@ -1555,6 +1555,7 @@ function cd_backward(args, options, pwd)
 			end
 			return os.path.normpath(path)
 		else
+			pwd = os.path.split(pwd)
 			local test = windows and pwd:gsub('\\', '/') or pwd
 			local key = windows and args[1]:lower() or args[1]
 			if not key:match('%u') then
