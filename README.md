@@ -492,6 +492,7 @@ As you see, z.lua is the fastest one and requires less resource.
 
 This project needs help for the tasks below:
 
+- [ ] Support csh/tcsh.
 - [ ] Completion: Actually I got little knowledge in completion, and need help to improve it.
 - [ ] Completion: Implement completion for Power Shell.
 - [ ] Completion: Implement completion for different arguments.
