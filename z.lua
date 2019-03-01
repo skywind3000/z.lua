@@ -4,7 +4,7 @@
 -- z.lua - a cd command that learns, by skywind 2018, 2019
 -- Licensed under MIT license.
 --
--- Version 1.5.9, Last Modified: 2019/02/25 23:17
+-- Version 1.5.10, Last Modified: 2019/03/01 13:08
 --
 -- * 10x faster than fasd and autojump, 3x faster than z.sh
 -- * available for posix shells: bash, zsh, sh, ash, dash, busybox
@@ -960,11 +960,16 @@ function data_save(filename, M)
 		fp = io.open(filename, 'w')
 	else
 		math.random_init()
-		tmpname = filename .. '.' .. tostring(os.time())
-		tmpname = tmpname .. math.random_string(8)
-		local rnd = os.getenv('_ZL_RANDOM')
-		tmpname = tmpname .. '' .. (rnd and rnd or '')
-		-- print('tmpname: '..tmpname)
+		while true do
+			tmpname = filename .. '.' .. tostring(os.time())
+			tmpname = tmpname .. math.random_string(8)
+			local rnd = os.getenv('_ZL_RANDOM')
+			tmpname = tmpname .. '' .. (rnd and rnd or '')
+			if not os.path.exists(tmpname) then
+				-- print('tmpname: '..tmpname)
+				break
+			end
+		end
 		fp = io.open(tmpname, 'w')
 	end
 	if fp == nil then
