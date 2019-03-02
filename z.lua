@@ -454,7 +454,7 @@ function os.path.exists(name)
 		elseif name:sub(-1) == '/' and code == 20 and (not windows) then
 			local test = name .. '.'
 			ok, err, code = os.rename(test, test)
-			if code == 16 or code == 13 then
+			if code == 16 or code == 13 or code == 22 then
 				return true
 			end
 		end
