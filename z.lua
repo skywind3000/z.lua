@@ -447,7 +447,7 @@ function os.path.exists(name)
 	if not ok then
 		if code == 13 then
 			return true
-		elseif code == 30 then
+		elseif code == 30 or code == 20 then
 			local f = io.open(name,"r")
 			if f ~= nil then
 				io.close(f)
