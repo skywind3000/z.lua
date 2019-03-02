@@ -458,6 +458,7 @@ As you see, z.lua is the fastest one and requires less resource.
 
 ## History
 
+- 1.5.11 (2019-03-02): fixed: os.path.isdir not work for symbol link folders.
 - 1.5.10 (2019-03-01): Prevent writing file racing.
 - 1.5.9 (2019-02-25): `z -b` should not match current directory (close #56).
 - 1.5.8 (2019-02-21): new `$_ZL_FZF_HEIGHT` to control `--height` parameter in fzf.
