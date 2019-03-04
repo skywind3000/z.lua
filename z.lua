@@ -4,7 +4,7 @@
 -- z.lua - a cd command that learns, by skywind 2018, 2019
 -- Licensed under MIT license.
 --
--- Version 1.5.11, Last Modified: 2019/03/02 11:37
+-- Version 1.6.0, Last Modified: 2019/03/04 14:47
 --
 -- * 10x faster than fasd and autojump, 3x faster than z.sh
 -- * available for posix shells: bash, zsh, sh, ash, dash, busybox
@@ -303,9 +303,106 @@ end
 
 
 -----------------------------------------------------------------------
+-- ffi optimize (luajit has builtin ffi module)
+-----------------------------------------------------------------------
+os.native = {}
+os.native.status, os.native.ffi =  pcall(require, "ffi")
+if os.native.status then
+	local ffi = os.native.ffi
+	if windows then
+		ffi.cdef[[
+		int GetFullPathNameA(const char *name, uint32_t size, char *out, char **name);
+		int ReplaceFileA(const char *dstname, const char *srcname, void *, uint32_t, void *, void *);
+		uint32_t GetTickCount(void);
+		uint32_t GetFileAttributesA(const char *name);
+		uint32_t GetCurrentDirectoryA(uint32_t size, char *ptr);
+		]]
+		local kernel32 = ffi.load('kernel32.dll')
+		local buffer = ffi.new('char[?]', 300)
+		local INVALID_FILE_ATTRIBUTES = 0xffffffff
+		local FILE_ATTRIBUTE_DIRECTORY = 0x10
+		os.native.kernel32 = kernel32
+		function os.native.GetFullPathName(name)
+			local hr = kernel32.GetFullPathNameA(name, 290, buffer, nil)
+			return (hr > 0) and ffi.string(buffer, hr) or nil
+		end
+		function os.native.ReplaceFile(replaced, replacement)
+			local hr = kernel32.ReplaceFileA(replaced, replacement, nil, 2, nil, nil)
+			return (hr ~= 0) and true or false
+		end
+		function os.native.GetTickCount()
+			return kernel32.GetTickCount()
+		end
+		function os.native.GetFileAttributes(name)
+			return kernel32.GetFileAttributesA(name)
+		end
+		function os.native.exists(name)
+			local attr = os.native.GetFileAttributes(name)
+			return attr ~= INVALID_FILE_ATTRIBUTES
+		end
+		function os.native.isdir(name)
+			local attr = os.native.GetFileAttributes(name)
+			local isdir = FILE_ATTRIBUTE_DIRECTORY
+			if attr == INVALID_FILE_ATTRIBUTES then
+				return false
+			end
+			return (attr % (2 * isdir)) >= isdir
+		end
+		function os.native.getcwd()
+			local hr = kernel32.GetCurrentDirectoryA(299, buffer)
+			if hr <= 0 then return nil end
+			return ffi.string(buffer, hr)
+		end
+	else
+		ffi.cdef[[
+		typedef struct { long tv_sec; long tv_usec; } timeval;
+		int gettimeofday(timeval *tv, void *tz);
+		int access(const char *name, int mode);
+		char *realpath(const char *path, char *resolve);
+		char *getcwd(char *buf, size_t size);
+		]]
+		local timeval = ffi.new('timeval[?]', 1)
+		local buffer = ffi.new('char[?]', 4100)
+		function os.native.gettimeofday()
+			local hr = ffi.C.gettimeofday(timeval, nil)
+			local sec = tonumber(timeval[0].tv_sec)
+			local usec = tonumber(timeval[0].tv_usec)
+			return sec + (usec * 0.000001)
+		end
+		function os.native.access(name, mode)
+			return ffi.C.access(name, mode)
+		end
+		function os.native.realpath(name)
+			local path = ffi.C.realpath(name, buffer)
+			return (path ~= nil) and ffi.string(buffer) or nil
+		end
+		function os.native.getcwd()
+			local hr = ffi.C.getcwd(buffer, 4099)
+			return hr ~= nil and ffi.string(buffer) or nil
+		end
+	end
+	function os.native.tickcount() 
+		if windows then
+			return os.native.GetTickCount()
+		else
+			return math.floor(os.native.gettimeofday() * 1000)
+		end
+	end
+	os.native.init = true
+end
+
+
+-----------------------------------------------------------------------
 -- get current path
 -----------------------------------------------------------------------
 function os.pwd()
+	if os.native and os.native.getcwd then
+		local hr = os.native.getcwd()
+		if hr then return hr end
+	end
+	if os.getcwd then
+		return os.getcwd()
+	end
 	if windows then
 		local fp = io.popen('cd')
 		if fp == nil then
@@ -372,6 +469,10 @@ end
 -----------------------------------------------------------------------
 function os.path.abspath(path)
 	if path == '' then path = '.' end
+	if os.native and os.native.GetFullPathName then
+		local test = os.native.GetFullPathName(path)
+		if test then return test end
+	end
 	if windows then
 		local script = 'FOR /f "delims=" %%i IN ("%s") DO @echo %%~fi'
 		local script = string.format(script, path)
@@ -429,9 +530,15 @@ function os.path.isdir(pathname)
 			return true
 		end
 	end
+	if os.native and os.native.isdir then
+		return os.native.isdir(pathname)
+	end
+	if clink and os.isdir then
+		return os.isdir(pathname)
+	end
 	local name = pathname
 	if (not name:endswith('/')) and (not name:endswith('\\')) then
-		name = name .. '/'
+		name = name .. os.path.sep
 	end
 	return os.path.exists(name)
 end
@@ -871,6 +978,9 @@ function math.random_init()
 		seed = seed .. rnd
 	end
 	seed = seed .. tostring(os.clock() * 10000000)
+	if os.native and os.native.tickcount then
+		seed = seed .. tostring(os.native.tickcount())
+	end
 	local number = 0
 	for i = 1, seed:len() do
 		local k = string.byte(seed:sub(i, i))
@@ -960,20 +1070,29 @@ function data_save(filename, M)
 	local tmpname = nil
 	local i
 	filename = os.path.expand(filename)
-	if windows then
-		fp = io.open(filename, 'w')
-	else
-		math.random_init()
-		while true do
-			tmpname = filename .. '.' .. tostring(os.time())
+	math.random_init()
+	while true do
+		tmpname = filename .. '.' .. tostring(os.time())
+		if os.native and os.native.tickcount then
+			local key = os.native.tickcount() % 1000
+			tmpname = tmpname .. string.format('%03d', key)
+			tmpname = tmpname .. math.random_string(5)
+		else
 			tmpname = tmpname .. math.random_string(8)
-			local rnd = os.getenv('_ZL_RANDOM')
-			tmpname = tmpname .. '' .. (rnd and rnd or '')
-			if not os.path.exists(tmpname) then
-				-- print('tmpname: '..tmpname)
-				break
-			end
 		end
+		if not os.path.exists(tmpname) then
+			-- print('tmpname: '..tmpname)
+			break
+		end
+	end
+	if windows then
+		if os.native and os.native.ReplaceFile then
+			fp = io.open(tmpname, 'w')
+		else
+			fp = io.open(filename, 'w')
+			tmpname = nil
+		end
+	else
 		fp = io.open(tmpname, 'w')
 	end
 	if fp == nil then
@@ -986,7 +1105,11 @@ function data_save(filename, M)
 	end
 	fp:close()
 	if tmpname ~= nil then
-		os.rename(tmpname, filename)
+		if windows then
+			os.native.ReplaceFile(filename, tmpname)
+		else
+			os.rename(tmpname, filename)
+		end
 		os.remove(tmpname)
 	end
 	return true

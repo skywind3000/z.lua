@@ -458,6 +458,7 @@ As you see, z.lua is the fastest one and requires less resource.
 
 ## History
 
+- 1.6.0 (2019-03-04): optimize with ffi module (luajit builtin module).
 - 1.5.11 (2019-03-02): fixed: os.path.isdir doesn't work for symbol link folders.
 - 1.5.10 (2019-03-01): Prevent writing file racing.
 - 1.5.9 (2019-02-25): `z -b` should not match current directory (close #56).
