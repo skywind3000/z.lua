@@ -4,7 +4,7 @@
 -- z.lua - a cd command that learns, by skywind 2018, 2019
 -- Licensed under MIT license.
 --
--- Version 1.6.0, Last Modified: 2019/03/04 14:47
+-- Version 1.7.0, Last Modified: 2019/03/09 16:51
 --
 -- * 10x faster than fasd and autojump, 3x faster than z.sh
 -- * available for posix shells: bash, zsh, sh, ash, dash, busybox
@@ -1106,7 +1106,10 @@ function data_save(filename, M)
 	fp:close()
 	if tmpname ~= nil then
 		if windows then
-			os.native.ReplaceFile(filename, tmpname)
+			local ok, err, code = os.rename(tmpname, filename)
+			if not ok then
+				os.native.ReplaceFile(filename, tmpname)
+			end
 		else
 			os.rename(tmpname, filename)
 		end
