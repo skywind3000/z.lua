@@ -32,3 +32,25 @@ alias zb='z -b'
 alias zh='z -I -t .'
 alias zzc='zz -c'
 
+fzf-zlua-widget() {
+    _zlua -I . 
+    local ret=$?
+    zle reset-prompt
+    return $ret
+}
+
+fzf-zlua-stack-widget() {
+    LBUFFER="${LBUFFER}$(z -- 2>&1 | fzf --height 25% | awk '{print $2}')"
+    local ret=$?
+    zle redisplay
+    if [[ $ret == 0 && -o auto_cd && -n $BUFFER ]]; then
+        zle .accept-line
+    fi
+    return $ret
+}
+
+zle -N fzf-zlua-widget
+bindkey "^G" fzf-zlua-widget
+
+zle -N fzf-zlua-stack-widget
+bindkey "^S" fzf-zlua-stack-widget
