@@ -59,7 +59,6 @@ class z(ranger.api.commands.Command):
                     cmd += ' "%s"'%arg
                 if mode in ('-e', '-x'):
                     path = subprocess.check_output([PATH_LUA, PATH_ZLUA, '--cd'] + args)
-                    path = path.decode("utf-8", "ignore")
                     path = path.rstrip('\n')
                     self.fm.notify(path)
                 elif mode in ('-h', '-l', '--help'):
@@ -81,7 +80,6 @@ class z(ranger.api.commands.Command):
                         self.fm.cd(path)
             else:
                 path = subprocess.check_output([PATH_LUA, PATH_ZLUA, '--cd'] + args)
-                path = path.decode("utf-8", "ignore")
                 path = path.rstrip('\n')
                 if path and os.path.exists(path):
                     self.fm.cd(path)
