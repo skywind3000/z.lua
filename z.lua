@@ -1865,17 +1865,15 @@ function z_init()
 	local _zl_skippwd = os.getenv('_ZL_SKIP_PWD')
 	local _zl_matchmode = os.getenv('_ZL_MATCH_MODE')
 	if _zl_data ~= nil and _zl_data ~= "" then
-		if windows then
-			DATA_FILE = _zl_data
-		else
-			-- avoid windows environments affect cygwin & msys
-			if _zl_data:sub(2, 2) ~= ':' then
-				local t = _zl_data:sub(3, 3)
-				if t ~= '/' and t ~= "\\" then
-					DATA_FILE = _zl_data
-				end
-			end
-		end
+                -- avoid windows environments affect cygwin & msys
+                if not windows and _zl_data:sub(2, 2) ~= ':' then
+                        local t = _zl_data:sub(3, 3)
+                        if t ~= '/' and t ~= "\\" then
+                                DATA_FILE = _zl_data
+                        end
+                else
+                        DATA_FILE = _zl_data
+                end
 	end
 	if _zl_maxage ~= nil and _zl_maxage ~= "" then
 		_zl_maxage = tonumber(_zl_maxage)
