@@ -4,7 +4,7 @@
 -- z.lua - a cd command that learns, by skywind 2018, 2019
 -- Licensed under MIT license.
 --
--- Version 1.7.0, Last Modified: 2019/03/09 16:51
+-- Version 1.7.1, Last Modified: 2019/06/07 22:07
 --
 -- * 10x faster than fasd and autojump, 3x faster than z.sh
 -- * available for posix shells: bash, zsh, sh, ash, dash, busybox
@@ -1869,11 +1869,8 @@ function z_init()
 			DATA_FILE = _zl_data
 		else
 			-- avoid windows environments affect cygwin & msys
-			if _zl_data:sub(2, 2) ~= ':' then
-				local t = _zl_data:sub(3, 3)
-				if t ~= '/' and t ~= "\\" then
-					DATA_FILE = _zl_data
-				end
+			if not string.match(_zl_data, '^%a:[/\\]') then
+				DATA_FILE = _zl_data
 			end
 		end
 	end
