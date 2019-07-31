@@ -2056,7 +2056,7 @@ local script_init_zsh = [[
 _zlua_precmd() {
 	(_zlua --add "${PWD:a}" &)
 }
-typeset -gaU precmd_functions
+typeset -ga precmd_functions
 [ -n "${precmd_functions[(r)_zlua_precmd]}" ] || {
 	precmd_functions[$(($#precmd_functions+1))]=_zlua_precmd
 }
@@ -2066,7 +2066,7 @@ local script_init_zsh_once = [[
 _zlua_precmd() {
 	(_zlua --add "${PWD:a}" &)
 }
-typeset -gaU chpwd_functions
+typeset -ga chpwd_functions
 [ -n "${chpwd_functions[(r)_zlua_precmd]}" ] || {
 	chpwd_functions[$(($#chpwd_functions+1))]=_zlua_precmd
 }
