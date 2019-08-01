@@ -2010,14 +2010,14 @@ alias ${_ZL_CMD:-z}='_zlua'
 local script_init_bash = [[
 case "$PROMPT_COMMAND" in
 	*_zlua?--add*) ;;
-	*) PROMPT_COMMAND="(_zlua --add \"\$(command pwd 2>/dev/null)\" &);$PROMPT_COMMAND" ;;
+	*) PROMPT_COMMAND="(_zlua --add \"\$(command pwd 2>/dev/null)\" &)${PROMPT_COMMAND:+;$PROMPT_COMMAND}" ;;
 esac
 ]]
 
 local script_init_bash_fast = [[
 case "$PROMPT_COMMAND" in
 	*_zlua?--add*) ;;
-	*) PROMPT_COMMAND="(_zlua --add \"\$PWD\" &);$PROMPT_COMMAND" ;;
+	*) PROMPT_COMMAND="(_zlua --add \"\$PWD\" &)${PROMPT_COMMAND:+;$PROMPT_COMMAND}" ;;
 esac
 ]]
 
@@ -2029,7 +2029,7 @@ _zlua_precmd() {
 }
 case "$PROMPT_COMMAND" in
 	*_zlua_precmd*) ;;
-	*) PROMPT_COMMAND="_zlua_precmd;$PROMPT_COMMAND" ;;
+	*) PROMPT_COMMAND="_zlua_precmd${PROMPT_COMMAND:+;$PROMPT_COMMAND}" ;;
 esac
 ]]
 
