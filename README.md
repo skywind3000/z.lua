@@ -458,6 +458,7 @@ As you see, z.lua is the fastest one and requires less resource.
 
 ## History
 
+- 1.7.2 (2019-08-01): Improve bash/zsh shell compatibility by [@barlik](https://github.com/barlik).
 - 1.7.1 (2019-06-07): Fixed: `$_ZL_DATA` failure on Linux sometimes.
 - 1.7.0 (2019-03-09): Support [ranger](https://github.com/skywind3000/z.lua/wiki/FAQ#how-to-integrate-zlua-to-ranger-), fix ReplaceFile issue in luajit (windows).
 - 1.6.0 (2019-03-04): optimize with ffi module (luajit builtin module).
