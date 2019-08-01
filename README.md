@@ -512,6 +512,7 @@ This project needs help for the tasks below:
 - Thanks to [@TeddyDD](https://github.com/TeddyDD) for Fish Shell porting.
 - Thanks to [@manhong2112](https://github.com/manhong2112) for Power Shell porting.
 - Thanks to [@BarbUk](https://github.com/BarbUk) for fzf completion in Bash.
+- Thanks to [@barlik](https://github.com/barlik) for many improvements.
 
 And many others.
 
