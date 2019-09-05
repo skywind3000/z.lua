@@ -548,6 +548,9 @@ end
 -- file or path exists
 -----------------------------------------------------------------------
 function os.path.exists(name)
+	if name == '/' then
+		return true
+	end
 	local ok, err, code = os.rename(name, name)
 	if not ok then
 		if code == 13 then
