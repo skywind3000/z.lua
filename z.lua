@@ -4,7 +4,7 @@
 -- z.lua - a cd command that learns, by skywind 2018, 2019
 -- Licensed under MIT license.
 --
--- Version 1.7.2, Last Modified: 2019/08/01 19:45
+-- Version 1.7.3, Last Modified: 2019/09/06 17:27
 --
 -- * 10x faster than fasd and autojump, 3x faster than z.sh
 -- * available for posix shells: bash, zsh, sh, ash, dash, busybox
@@ -74,6 +74,7 @@
 --   set $_ZL_MAXAGE to define a aging threshold (default is 5000).
 --   set $_ZL_MATCH_MODE to 1 to enable enhanced matching mode.
 --   set $_ZL_NO_CHECK to 1 to disable path validation. z --purge to clear.
+--   set $_ZL_USE_LFS to 1 to use lua-filesystem package
 --
 --=====================================================================
 
@@ -2542,7 +2543,33 @@ end
 
 
 -----------------------------------------------------------------------
--- testing case
+-- LFS optimize
+-----------------------------------------------------------------------
+os.lfs = {}
+os.lfs.enable = os.getenv('_ZL_USE_LFS')
+if os.lfs.enable ~= nil then
+	local m = string.lower(os.lfs.enable)
+	if (m == '1' or m == 'yes' or m == 'true' or m == 't') then
+		os.lfs.status, os.lfs.pkg = pcall(require, 'lfs')
+		if os.lfs.status then
+			local lfs = os.lfs.pkg
+			os.path.exists = function (name)
+				return lfs.attributes(name) and true or false
+			end
+			os.path.isdir = function (name)
+				local mode = lfs.attributes(name)
+				if not mode then 
+					return false
+				end
+				return (mode.mode == 'directory') and true or false
+			end
+		end
+	end
+end
+
+
+-----------------------------------------------------------------------
+-- program entry
 -----------------------------------------------------------------------
 if not pcall(debug.getlocal, 4, 1) then
 	-- main script
