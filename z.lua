@@ -1417,10 +1417,16 @@ function z_match(patterns, method, subdir)
 	subdir = subdir ~= nil and subdir or false
 	local M = data_load(DATA_FILE)
 	M = data_select(M, patterns, false)
-	M = data_filter(M)
+	local nc = os.getenv('_ZL_NO_CHECK')
+	if nc == nil or nc == '' or nc == '0' then
+		M = data_filter(M)
+	end
 	if Z_MATCHNAME then
 		local N = data_select(M, patterns, true)
 		N = data_filter(N)
+        if nc == nil or nc == '' or nc == '0' then
+            M = data_filter(M)
+        end
 		if #N > 0 then
 			M = N
 		end
