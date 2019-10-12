@@ -1423,10 +1423,9 @@ function z_match(patterns, method, subdir)
 	end
 	if Z_MATCHNAME then
 		local N = data_select(M, patterns, true)
-		N = data_filter(N)
-        if nc == nil or nc == '' or nc == '0' then
-            M = data_filter(M)
-        end
+		if nc == nil or nc == '' or nc == '0' then
+			N = data_filter(N)
+		end
 		if #N > 0 then
 			M = N
 		end
