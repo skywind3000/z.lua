@@ -4,7 +4,7 @@
 -- z.lua - a cd command that learns, by skywind 2018, 2019
 -- Licensed under MIT license.
 --
--- Version 1.7.3, Last Modified: 2019/09/06 17:27
+-- Version 1.7.4, Last Modified: 2019/12/29 04:52
 --
 -- * 10x faster than fasd and autojump, 3x faster than z.sh
 -- * available for posix shells: bash, zsh, sh, ash, dash, busybox
@@ -75,6 +75,7 @@
 --   set $_ZL_MATCH_MODE to 1 to enable enhanced matching mode.
 --   set $_ZL_NO_CHECK to 1 to disable path validation. z --purge to clear.
 --   set $_ZL_USE_LFS to 1 to use lua-filesystem package
+--   set $_ZL_HYPHEN to 1 to stop treating hyphen as a regexp keyword
 --
 --=====================================================================
 
@@ -121,6 +122,7 @@ Z_CMD = 'z'
 Z_MATCHMODE = 0
 Z_MATCHNAME = false
 Z_SKIPPWD = false
+Z_HYPHEN = false
 
 os.LOG_NAME = os.getenv('_ZL_LOG_NAME')
 
@@ -1267,6 +1269,9 @@ function data_select(M, patterns, matchlast)
 	local pats = {}
 	for i = 1, #patterns do
 		local p = patterns[i]
+		if Z_HYPHEN then
+			p = p:gsub('-', '%%-')
+		end
 		table.insert(pats, case_insensitive_pattern(p))
 	end
 	for i = 1, #M do
@@ -1868,6 +1873,7 @@ function z_init()
 	local _zl_matchname = os.getenv('_ZL_MATCH_NAME')
 	local _zl_skippwd = os.getenv('_ZL_SKIP_PWD')
 	local _zl_matchmode = os.getenv('_ZL_MATCH_MODE')
+	local _zl_hyphen = os.getenv('_ZL_HYPHEN')
 	if _zl_data ~= nil and _zl_data ~= "" then
 		if windows then
 			DATA_FILE = _zl_data
@@ -1918,6 +1924,12 @@ function z_init()
 		if (m == 1) then
 			Z_MATCHNAME = true
 			Z_SKIPPWD = true
+		end
+	end
+	if _zl_hyphen ~= nil then
+		local m = string.lower(_zl_hyphen)
+		if (m == '1' or m == 'yes' or m == 'true' or m == 't') then
+			Z_HYPHEN = true
 		end
 	end
 end

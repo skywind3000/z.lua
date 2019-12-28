@@ -131,6 +131,7 @@ z -b foo    # cd to the parent directory starting with foo
 - set `$_ZL_ECHO` to 1 to display new directory name after cd.
 - set `$_ZL_MATCH_MODE` to 1 to enable enhanced matching.
 - set `$_ZL_NO_CHECK` to 1 to disable path validation, use `z --purge` to clean
+- set `$_ZL_HYPHEN` to 1 to treat hyphon (-) as a normal character not a lua regexp keyword.
 
 ## Aging
 
@@ -458,6 +459,7 @@ As you see, z.lua is the fastest one and requires less resource.
 
 ## History
 
+- 1.7.4 (2019-12-29): new: `$_ZL_HYPHEN` to treat hyphen as a normal character, see [here](https://github.com/skywind3000/z.lua/wiki/FAQ#how-to-input-a-hyphen---in-the-keyword-).
 - 1.7.3 (2019-09-07): use [lua-filesystem](http://keplerproject.github.io/luafilesystem/) package if possible when `$_ZL_USE_LFS` is `1`.
 - 1.7.2 (2019-08-01): Improve bash/zsh shell compatibility by [@barlik](https://github.com/barlik).
 - 1.7.1 (2019-06-07): Fixed: `$_ZL_DATA` failure on Linux sometimes.
