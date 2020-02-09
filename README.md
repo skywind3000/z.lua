@@ -460,7 +460,7 @@ As you see, z.lua is the fastest one and requires less resource.
 
 ## History
 
-- 1.8.2 (2020-02-09): new: `z -b -i` and `z -b -I` to jump backwards in interactive mode.
+- 1.8.3 (2020-02-09): new: `z -b -i` and `z -b -I` to jump backwards in interactive mode.
 - 1.7.4 (2019-12-29): new: `$_ZL_HYPHEN` to treat hyphen as a normal character, see [here](https://github.com/skywind3000/z.lua/wiki/FAQ#how-to-input-a-hyphen---in-the-keyword-).
 - 1.7.3 (2019-09-07): use [lua-filesystem](http://keplerproject.github.io/luafilesystem/) package if possible when `$_ZL_USE_LFS` is `1`.
 - 1.7.2 (2019-08-01): Improve bash/zsh shell compatibility by [@barlik](https://github.com/barlik).
