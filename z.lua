@@ -1777,7 +1777,6 @@ function cd_breadcrumbs(pwd, interactive)
 	local elements = {}
 	local interactive = interactive and interactive or 1
 	local fullname = os.environ('_ZL_FULL_PATH', false)
-	-- fullname = true
 	while true do
 		local head, name = os.path.split(path)
 		if head == path  then		-- reached root
@@ -1790,7 +1789,6 @@ function cd_breadcrumbs(pwd, interactive)
 		end
 		path = head
 	end
-	-- printT(elements)
 	local tmpname = '/tmp/zlua.txt'
 	local fp = io.stderr
 	if interactive == 2 then
