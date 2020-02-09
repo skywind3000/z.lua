@@ -1,10 +1,10 @@
 #! /usr/bin/env lua
 --=====================================================================
 --
--- z.lua - a cd command that learns, by skywind 2018, 2019
+-- z.lua - a cd command that learns, by skywind 2018, 2019, 2020
 -- Licensed under MIT license.
 --
--- Version 1.7.4, Last Modified: 2019/12/29 04:52
+-- Version 1.8.1, Last Modified: 2020/02/09 23:33
 --
 -- * 10x faster than fasd and autojump, 3x faster than z.sh
 -- * available for posix shells: bash, zsh, sh, ash, dash, busybox
@@ -1585,7 +1585,7 @@ function z_cd(patterns)
 		io.stderr:write('> ')
 		io.stderr:flush()
 		local input = io.read('*l')
-		if input == nil then
+		if input == nil or input == '' then
 			return nil
 		end
 		local index = tonumber(input)
@@ -1768,6 +1768,103 @@ end
 
 
 -----------------------------------------------------------------------
+-- cd breadcrumbs: z -b -i, z -b -I
+-----------------------------------------------------------------------
+function cd_breadcrumbs(pwd, interactive)
+	local pwd = (pwd == nil or pwd == '') and os.pwd() or pwd
+	local pwd = os.path.normpath(pwd)
+	local path, _ = os.path.split(pwd)
+	local elements = {}
+	local interactive = interactive and interactive or 1
+	local fullname = os.environ('_ZL_FULL_PATH', false)
+	-- fullname = true
+	while true do
+		local head, name = os.path.split(path)
+		if head == path  then		-- reached root
+			table.insert(elements, {head, head})
+			break
+		elseif name ~= '' then
+			table.insert(elements, {name, path})
+		else
+			break
+		end
+		path = head
+	end
+	-- printT(elements)
+	local tmpname = '/tmp/zlua.txt'
+	local fp = io.stderr
+	if interactive == 2 then
+		if not windows then
+			tmpname = os.tmpname()
+		else
+			tmpname = os.tmpname():gsub('\\', ''):gsub('%.', '')
+			tmpname = os.environ('TMP', '') .. '\\zlua_' .. tmpname .. '.txt'
+		end
+		fp = io.open(tmpname, 'w')
+	end
+	-- print table
+	local maxsize = string.len(tostring(#elements))
+	for i = #elements, 1, -1 do
+		local item = elements[i]
+		local name = item[1]
+		local text = string.rep(' ', maxsize - string.len(i)) .. tostring(i)
+		text = text .. ': ' .. (fullname and item[2] or item[1])
+		fp:write(text .. '\n')
+	end
+	if fp ~= io.stderr then
+		fp:close()
+	end
+	-- select from stdin or fzf
+	if interactive == 1 then
+		io.stderr:write('> ')
+		io.stderr:flush()
+		local input = io.read('*l')
+		if input == nil or input == '' then
+			return nil
+		end
+		local index = tonumber(input)
+		if index < 1 or index > #elements then
+			return nil
+		end
+		retval = elements[index][2]
+	elseif interactive == 2 then
+		local fzf = os.environ('_ZL_FZF', 'fzf')
+		local cmd = '--reverse --inline-info --tac '
+		local flag = os.environ('_ZL_FZF_FLAG', '')
+		flag = (flag == '' or flag == nil) and '+s -e' or flag
+		cmd = ((fzf == '') and 'fzf' or fzf) .. ' ' .. cmd .. ' ' .. flag
+		if not windows then
+			local height = os.environ('_ZL_FZF_HEIGHT', '35%')
+			if height ~= nil and height ~= '' and height ~= '0' then
+				cmd = cmd .. ' --height ' .. height
+			end
+			cmd = cmd .. '< "' .. tmpname .. '"'
+		else
+			cmd = 'type "' .. tmpname .. '" | ' .. cmd
+		end
+		retval = os.call(cmd)
+		os.remove(tmpname)
+		if retval == '' or retval == nil then
+			return nil
+		end
+		local pos = retval:find(':')
+		if not pos then
+			return nil
+		end
+		retval = retval:sub(1, pos - 1):gsub('^%s*', '')
+		index = tonumber((retval == nil) and '0' or retval)
+		if index == nil then
+			return nil
+		elseif index < 1 or index > #elements then
+			return nil
+		end
+		retval = elements[index][2]
+	end
+	return retval
+end
+
+
+-----------------------------------------------------------------------
 -- main entry
 -----------------------------------------------------------------------
 function main(argv)
@@ -1801,7 +1898,11 @@ function main(argv)
 	if options['--cd'] or options['-e'] then
 		local path = ''
 		if options['-b'] then
-			path = cd_backward(args, options)
+			if Z_INTERACTIVE == 0 then
+				path = cd_backward(args, options)
+			else
+				path = cd_breadcrumbs('', Z_INTERACTIVE)
+			end
 		elseif options['-'] then
 			path = cd_minus(args, options)
 		elseif #args == 0 then
