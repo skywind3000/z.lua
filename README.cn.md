@@ -302,6 +302,8 @@ export _ZL_ROOT_MARKERS=".git,.svn,.hg,.root,package.json"
 
 **Bonus**：`zb ..` 相当于 `cd ..`，`zb ...` 相当于 `cd ../..`，而 `zb ....` 相当于 `cd ../../..` 等等。 最后 `zb ..20` 等同于调用 `cd ..` 二十次。
 
+**Bonus**: 试试 `z -b -i` 以及 `z -b -I`，推荐把他们取个别名成 `zbi` 和 `zbf`。
+
 
 ## 补全功能
 
