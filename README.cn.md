@@ -111,6 +111,7 @@ z -b foo    # 跳转到父目录中名称以 foo 开头的那一级
 - 设置 `$_ZL_CD` 用来指定你想用的 cd 命令，比如有人用 cd_func 。
 - 设置 `$_ZL_ECHO` 为 1 可以在跳转后显示目标路径名称。
 - 设置 `$_ZL_MATCH_MODE` 为 1 可以打开 “增强匹配模式”。
+- 设置 `$_ZL_HYPHEN` 为 1 可以允许关键字中包含横线 （横线默认是 lua 正则关键字，要转写成 `%-`）。
 
 ## Aging
 
@@ -175,7 +176,7 @@ Frecency 是一个由 'recent' 和 'frequency' 组成的合成词，这个术语
       30   /home/user/workspace/project2
       40   /home/user/workspace/project3
 
-  在增强模式下使用 `"z wo"` 的话，只有 `/home/user/work` 满足匹配，因为按照第二条规则，这是唯一一条最有一段名称匹配 `wo` 的路径。
+  在增强模式下使用 `"z wo"` 的话，只有 `/home/user/workspace` 满足匹配，因为按照第二条规则，这是唯一一条最有一段名称匹配 `wo` 的路径。
 
   因为最后一级目录名称总是最容易记住的，所以给到它比较高的优先级。在默认匹配算法中，你同样可以用 `"z space$"` 来达到相同的目的，但是 `"z wo"` 可以打更少的字。
 
