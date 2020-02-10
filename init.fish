@@ -35,6 +35,8 @@ if test -e $_zlua_dir/z.lua
 	alias zz='z -i'      # cd with interactive selection
 	alias zf='z -I'      # use fzf to select in multiple matches
 	alias zb='z -b'      # quickly cd to the parent directory
+	alias zbi='z -b -i'  # interactive jump backward
+	alias zbf='z -b -I'  # interactive jump backward with fzf
 	set -U ZLUA_SCRIPT "$ZLUA_SCRIPT"  2> /dev/null
 	set -U ZLUA_LUAEXE "$ZLUA_LUAEXE"  2> /dev/null
 end
