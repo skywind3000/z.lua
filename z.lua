@@ -2201,12 +2201,11 @@ fi
 local script_complete_zsh = [[
 _zlua_zsh_tab_completion() {
 	# tab completion
-	local compl
-	read -l compl
 	(( $+compstate )) && compstate[insert]=menu # no expand
-	reply=(${(f)"$(_zlua --complete "$compl")"})
+	local -a tmp=(${(f)"$(_zlua --complete "${words/_zlua/z}")"})
+	_describe "directory" tmp -U
 }
-compctl -U -K _zlua_zsh_tab_completion _zlua
+compdef _zlua_zsh_tab_completion _zlua
 ]]
 
 
