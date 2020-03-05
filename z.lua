@@ -4,7 +4,7 @@
 -- z.lua - a cd command that learns, by skywind 2018, 2019, 2020
 -- Licensed under MIT license.
 --
--- Version 1.8.4, Last Modified: 2020/02/10 19:22
+-- Version 1.8.5, Last Modified: 2020/03/05 18:08
 --
 -- * 10x faster than fasd and autojump, 3x faster than z.sh
 -- * available for posix shells: bash, zsh, sh, ash, dash, busybox
@@ -2205,7 +2205,7 @@ _zlua_zsh_tab_completion() {
 	local -a tmp=(${(f)"$(_zlua --complete "${words/_zlua/z}")"})
 	_describe "directory" tmp -U
 }
-compdef _zlua_zsh_tab_completion _zlua
+compdef _zlua_zsh_tab_completion _zlua 2> /dev/null
 ]]
 
 
