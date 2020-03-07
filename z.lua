@@ -2205,7 +2205,9 @@ _zlua_zsh_tab_completion() {
 	local -a tmp=(${(f)"$(_zlua --complete "${words/_zlua/z}")"})
 	_describe "directory" tmp -U
 }
-compdef _zlua_zsh_tab_completion _zlua 2> /dev/null
+if [ "${+functions[compdef]}" -ne 0 ]; then
+	compdef _zlua_zsh_tab_completion _zlua 2> /dev/null
+fi
 ]]
 
 
