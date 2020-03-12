@@ -1,9 +1,20 @@
+//=====================================================================
+//
+// czmod.c - c module to boost z.lua
+//
+// Created by skywind on 2020/03/11
+// Last Modified: 2020/03/11 16:37:01
+//
+//=====================================================================
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <stdint.h>
 
+#ifdef __linux
 #include <linux/limits.h>
+#endif
 
 #include "imembase.c"
 
@@ -33,6 +44,12 @@
 
 
 //---------------------------------------------------------------------
+// internal functions
+//---------------------------------------------------------------------
+static const char *get_data_file(void);
+
+
+//---------------------------------------------------------------------
 // get environ
 //---------------------------------------------------------------------
 static ib_string* os_getenv(const char *name)
@@ -50,7 +67,7 @@ static ib_string* os_getenv(const char *name)
 //---------------------------------------------------------------------
 // get data file
 //---------------------------------------------------------------------
-static inline const char *get_data_file(void)
+static const char *get_data_file(void)
 {
 	static ib_string *text = NULL;
 	if (text != NULL) {
@@ -71,6 +88,38 @@ static inline const char *get_data_file(void)
 	return text->ptr;
 }
 
+
+//---------------------------------------------------------------------
+// load file content
+//---------------------------------------------------------------------
+ib_string *load_content(const char *filename)
+{
+	FILE *fp = fopen(filename, "r");
+	if (fp == NULL) {
+		return NULL;
+	}
+	ib_string *text = ib_string_new();
+	size_t block = 65536;
+	ib_string_resize(text, block);
+	size_t pos = 0;
+	while (feof(fp) == 0) {
+		size_t avail = text->size - pos;
+		if (avail < block) {
+			ib_string_resize(text, text->size + block);
+			avail = text->size - pos;
+		}
+		size_t hr = fread(&(text->ptr[pos]), 1, avail, fp);
+		pos += hr;
+	}
+	fclose(fp);
+	ib_string_resize(text, pos);
+	return text;
+}
+
+
+//---------------------------------------------------------------------
+// main entry
+//---------------------------------------------------------------------
 int main(int argc, char *argv[])
 {
 	if (argc <= 1) {
