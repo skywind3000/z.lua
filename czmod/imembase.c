@@ -532,11 +532,6 @@ ib_array *ib_array_new(void (*destroy_func)(void*))
 
 void ib_array_delete(ib_array *array)
 {
-	array->items = (void**)array->vec.data;
-}
-
-void ib_array_release(ib_array *array)
-{
 	if (array->fn_destroy) {
 		size_t n = array->size;
 		size_t i;
