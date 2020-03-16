@@ -303,6 +303,15 @@ void z_add(const char *newpath)
 int main(int argc, char *argv[])
 {
 	if (argc <= 1) {
+		int i;
+		printf("begin\n");
+		clock_t ts = (uint64_t)clock();
+		for (i = 0; i < 1000; i++) {
+			z_add("/tmp");
+		}
+		ts = clock() - ts;
+		ts = (ts * 1000) / CLOCKS_PER_SEC;
+		printf("finished: %d ms\n", (int)ts);
 		return 0;
 	}
 	if (strcmp(argv[1], "--add") == 0) {
