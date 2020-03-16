@@ -18,6 +18,7 @@
 #elif defined(__linux)
 // #include <linux/limits.h>
 #include <limits.h>
+#include <sys/file.h>
 #endif
 
 #define IB_STRING_SSO 256
@@ -105,6 +106,8 @@ ib_string *load_content(const char *filename)
 	if (fp == NULL) {
 		return NULL;
 	}
+	int fd = fileno(fp);
+	flock(fd, LOCK_SH);
 	ib_string *text = ib_string_new();
 	size_t block = 65536;
 	ib_string_resize(text, block);
@@ -118,6 +121,7 @@ ib_string *load_content(const char *filename)
 		size_t hr = fread(&(text->ptr[pos]), 1, avail, fp);
 		pos += hr;
 	}
+	flock(fd, LOCK_UN);
 	fclose(fp);
 	ib_string_resize(text, pos);
 	return text;
@@ -237,6 +241,30 @@ void data_save(const char *filename, ib_array *items)
 
 
 //---------------------------------------------------------------------
+// save data
+//---------------------------------------------------------------------
+void data_write(const char *filename, ib_array *items)
+{
+	FILE *fp;
+	int fd;
+	fp = fopen(filename, "w+");
+	if (fp) {
+		int size = ib_array_size(items);
+		int i;
+		fd = fileno(fp);
+		flock(fd, LOCK_EX);
+		for (i = 0; i < size; i++) {
+			PathItem *item = (PathItem*)ib_array_index(items, i);
+			fprintf(fp, "%s|%u|%u\n",
+				item->path->ptr, item->rank, item->timestamp);
+		}
+		flock(fd, LOCK_UN);
+		fclose(fp);
+	}
+}
+
+
+//---------------------------------------------------------------------
 // insert data
 //---------------------------------------------------------------------
 void data_add(ib_array *items, const char *path)
@@ -291,9 +319,10 @@ void z_insert(const char *newpath)
 {
 	static char tmpname[PATH_MAX + 10];
 	static char text[PATH_MAX + 100];
-	const char *data = get_data_file();
+	const char *data = "/home/skywind/.zlua";
 	FILE *fin = fopen(data, "r");
 	FILE *fout;
+#if 0
 	while (1) {
 		char tmp[100];
 		sprintf(tmp, ".%u%03u%d", (uint32_t)time(NULL), 
@@ -301,6 +330,9 @@ void z_insert(const char *newpath)
 		sprintf(tmpname, "%s%s", data, tmp);
 		if (iposix_path_isdir(tmpname) < 0) break;
 	}
+#else
+	sprintf(tmpname, "%s.1", data);
+#endif
 	fout = fopen(tmpname, "w");
 	if (fin) {
 		int found = 0;
@@ -350,7 +382,11 @@ void z_add(const char *newpath)
 		items = ib_array_new_items();
 	}
 	data_add(items, newpath);
+#if 0
 	data_save(data, items);
+#else
+	data_write(data, items);
+#endif
 	ib_array_delete(items);
 }
 
@@ -375,7 +411,7 @@ int main(int argc, char *argv[])
 	}
 	if (strcmp(argv[1], "--add") == 0) {
 		if (argc >= 3) {
-#if 0
+#if 1
 			z_add(argv[2]);
 #else
 			z_insert(argv[2]);
