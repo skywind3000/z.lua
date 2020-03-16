@@ -17,7 +17,10 @@
 #include <windows.h>
 #elif defined(__linux)
 // #include <linux/limits.h>
+#include <limits.h>
 #endif
+
+#define IB_STRING_SSO 256
 
 #include "iposix.c"
 #include "imembase.c"
@@ -282,6 +285,61 @@ void data_add(ib_array *items, const char *path)
 
 
 //---------------------------------------------------------------------
+// 
+//---------------------------------------------------------------------
+void z_insert(const char *newpath)
+{
+	static char tmpname[PATH_MAX + 10];
+	static char text[PATH_MAX + 100];
+	const char *data = get_data_file();
+	FILE *fin = fopen(data, "r");
+	FILE *fout;
+	while (1) {
+		char tmp[100];
+		sprintf(tmp, ".%u%03u%d", (uint32_t)time(NULL), 
+				(uint32_t)(clock() % 1000), rand() % 10000);
+		sprintf(tmpname, "%s%s", data, tmp);
+		if (iposix_path_isdir(tmpname) < 0) break;
+	}
+	fout = fopen(tmpname, "w");
+	if (fin) {
+		int found = 0;
+		while (!feof(fin)) {
+			uint32_t rank, ts;
+			text[0] = 0;
+			fgets(text, PATH_MAX + 100, fin);
+			char *p1 = strchr(text, '|');
+			if (p1 == NULL) continue;
+			*p1++ = 0;
+			char *p2 = strchr(p1, '|');
+			if (p2 == NULL) continue;
+			*p2++ = 0;
+			if (strcmp(text, newpath) == 0) {
+				found = 1;
+				sscanf(p1, "%u", &rank);
+				sscanf(p2, "%u", &ts);
+				rank++;
+				ts = (uint32_t)time(NULL);
+				fprintf(fout, "%s|%u|%u\n", text, rank, ts);
+			}
+			else {
+				fprintf(fout, "%s|%s|%s\n", text, p1, p2);
+			}
+		}
+		if (!found) {
+			fprintf(fout, "%s|1|%u\n", newpath, (uint32_t)time(NULL));
+		}
+		fclose(fin);
+	}
+	else {
+		fprintf(fout, "%s|1|%u\n", newpath, (uint32_t)time(NULL));
+	}
+	fclose(fout);
+	rename(tmpname, data);
+}
+
+
+//---------------------------------------------------------------------
 // add to database
 //---------------------------------------------------------------------
 void z_add(const char *newpath)
@@ -307,7 +365,8 @@ int main(int argc, char *argv[])
 		printf("begin\n");
 		clock_t ts = (uint64_t)clock();
 		for (i = 0; i < 1000; i++) {
-			z_add("/tmp");
+			// z_add("/tmp");
+			z_insert("/tmp");
 		}
 		ts = clock() - ts;
 		ts = (ts * 1000) / CLOCKS_PER_SEC;
@@ -316,7 +375,11 @@ int main(int argc, char *argv[])
 	}
 	if (strcmp(argv[1], "--add") == 0) {
 		if (argc >= 3) {
+#if 0
 			z_add(argv[2]);
+#else
+			z_insert(argv[2]);
+#endif
 		}
 	}
 	return 0;
