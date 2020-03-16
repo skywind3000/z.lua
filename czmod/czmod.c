@@ -258,6 +258,7 @@ void data_write(const char *filename, ib_array *items)
 			fprintf(fp, "%s|%u|%u\n",
 				item->path->ptr, item->rank, item->timestamp);
 		}
+		fflush(fp);
 		flock(fd, LOCK_UN);
 		fclose(fp);
 	}
