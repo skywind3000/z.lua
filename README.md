@@ -17,6 +17,7 @@ For example, `z foo bar` would match `/foo/bar` but not `/bar/foo`.
 ## Features
 
 - **10x** times faster than **fasd** and **autojump**, **3x** times faster than **z.sh**.
+- Capable to gain the ultimate speed with a [module](https://github.com/skywind3000/czmod) written in C.
 - Available for **posix shells**: bash, zsh, dash, sh, ash, ksh, busybox and etc.
 - Available for Fish Shell, Power Shell and Windows cmd.
 - [Enhanced matching algorithm](#enhanced-matching) takes you to where ever you want precisely.
@@ -448,6 +449,13 @@ sys     0m0.030s
 
 As you see, z.lua is the fastest one and requires less resource.
 
+## Native Module
+
+Since z.lua is a standalone script, but it can also work with a native module written in C:
+
+- [czmod](https://github.com/skywind3000/czmod): native module to boost `z.lua`.
+
+z.lua can be **4-5** times faster than zoxide after enabling czmod.
 
 
 ## Reputation
