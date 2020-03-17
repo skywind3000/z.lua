@@ -17,7 +17,7 @@ For example, `z foo bar` would match `/foo/bar` but not `/bar/foo`.
 ## Features
 
 - **10x** times faster than **fasd** and **autojump**, **3x** times faster than **z.sh**.
-- Capable to gain the ultimate speed with a [module](https://github.com/skywind3000/czmod) written in C.
+- Capable to gain the ultimate speed with a [native module](https://github.com/skywind3000/czmod) written in C.
 - Available for **posix shells**: bash, zsh, dash, sh, ash, ksh, busybox and etc.
 - Available for Fish Shell, Power Shell and Windows cmd.
 - [Enhanced matching algorithm](#enhanced-matching) takes you to where ever you want precisely.
