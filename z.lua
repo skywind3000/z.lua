@@ -4,7 +4,7 @@
 -- z.lua - a cd command that learns, by skywind 2018, 2019, 2020
 -- Licensed under MIT license.
 --
--- Version 1.8.5, Last Modified: 2020/03/05 18:08
+-- Version 1.8.6, Last Modified: 2020/03/17 16:32
 --
 -- * 10x faster than fasd and autojump, 3x faster than z.sh
 -- * available for posix shells: bash, zsh, sh, ash, dash, busybox
@@ -2211,7 +2211,6 @@ fi
 ]]
 
 
-
 -----------------------------------------------------------------------
 -- initialize bash/zsh
 ----------------------------------------------------------------------
@@ -2231,6 +2230,10 @@ function z_shell_init(opts)
 
 	local prompt_hook = (not os.environ("_ZL_NO_PROMPT_COMMAND", false))
 	local once = os.environ("_ZL_ADD_ONCE", false) or opts.once ~= nil
+
+	if opts.clean ~= nil then
+		prompt_hook = false
+	end
 
 	if opts.bash ~= nil then
 		if prompt_hook then
@@ -2401,11 +2404,17 @@ function z_fish_init(opts)
 	print('set -x ZLUA_SCRIPT "' .. os.scriptname() .. '"')
 	print('set -x ZLUA_LUAEXE "' .. os.interpreter() .. '"')
 	local once = (os.getenv("_ZL_ADD_ONCE") ~= nil) or opts.once ~= nil
+	local prompt_hook = (not os.environ("_ZL_NO_PROMPT_COMMAND", false))
+	if opts.clean ~= nil then
+		prompt_hook = false
+	end
 	print(script_zlua_fish)
-	if once then
-		print(script_init_fish_once)
-	else
-		print(script_init_fish)
+	if prompt_hook then
+		if once then
+			print(script_init_fish_once)
+		else
+			print(script_init_fish)
+		end
 	end
 	print(script_complete_fish)
 	if opts.enhanced ~= nil then
@@ -2595,6 +2604,10 @@ if (!$env:_ZL_NO_PROMPT_COMMAND -and (!$global:_zlua_inited)) {
 -- initialize cmd/powershell
 -----------------------------------------------------------------------
 function z_windows_init(opts)
+	local prompt_hook = (not os.environ("_ZL_NO_PROMPT_COMMAND", false))
+	if opts.clean ~= nil then
+		prompt_hook = false
+	end
 	if opts.powershell ~= nil then
 		print('$script:ZLUA_LUAEXE = "' .. os.interpreter() .. '"')
 		print('$script:ZLUA_SCRIPT = "' .. os.scriptname() .. '"')
@@ -2611,7 +2624,9 @@ function z_windows_init(opts)
 		if opts.nc ~= nil then
 			print('$env:_ZL_NO_CHECK = 1')
 		end
-		print(script_init_powershell)
+		if prompt_hook then
+			print(script_init_powershell)
+		end
 	else
 		print('@echo off')
 		print('setlocal EnableDelayedExpansion')
