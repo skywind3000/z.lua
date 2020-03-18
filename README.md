@@ -26,7 +26,7 @@ From people using z.lua:
 ## Features
 
 - **10x** times faster than **fasd** and **autojump**, **3x** times faster than **z.sh**.
-- Capable to gain the ultimate speed with a [native module](https://github.com/skywind3000/czmod) written in C.
+- Gain the ultimate speed with an optional [native module](https://github.com/skywind3000/czmod) written in C.
 - Available for **posix shells**: bash, zsh, dash, sh, ash, ksh, busybox and etc.
 - Available for Fish Shell, Power Shell and Windows cmd.
 - [Enhanced matching algorithm](#enhanced-matching) takes you to where ever you want precisely.
