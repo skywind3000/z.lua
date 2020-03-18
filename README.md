@@ -15,6 +15,8 @@ For example, `z foo bar` would match `/foo/bar` but not `/bar/foo`.
 
 ## Reputation
 
+From people using z.lua:
+
 - I like this in principal. I’m pretty damn predictable at the command line and far too lazy to make shortcuts
 - It feels far more intuitive and it's so incredibly convenient to be able to jump between folders I'm working in without having to traverse an entire tree. The shell used to feel so constraining for me, but tools like this are making me enjoy it so much more. 
 - I can finally have autojump-like functionality on my Raspberry Pi 1 without waiting 30 seconds every time I open a new shell. Thanks z.lua devs.
