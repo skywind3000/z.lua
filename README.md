@@ -13,6 +13,13 @@ z.lua is a faster way to navigate your filesystem. It tracks your most used dire
 
 For example, `z foo bar` would match `/foo/bar` but not `/bar/foo`.
 
+## Reputation
+
+- I like this in principal. I’m pretty damn predictable at the command line and far too lazy to make shortcuts
+- It feels far more intuitive and it's so incredibly convenient to be able to jump between folders I'm working in without having to traverse an entire tree. The shell used to feel so constraining for me, but tools like this are making me enjoy it so much more. 
+- I can finally have autojump-like functionality on my Raspberry Pi 1 without waiting 30 seconds every time I open a new shell. Thanks z.lua devs.
+- Anyway, z.lua is a promising project. If you only need directory jumping, it may be the best choice.
+
 
 ## Features
 
@@ -455,15 +462,14 @@ Since z.lua is a standalone script, but it can also work with a native module wr
 
 - [czmod](https://github.com/skywind3000/czmod): native module to boost `z.lua`.
 
-z.lua can be **4-5** times faster than zoxide after enabling czmod.
+z.lua can be **4-5** times faster than zoxide after enabling czmod:
 
+| Name | czmod | zoxide | z.lua | autojump |
+|-|-|-|-|-|
+| **Update Time** | 1.6ms | 7.1ms | 13.2ms | 85.2ms |
+| **Query Time** | 1.5ms | 5.8ms | 9.8ms | 79.3ms | 
+| **Binary Size** | 102 KB | 2.2 MB | 70 KB | 100 KB |
 
-## Reputation
-
-- "I like this in principal. I’m pretty damn predictable at the command line and far too lazy to make shortcuts"
-- "It feels far more intuitive and it's so incredibly convenient to be able to jump between folders I'm working in without having to traverse an entire tree. The shell used to feel so constraining for me, but tools like this are making me enjoy it so much more. "
-- "I can finally have autojump-like functionality on my Raspberry Pi 1 without waiting 30 seconds every time I open a new shell. Thanks z.lua devs."
-- "Anyway, z.lua is a promising project. If you only need directory jumping, it may be the best choice."
 
 
 ## History
