@@ -460,17 +460,18 @@ As you see, z.lua is the fastest one and requires less resource.
 
 ## Native Module
 
-Since z.lua is a standalone script, but it can also work with a native module written in C:
+z.lua is fast enough for most case, the path tracking action will be triggered each time when you change your current directory.
+
+So I still recommend the pure lua script for portability and flexibility, but for someone who really care about `10ms` or `1ms` things, this module can help them to gain the ultimate speed.
 
 - [czmod](https://github.com/skywind3000/czmod): native module to boost `z.lua`.
 
-z.lua can be **4-5** times faster than zoxide after enabling czmod:
+Average performance:
 
-| Name | czmod | zoxide | z.lua | autojump |
+| Name | czmod |  z.lua |
 |-|-|-|-|-|
-| **Update Time** | 1.6ms | 7.1ms | 13.2ms | 85.2ms |
-| **Query Time** | 1.5ms | 5.8ms | 9.8ms | 79.3ms | 
-| **Binary Size** | 102 KB | 2.2 MB | 70 KB | 100 KB |
+| **Update Time** | 1.6ms | 13.2ms |
+| **Query Time** | 1.5ms | 9.8ms |
 
 
 
