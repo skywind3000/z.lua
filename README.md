@@ -32,7 +32,7 @@ From people using z.lua:
 - [Enhanced matching algorithm](#enhanced-matching) takes you to where ever you want precisely.
 - Allow updating database only if `$PWD` changed with "$_ZL_ADD_ONCE" set to 1.
 - Interactive selection enables you to choose where to go before cd.
-- Intergrated with FZF (optional) for interactive selection and completion.
+- Integrated with FZF (optional) for interactive selection and completion.
 - Quickly go back to a parent directory instead of typing "cd ../../..".
 - Corresponding experience in different shells and operating systems. 
 - Compatible with Lua 5.1, 5.2 and 5.3+
