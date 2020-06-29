@@ -13,17 +13,26 @@ z.lua is a faster way to navigate your filesystem. It tracks your most used dire
 
 For example, `z foo bar` would match `/foo/bar` but not `/bar/foo`.
 
+## Reputation
+
+From people using z.lua:
+
+- I like this in principal. I’m pretty damn predictable at the command line and far too lazy to make shortcuts
+- It feels far more intuitive and it's so incredibly convenient to be able to jump between folders I'm working in without having to traverse an entire tree. The shell used to feel so constraining for me, but tools like this are making me enjoy it so much more. 
+- I can finally have autojump-like functionality on my Raspberry Pi 1 without waiting 30 seconds every time I open a new shell. Thanks z.lua devs.
+- Anyway, z.lua is a promising project. If you only need directory jumping, it may be the best choice.
+
 
 ## Features
 
 - **10x** times faster than **fasd** and **autojump**, **3x** times faster than **z.sh**.
-- Capable to gain the ultimate speed with a [native module](https://github.com/skywind3000/czmod) written in C.
+- Gain the ultimate speed with an optional [native module](https://github.com/skywind3000/czmod) written in C.
 - Available for **posix shells**: bash, zsh, dash, sh, ash, ksh, busybox and etc.
 - Available for Fish Shell, Power Shell and Windows cmd.
 - [Enhanced matching algorithm](#enhanced-matching) takes you to where ever you want precisely.
 - Allow updating database only if `$PWD` changed with "$_ZL_ADD_ONCE" set to 1.
 - Interactive selection enables you to choose where to go before cd.
-- Intergrated with FZF (optional) for interactive selection and completion.
+- Integrated with FZF (optional) for interactive selection and completion.
 - Quickly go back to a parent directory instead of typing "cd ../../..".
 - Corresponding experience in different shells and operating systems. 
 - Compatible with Lua 5.1, 5.2 and 5.3+
@@ -451,19 +460,19 @@ As you see, z.lua is the fastest one and requires less resource.
 
 ## Native Module
 
-Since z.lua is a standalone script, but it can also work with a native module written in C:
+z.lua is fast enough for most case, the path tracking action will be triggered each time when you change your current directory.
+
+So I still recommend the pure lua script for portability and flexibility, but for someone who really care about `10ms` or `1ms` things, this module can help them to gain the ultimate speed.
 
 - [czmod](https://github.com/skywind3000/czmod): native module to boost `z.lua`.
 
-z.lua can be **4-5** times faster than zoxide after enabling czmod.
+Average performance:
 
+| Name | czmod |  z.lua |
+|-|-|-|-|-|
+| **Update Time** | 1.6ms | 13.2ms |
+| **Query Time** | 1.5ms | 9.8ms |
 
-## Reputation
-
-- "I like this in principal. I’m pretty damn predictable at the command line and far too lazy to make shortcuts"
-- "It feels far more intuitive and it's so incredibly convenient to be able to jump between folders I'm working in without having to traverse an entire tree. The shell used to feel so constraining for me, but tools like this are making me enjoy it so much more. "
-- "I can finally have autojump-like functionality on my Raspberry Pi 1 without waiting 30 seconds every time I open a new shell. Thanks z.lua devs."
-- "Anyway, z.lua is a promising project. If you only need directory jumping, it may be the best choice."
 
 
 ## History
