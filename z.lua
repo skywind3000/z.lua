@@ -4,7 +4,7 @@
 -- z.lua - a cd command that learns, by skywind 2018, 2019, 2020
 -- Licensed under MIT license.
 --
--- Version 1.8.6, Last Modified: 2020/03/17 16:32
+-- Version 1.8.7, Last Modified: 2020/06/29 18:04
 --
 -- * 10x faster than fasd and autojump, 3x faster than z.sh
 -- * available for posix shells: bash, zsh, sh, ash, dash, busybox
@@ -319,14 +319,16 @@ if os.native.status then
 		uint32_t GetTickCount(void);
 		uint32_t GetFileAttributesA(const char *name);
 		uint32_t GetCurrentDirectoryA(uint32_t size, char *ptr);
+		uint32_t GetShortPathNameA(const char *longname, char *shortname, uint32_t size);
+		uint32_t GetLongPathNameA(const char *shortname, char *longname, uint32_t size);
 		]]
 		local kernel32 = ffi.load('kernel32.dll')
-		local buffer = ffi.new('char[?]', 300)
+		local buffer = ffi.new('char[?]', 4100)
 		local INVALID_FILE_ATTRIBUTES = 0xffffffff
 		local FILE_ATTRIBUTE_DIRECTORY = 0x10
 		os.native.kernel32 = kernel32
 		function os.native.GetFullPathName(name)
-			local hr = kernel32.GetFullPathNameA(name, 290, buffer, nil)
+			local hr = kernel32.GetFullPathNameA(name, 4096, buffer, nil)
 			return (hr > 0) and ffi.string(buffer, hr) or nil
 		end
 		function os.native.ReplaceFile(replaced, replacement)
@@ -338,6 +340,21 @@ if os.native.status then
 		end
 		function os.native.GetFileAttributes(name)
 			return kernel32.GetFileAttributesA(name)
+		end
+		function os.native.GetLongPathName(name)
+			local hr = kernel32.GetLongPathNameA(name, buffer, 4096)
+			return (hr ~= 0) and ffi.string(buffer, hr) or nil
+		end
+		function os.native.GetShortPathName(name)
+			local hr = kernel32.GetShortPathNameA(name, buffer, 4096)
+			return (hr ~= 0) and ffi.string(buffer, hr) or nil
+		end
+		function os.native.GetRealPathName(name)
+			local short = os.native.GetShortPathName(name)
+			if short then
+				return os.native.GetLongPathName(short)
+			end
+			return nil
 		end
 		function os.native.exists(name)
 			local attr = os.native.GetFileAttributes(name)
@@ -352,7 +369,7 @@ if os.native.status then
 			return (attr % (2 * isdir)) >= isdir
 		end
 		function os.native.getcwd()
-			local hr = kernel32.GetCurrentDirectoryA(299, buffer)
+			local hr = kernel32.GetCurrentDirectoryA(4096, buffer)
 			if hr <= 0 then return nil end
 			return ffi.string(buffer, hr)
 		end
@@ -553,6 +570,9 @@ end
 function os.path.exists(name)
 	if name == '/' then
 		return true
+	end
+	if os.native and os.native.exists then
+		return os.native.exists(name)
 	end
 	local ok, err, code = os.rename(name, name)
 	if not ok then
@@ -1357,6 +1377,14 @@ function z_add(path)
 				end
 			end
 			if not skip then
+				if windows then
+					if os.native and os.native.GetRealPathName then
+						local ts = os.native.GetRealPathName(path)
+						if ts then
+							path = ts
+						end
+					end
+				end
 				M = data_insert(M, path)
 				count = count + 1
 			end
@@ -2663,23 +2691,20 @@ end
 -- LFS optimize
 -----------------------------------------------------------------------
 os.lfs = {}
-os.lfs.enable = os.getenv('_ZL_USE_LFS')
-if os.lfs.enable ~= nil then
-	local m = string.lower(os.lfs.enable)
-	if (m == '1' or m == 'yes' or m == 'true' or m == 't') then
-		os.lfs.status, os.lfs.pkg = pcall(require, 'lfs')
-		if os.lfs.status then
-			local lfs = os.lfs.pkg
-			os.path.exists = function (name)
-				return lfs.attributes(name) and true or false
+os.lfs.disable = os.getenv('_ZL_DISABLE_LFS')
+if os.lfs.disable == nil then
+	os.lfs.status, os.lfs.pkg = pcall(require, 'lfs')
+	if os.lfs.status then
+		local lfs = os.lfs.pkg
+		os.path.exists = function (name)
+			return lfs.attributes(name) and true or false
+		end
+		os.path.isdir = function (name)
+			local mode = lfs.attributes(name)
+			if not mode then 
+				return false
 			end
-			os.path.isdir = function (name)
-				local mode = lfs.attributes(name)
-				if not mode then 
-					return false
-				end
-				return (mode.mode == 'directory') and true or false
-			end
+			return (mode.mode == 'directory') and true or false
 		end
 	end
 end

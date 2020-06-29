@@ -468,6 +468,7 @@ z.lua can be **4-5** times faster than zoxide after enabling czmod.
 
 ## History
 
+- 1.8.7 (2020-06-29): use lfs or luajit's cffi if possible.
 - 1.8.4 (2020-02-10): fish shell: set `$_ZL_ECHO` to global scope.
 - 1.8.3 (2020-02-09): new: `z -b -i` and `z -b -I` to jump backwards in interactive mode.
 - 1.7.4 (2019-12-29): new: `$_ZL_HYPHEN` to treat hyphen as a normal character, see [here](https://github.com/skywind3000/z.lua/wiki/FAQ#how-to-input-a-hyphen---in-the-keyword-).
