@@ -469,7 +469,7 @@ So I still recommend the pure lua script for portability and flexibility, but fo
 Average performance:
 
 | Name | czmod |  z.lua |
-|-|-|-|-|-|
+|-|-|-|
 | **Update Time** | 1.6ms | 13.2ms |
 | **Query Time** | 1.5ms | 9.8ms |
 
