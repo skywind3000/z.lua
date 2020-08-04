@@ -1955,6 +1955,8 @@ function main(argv)
 			z_windows_init(opts)
 		elseif opts.fish then
 			z_fish_init(opts)
+		elseif opts.powershell then
+		       z_windows_init(opts)
 		else
 			z_shell_init(opts)
 		end
