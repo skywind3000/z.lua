@@ -17,9 +17,9 @@ end
 
 set -x _ZL_DATA "$_ZL_DATA"
 
-set -q XDG_CONFIG_HOME; or set XDG_CONFIG_HOME ~/.config
+set -q XDG_DATA_HOME; or set XDG_DATA_HOME ~/.local/share
 if functions -q fisher
-	set _zlua_dir $XDG_CONFIG_HOME/fisher/github.com/skywind3000/z.lua
+	set _zlua_dir $XDG_DATA_HOME/fisher/github.com/skywind3000/z.lua
 else
 	set _zlua_dir (dirname (status --current-filename))
 end
