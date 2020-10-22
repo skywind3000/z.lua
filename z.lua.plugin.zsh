@@ -6,15 +6,11 @@ ZLUA_SCRIPT="${0:A:h}/z.lua"
 
 # search lua executable
 if [[ -z "$ZLUA_EXEC" ]]; then
-	if [[ -x "$(command which lua)" ]]; then
-		ZLUA_EXEC="$(command which lua)"
-	elif [[ -x "$(command which lua5.3)" ]]; then
-		ZLUA_EXEC="$(command which lua5.3)"
-	elif [[ -x "$(command which lua5.2)" ]]; then
-		ZLUA_EXEC="$(command which lua5.2)"
-	elif [[ -x "$(command which lua5.1)" ]]; then
-		ZLUA_EXEC="$(command which lua5.1)"
-	else
+	for lua in lua lua5.3 lua5.2 lua5.1; do
+		ZLUA_EXEC="$(command -v "$lua")"
+		[[ -n "$ZLUA_EXEC" ]] && break
+	done
+	if [[ -z "$ZLUA_EXEC" ]]; then
 		echo "Not find lua in your $PATH, please install it."
 		return
 	fi
