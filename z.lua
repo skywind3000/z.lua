@@ -4,7 +4,7 @@
 -- z.lua - a cd command that learns, by skywind 2018, 2019, 2020
 -- Licensed under MIT license.
 --
--- Version 1.8.7, Last Modified: 2020/06/29 18:04
+-- Version 1.8.8, Last Modified: 2020/10/31 18:58
 --
 -- * 10x faster than fasd and autojump, 3x faster than z.sh
 -- * available for posix shells: bash, zsh, sh, ash, dash, busybox
@@ -2499,6 +2499,11 @@ if /i "%1"=="-e" (
 )
 if /i "%1"=="-x" (
 	set "RunMode=-x"
+	shift /1
+	goto parse
+)
+if /i "%1"=="--add" (
+	set "RunMode=--add"
 	shift /1
 	goto parse
 )

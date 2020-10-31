@@ -54,6 +54,12 @@ if /i "%1"=="-x" (
 	goto parse
 )
 
+if /i "%1"=="--add" (
+	set "RunMode=--add"
+	shift /1
+	goto parse
+)
+
 if "%1"=="-i" (
 	set "InterMode=-i"
 	shift /1
