@@ -69,14 +69,10 @@ class z(ranger.api.commands.Command):
                     p = self.fm.execute_command(cmd + ' 2>&1 | less +G', universal_newlines=True)
                     stdout, stderr = p.communicate()
                 else:
-                    if mode == '-I':
-                        os.environ['_ZL_FZF_HEIGHT'] = '0'
-                        path = subprocess.check_output([PATH_LUA, PATH_ZLUA, '--cd'] + args)
-                        self.fm.execute_console('redraw_window')
-                    else:
-                        p = self.fm.execute_command(cmd, universal_newlines=True, stdout=subprocess.PIPE)
-                        stdout, stderr = p.communicate()
-                        path = stdout.rstrip('\n')
+                    p = self.fm.execute_command(cmd, universal_newlines=True, stdout=subprocess.PIPE)
+                    stdout, stderr = p.communicate()
+                    path = stdout.rstrip('\n')
+                    self.fm.execute_console('redraw_window')
                     if path and os.path.exists(path):
                         self.fm.cd(path)
             else:
