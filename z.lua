@@ -4,7 +4,7 @@
 -- z.lua - a cd command that learns, by skywind 2018, 2019, 2020
 -- Licensed under MIT license.
 --
--- Version 1.8.8, Last Modified: 2020/10/31 18:58
+-- Version 1.8.9, Last Modified: 2020/12/23 16:37
 --
 -- * 10x faster than fasd and autojump, 3x faster than z.sh
 -- * available for posix shells: bash, zsh, sh, ash, dash, busybox
