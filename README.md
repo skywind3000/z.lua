@@ -142,6 +142,7 @@ z -b foo    # cd to the parent directory starting with foo
 - set `$_ZL_MATCH_MODE` to 1 to enable enhanced matching.
 - set `$_ZL_NO_CHECK` to 1 to disable path validation, use `z --purge` to clean
 - set `$_ZL_HYPHEN` to 1 to treat hyphon (-) as a normal character not a lua regexp keyword.
+- set `$_ZL_CLINK_PROMPT_PRIORITY` change clink prompt register priority (default 99).
 
 ## Aging
 
