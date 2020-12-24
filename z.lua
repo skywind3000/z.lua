@@ -2081,6 +2081,7 @@ function z_clink_init()
 	end
 	local z_parser = clink.arg.new_parser()
 	z_parser:set_arguments({ z_match_completion })
+	z_parser:set_flags("-c", "-r", "-i", "--cd", "-e", "-b", "--add", "-x", "--purge", "--init", "-l", "-s", "--complete", "--help", "-h")
 	clink.arg.register_parser("z", z_parser)
 end
 
