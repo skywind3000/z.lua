@@ -106,7 +106,7 @@ if /i "%RunMode%"=="-n" (
 			pushd !NewPath!
 			pushd !NewPath!
 			endlocal
-			popd
+			goto popdir
 		)
 	)
 )	else (
@@ -115,4 +115,13 @@ if /i "%RunMode%"=="-n" (
 
 :end
 echo.
+goto :eof
+
+:popdir
+rem -- Exploits variable expansion and the pushd stack to set the current
+rem -- directory without leaking a pushd.
+popd
+setlocal
+set NewPath=%CD%
+endlocal & popd & cd /d "%NewPath%"
 
