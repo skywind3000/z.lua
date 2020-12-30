@@ -113,9 +113,7 @@ if /i "%RunMode%"=="-n" (
 	call "%LuaExe%" "%LuaScript%" "%RunMode%" %MatchType% %StrictSub% %InterMode% %StripMode% %*
 )
 
-:end
-echo.
-goto :eof
+goto end
 
 :popdir
 rem -- Exploits variable expansion and the pushd stack to set the current
@@ -124,3 +122,7 @@ popd
 setlocal
 set NewPath=%CD%
 endlocal & popd & cd /d "%NewPath%"
+
+:end
+echo.
+
