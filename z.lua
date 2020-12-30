@@ -4,7 +4,7 @@
 -- z.lua - a cd command that learns, by skywind 2018, 2019, 2020
 -- Licensed under MIT license.
 --
--- Version 1.8.10, Last Modified: 2020/12/23 16:37
+-- Version 1.8.11, Last Modified: 2020/12/31 01:44
 --
 -- * 10x faster than fasd and autojump, 3x faster than z.sh
 -- * available for posix shells: bash, zsh, sh, ash, dash, busybox
@@ -2548,12 +2548,18 @@ if /i "%RunMode%"=="-n" (
 			pushd !NewPath!
 			pushd !NewPath!
 			endlocal
-			popd
+			goto popdir
 		)
 	)
 )	else (
 	call "%LuaExe%" "%LuaScript%" "%RunMode%" %MatchType% %StrictSub% %InterMode% %StripMode% %*
 )
+goto end
+:popdir
+popd
+setlocal
+set "NewPath=%CD%"
+endlocal & popd & cd /d "%NewPath%"
 :end
 ]]
 
