@@ -49,7 +49,6 @@
 --         source (lua /path/to/z.lua --init fish | psub)
 --
 -- Power Shell Install:
---
 --     * put something like this in your config file:
 --         Invoke-Expression (& { 
 --           (lua /path/to/z.lua --init powershell) -join "`n" })
