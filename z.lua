@@ -4,7 +4,7 @@
 -- z.lua - a cd command that learns, by skywind 2018, 2019, 2020
 -- Licensed under MIT license.
 --
--- Version 1.8.11, Last Modified: 2020/12/31 02:05
+-- Version 1.8.12, Last Modified: 2020/12/31 02:05
 --
 -- * 10x faster than fasd and autojump, 3x faster than z.sh
 -- * available for posix shells: bash, zsh, sh, ash, dash, busybox
@@ -51,7 +51,8 @@
 -- Power Shell Install:
 --
 --     * put something like this in your config file:
---         iex ($(lua /path/to/z.lua --init powershell) -join "`n")
+--         Invoke-Expression (& { 
+--           (lua /path/to/z.lua --init powershell) -join "`n" })
 --
 -- Windows Install (with Clink):
 --     * copy z.lua and z.cmd to clink's home directory

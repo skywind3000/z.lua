@@ -65,7 +65,12 @@ z -b foo    # 跳转到父目录中名称以 foo 开头的那一级
       antigen bundle skywind3000/z.lua
 
   就可以了（主要要放在 antigen apply 语句之前）。
+  
+  **注意**：使用 WSL-1 的用户，需要安装 `lua-filesystem` 包：
 
+      sudo apt-get install lua-filesystem
+
+  这是由于 wsl-1 的 [bug](https://github.com/microsoft/WSL/issues/5505) 引起的，使用 lua-filesystem 可以避免该问题。
 
 - Fish Shell:
 
@@ -83,7 +88,7 @@ z -b foo    # 跳转到父目录中名称以 foo 开头的那一级
 
   在你 Power Shell 的配置文件 `profile.ps1` 中放入下面语句：
 
-      iex ($(lua /path/to/z.lua --init powershell) -join "`n") 
+      Invoke-Expression (& { (lua /path/to/z.lua --init powershell) -join "`n" })
 
 
 - Windows cmd (with clink):

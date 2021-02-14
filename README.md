@@ -69,13 +69,19 @@ z -b foo    # cd to the parent directory starting with foo
 
   and perhaps this:
 
-      export _ZL_ECHO=1
+      eval "$(lua /path/to/z.lua --init bash enhanced once echo)"
 
   if you want `z.lua` print the new directory after cd. 
 
-  If you want `fzf` tab completion use:
+  For `fzf` tab completion use:
 
       eval "$(lua /path/to/z.lua --init bash enhanced once fzf)"
+  
+  **NOTE**: For wsl-1 users, `lua-filesystem` must be installed:
+
+      sudo apt-get install lua-filesystem
+
+  To avoid a wsl-1 [defect](https://github.com/microsoft/WSL/issues/5505).
 
 - Zsh:
 
@@ -84,6 +90,8 @@ z -b foo    # cd to the parent directory starting with foo
       eval "$(lua /path/to/z.lua --init zsh)"
 
   Options like "enhanced" and "once" can be used after `--init` too. It can also be initialized from "skywind3000/z.lua" with your zsh plugin managers (antigen / oh-my-zsh).
+
+  **NOTE**: for wsl-1 users, `lua-filesystem` must be installed.
 
 - Posix Shells:
 
@@ -113,20 +121,25 @@ z -b foo    # cd to the parent directory starting with foo
 
   put something like this in your `profile.ps1`:
 
-      iex ($(lua /path/to/z.lua --init powershell) -join "`n") 
-
+      Invoke-Expression (& { (lua /path/to/z.lua --init powershell) -join "`n" })
 
 - Windows cmd (with clink):
 
-  - copy z.lua and z.cmd to clink's home directory
+  - Copy z.lua and z.cmd to clink's home directory
   - Add clink's home to `%PATH%` (z.cmd can be called anywhere)
   - Ensure that "lua" can be called in `%PATH%`
 
 - Windows cmder:
 
-  - copy z.lua and z.cmd to cmder/vendor
+  - Copy z.lua and z.cmd to cmder/vendor
   - Add cmder/vendor to `%PATH%`
   - Ensure that "lua" can be called in `%PATH%`
+
+- Windows WSL-1:
+
+  - Install `lua-filesystem` module.
+  - Initialize z.lua as in Linux.
+
 
 
 ## Options
