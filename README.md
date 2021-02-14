@@ -137,8 +137,11 @@ z -b foo    # cd to the parent directory starting with foo
 
 - Windows WSL-1:
 
-  - Install `lua-filesystem` module.
-  - Initialize z.lua as in Linux.
+  Install `lua-filesystem` module before init z.lua:
+        
+        sudo apt-get install lua-filesystem
+
+  This module is required due to a wsl-1 [defect](https://github.com/microsoft/WSL/issues/5505).
 
 
 

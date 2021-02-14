@@ -1,10 +1,10 @@
 #! /usr/bin/env lua
 --=====================================================================
 --
--- z.lua - a cd command that learns, by skywind 2018, 2019, 2020
+-- z.lua - a cd command that learns, by skywind 2018, 2019, 2020, 2021
 -- Licensed under MIT license.
 --
--- Version 1.8.12, Last Modified: 2020/12/31 02:05
+-- Version 1.8.12, Last Modified: 2021/02/15 00:05
 --
 -- * 10x faster than fasd and autojump, 3x faster than z.sh
 -- * available for posix shells: bash, zsh, sh, ash, dash, busybox
@@ -63,6 +63,10 @@
 --     * copy z.lua and z.cmd to cmder/vendor
 --     * Add cmder/vendor to %PATH%
 --     * Ensure that "lua" can be called in %PATH%
+--
+-- Windows WSL-1:
+--     * Install lua-filesystem module before init z.lua:
+--         sudo apt-get install lua-filesystem
 --
 -- Configure (optional):
 --   set $_ZL_CMD in .bashrc/.zshrc to change the command (default z).
@@ -2744,4 +2748,5 @@ if not pcall(debug.getlocal, 4, 1) then
 	end
 end
 
+-- vim: set ts=4 sw=4 tw=0 noet :
 
