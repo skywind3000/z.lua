@@ -153,7 +153,7 @@ z -b foo    # cd to the parent directory starting with foo
 - set `$_ZL_EXCLUDE_DIRS` to a comma separated list of dirs to exclude.
 - set `$_ZL_ADD_ONCE` to '1' to update database only if `$PWD` changed.
 - set `$_ZL_MAXAGE` to define a aging threshold (default is 5000).
-- set `$_ZL_CD` to specify your own cd command.
+- set `$_ZL_CD` to specify your own cd command (default is `builtin cd` in Unix shells).
 - set `$_ZL_ECHO` to 1 to display new directory name after cd.
 - set `$_ZL_MATCH_MODE` to 1 to enable enhanced matching.
 - set `$_ZL_NO_CHECK` to 1 to disable path validation, use `z --purge` to clean
