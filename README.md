@@ -109,8 +109,8 @@ z -b foo    # cd to the parent directory starting with foo
 
   Create `~/.config/fish/conf.d/z.fish` with following code
 
-      lua /path/to/z.lua --init fish | source 
-  
+      lua /path/to/z.lua --init fish | source
+
   If you'd like `z.lua` to cooperate with fish's own [directory history](https://fishshell.com/docs/3.2/index.html#id34), you can put
 
       set -gx _ZL_CD cd
