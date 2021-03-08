@@ -268,7 +268,7 @@ To enable this, you can set `$_ZL_ADD_ONCE` to `1` before init z.lua. Or you can
 ````bash
 eval "$(lua /path/to/z.lua --init bash once)"
 eval "$(lua /path/to/z.lua --init zsh once)"
-source (lua /path/to/z.lua --init fish once | psub)
+lua /path/to/z.lua --init fish once | source
 ````
 
 With `add once` mode off (default), z.lua will consider the time you spent in the directory (like z.sh). When this mode is on, consider the times you accessed the directory (like autojump), and that could be much faster on slow hardware. 
