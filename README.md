@@ -105,17 +105,17 @@ z -b foo    # cd to the parent directory starting with foo
 
   To generate old posix compatible script.
 
-- Fish Shell:
+- Fish Shell (version `2.4.0` or above):
 
   Create `~/.config/fish/conf.d/z.fish` with following code
 
-      source (lua /path/to/z.lua --init fish | psub)
+      lua /path/to/z.lua --init fish | source 
+  
+  If you'd like `z.lua` to cooperate with fish's own [directory history](https://fishshell.com/docs/3.2/index.html#id34), you can put
 
-  Fish version `2.4.0` or above is required. 
+      set -gx _ZL_CD cd
 
-      lua /path/to/z.lua --init fish > ~/.config/fish/conf.d/z.fish
-
-  This is another way to initialize z.lua in fish shell, but remember to regenerate z.fish if z.lua has been updated or moved.
+  into the same file.
 
 - Power Shell:
 
