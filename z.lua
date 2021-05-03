@@ -580,7 +580,7 @@ function os.path.exists(name)
 	end
 	local ok, err, code = os.rename(name, name)
 	if not ok then
-		if code == 13 then
+		if code == 13 or code == 17 then
 			return true
 		elseif code == 30 then
 			local f = io.open(name,"r")
