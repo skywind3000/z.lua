@@ -2216,7 +2216,7 @@ typeset -ga chpwd_functions
 
 local script_complete_bash = [[
 if [ -n "$BASH_VERSION" ]; then
-	complete -o filenames -C '_zlua --complete "$COMP_LINE"' ${_ZL_CMD:-z}
+	complete -o filenames -o nosort -C '_zlua --complete "$COMP_LINE"' ${_ZL_CMD:-z}
 fi
 ]]
 
@@ -2240,7 +2240,7 @@ _zlua_zsh_tab_completion() {
 	# tab completion
 	(( $+compstate )) && compstate[insert]=menu # no expand
 	local -a tmp=(${(f)"$(_zlua --complete "${words/_zlua/z}")"})
-	_describe "directory" tmp -U
+	_describe -V "directory" tmp -U
 }
 if [ "${+functions[compdef]}" -ne 0 ]; then
 	compdef _zlua_zsh_tab_completion _zlua 2> /dev/null
@@ -2424,7 +2424,7 @@ function _z_complete
 	eval "$_ZL_CMD" --complete (commandline -t)
 end
 
-complete -c $_ZL_CMD -f -a '(_z_complete)'
+complete -c $_ZL_CMD -k -f -a '(_z_complete)'
 complete -c $_ZL_CMD -s 'r' -d 'cd to highest ranked dir matching'
 complete -c $_ZL_CMD -s 'i' -d 'cd with interactive selection'
 complete -c $_ZL_CMD -s 'I' -d 'cd with interactive selection using fzf'
