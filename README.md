@@ -35,7 +35,7 @@ From people using z.lua:
 - Integrated with FZF (optional) for interactive selection and completion.
 - Quickly go back to a parent directory instead of typing "cd ../../..".
 - Corresponding experience in different shells and operating systems. 
-- Compatible with Lua 5.1, 5.2 and 5.3+
+- Compatible with Lua (5.1, 5.2, 5.3+) and luajit.
 - Self contained, distributed as a single `z.lua` script, no other dependence.
 
 

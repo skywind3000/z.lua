@@ -27,6 +27,8 @@ end
 if test -e $_zlua_dir/z.lua 
 	if type -q lua
 		lua $_zlua_dir/z.lua --init fish enhanced once echo | source
+	else if type -q luajit
+		luajit $_zlua_dir/z.lua --init fish enhanced once echo | source
 	else if type -q lua5.3
 		lua5.3 $_zlua_dir/z.lua --init fish enhanced once echo | source
 	else if type -q lua5.2
