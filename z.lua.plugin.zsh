@@ -2,7 +2,10 @@
 
 ZLUA_SCRIPT="${0:A:h}/z.lua"
 
-[[ -n "$ZLUA_EXEC" ]] && [[ ! -x "$ZLUA_EXEC" ]] && ZLUA_EXEC=""
+if [[ -n "$ZLUA_EXEC" ]] && ! which "$ZLUA_EXEC" &>/dev/null; then
+    echo "$ZLUA_EXEC not found"
+    ZLUA_EXEC=""
+fi
 
 # search lua executable
 if [[ -z "$ZLUA_EXEC" ]]; then
