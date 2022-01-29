@@ -112,8 +112,6 @@ if /i "%RunMode%"=="-n" (
 			pushd !NewPath!
 			endlocal
 			goto popdir
-		) else (
-			echo The system cannot find the path specified.
 		)
 	)
 )	else (
