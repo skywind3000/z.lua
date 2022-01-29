@@ -98,6 +98,11 @@ for /f "delims=" %%i in ('cd') do set "PWD=%%i"
 
 if /i "%RunMode%"=="-n" (
 	for /f "delims=" %%i in ('call "%LuaExe%" "%LuaScript%" --cd %MatchType% %StrictSub% %InterMode% %*') do set "NewPath=%%i"
+	if "!NewPath!"=="" (
+		set NewPath=%1
+		call :normalizepath !NewPath!
+		set NewPath=!retval!
+	)
 	if not "!NewPath!"=="" (
 		if exist !NewPath!\nul (
 			if /i not "%_ZL_ECHO%"=="" (
@@ -107,6 +112,8 @@ if /i "%RunMode%"=="-n" (
 			pushd !NewPath!
 			endlocal
 			goto popdir
+		) else (
+			echo The system cannot find the path specified.
 		)
 	)
 )	else (
@@ -121,8 +128,16 @@ rem -- directory without leaking a pushd.
 popd
 setlocal
 set NewPath=%CD%
-endlocal & popd & cd /d "%NewPath%"
+set "CDCmd=cd /d"
+if /i not "%_ZL_CD%"=="" (
+	set "CDCmd=%_ZL_CD%"
+)
+endlocal & popd & %CDCmd% "%NewPath%"
 
 :end
 echo.
+exit /B
 
+:normalizepath
+set retval=%~f1
+exit /B
