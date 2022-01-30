@@ -1,10 +1,10 @@
 #! /usr/bin/env lua
 --=====================================================================
 --
--- z.lua - a cd command that learns, by skywind 2018, 2019, 2020, 2021
+-- z.lua - a cd command that learns, by skywind 2018-2022
 -- Licensed under MIT license.
 --
--- Version 1.8.12, Last Modified: 2021/02/15 00:05
+-- Version 1.8.13, Last Modified: 2022/01/30 10:46
 --
 -- * 10x faster than fasd and autojump, 3x faster than z.sh
 -- * available for posix shells: bash, zsh, sh, ash, dash, busybox
@@ -2563,7 +2563,11 @@ goto end
 popd
 setlocal
 set "NewPath=%CD%"
-endlocal & popd & cd /d "%NewPath%"
+set "CDCmd=cd /d"
+if /i not "%_ZL_CD%"=="" (
+	set "CDCmd=%_ZL_CD%"
+)
+endlocal & popd & %CDCmd% "%NewPath%"
 :end
 ]]
 

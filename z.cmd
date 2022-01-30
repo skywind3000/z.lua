@@ -120,8 +120,12 @@ rem -- Exploits variable expansion and the pushd stack to set the current
 rem -- directory without leaking a pushd.
 popd
 setlocal
-set NewPath=%CD%
-endlocal & popd & cd /d "%NewPath%"
+set "NewPath=%CD%"
+set "CDCmd=cd /d"
+if /i not "%_ZL_CD%"=="" (
+	set "CDCmd=%_ZL_CD%"
+)
+endlocal & popd & %CDCmd% "%NewPath%"
 
 :end
 echo.
