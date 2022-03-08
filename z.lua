@@ -78,7 +78,6 @@
 --   set $_ZL_MAXAGE to define a aging threshold (default is 5000).
 --   set $_ZL_MATCH_MODE to 1 to enable enhanced matching mode.
 --   set $_ZL_NO_CHECK to 1 to disable path validation. z --purge to clear.
---   set $_ZL_USE_LFS to 1 to use lua-filesystem package
 --   set $_ZL_HYPHEN to 1 to stop treating hyphen as a regexp keyword
 --
 --=====================================================================
@@ -2715,25 +2714,18 @@ end
 -- LFS optimize
 -----------------------------------------------------------------------
 os.lfs = {}
-os.lfs.enable = os.getenv('_ZL_USE_LFS')
-os.lfs.enable = '1'
-if os.lfs.enable ~= nil then
-	local m = string.lower(os.lfs.enable)
-	if (m == '1' or m == 'yes' or m == 'true' or m == 't') then
-		os.lfs.status, os.lfs.pkg = pcall(require, 'lfs')
-		if os.lfs.status then
-			local lfs = os.lfs.pkg
-			os.path.exists = function (name)
-				return lfs.attributes(name) and true or false
-			end
-			os.path.isdir = function (name)
-				local mode = lfs.attributes(name)
-				if not mode then 
-					return false
-				end
-				return (mode.mode == 'directory') and true or false
-			end
+lfs.status, lfs.pkg = pcall(require, 'lfs')
+if lfs.status then
+	local lfs = lfs.pkg
+	os.path.exists = function (name)
+		return lfs.attributes(name) and true or false
+	end
+	os.path.isdir = function (name)
+		local mode = lfs.attributes(name)
+		if not mode then
+			return false
 		end
+		return (mode.mode == 'directory') and true or false
 	end
 end
 
