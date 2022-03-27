@@ -4,7 +4,7 @@
 -- z.lua - a cd command that learns, by skywind 2018-2022
 -- Licensed under MIT license.
 --
--- Version 1.8.14, Last Modified: 2022/01/30 21:53
+-- Version 1.8.15, Last Modified: 2022/03/27 21:38
 --
 -- * 10x faster than fasd and autojump, 3x faster than z.sh
 -- * available for posix shells: bash, zsh, sh, ash, dash, busybox
@@ -527,13 +527,16 @@ function os.path.abspath(path)
 				return test
 			end
 		end
-		for _, python in pairs({'python', 'python2', 'python3'}) do
+		for _, python in pairs({'python3', 'python2', 'python'}) do
 			local s = 'sys.stdout.write(os.path.abspath(sys.argv[1]))'
 			local s = '-c "import os, sys;' .. s .. '" \'' .. path .. '\''
 			local s = python .. ' ' .. s
 			local test = os.path.which(python)
 			if test ~= nil and test ~= '' then
-				return os.call(s)
+				test = os.call(s)
+				if test ~= nil and test ~= '' then
+					return test
+				end
 			end
 		end
 	end

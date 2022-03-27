@@ -9,7 +9,7 @@ fi
 
 # search lua executable
 if [[ -z "$ZLUA_EXEC" ]]; then
-	for lua in lua luajit lua5.3 lua5.2 lua5.1; do
+	for lua in lua luajit lua5.4 lua5.3 lua5.2 lua5.1; do
 		ZLUA_EXEC="$(command -v "$lua")"
 		[[ -n "$ZLUA_EXEC" ]] && break
 	done
