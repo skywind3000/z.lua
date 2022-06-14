@@ -119,6 +119,8 @@ z -b foo    # cd to the parent directory starting with foo
 
 - Power Shell:
 
+  > ⚠️ **WARNING**: users of [Starship Prompt](https://starship.rs/) should add the following command *after* `starship init`.
+  
   put something like this in your `profile.ps1`:
 
       Invoke-Expression (& { (lua /path/to/z.lua --init powershell) -join "`n" })
