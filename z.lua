@@ -2685,8 +2685,6 @@ function z_windows_init(opts)
 	else
 		print('@echo off')
 		print('setlocal EnableDelayedExpansion')
-		print('set "HomeDir=%~dp0"') -- So that Lua can find the z.lua file.
-		print('set "PathSave=%PATH%"')
 		print('set "LuaExe=' .. os.interpreter() .. '"')
 		print('set "LuaScript=' .. os.scriptname() .. '"')
 		print(script_init_cmd)
