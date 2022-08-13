@@ -4,8 +4,9 @@ import subprocess
 
 old_hook_init = ranger.api.hook_init
 
-PATH_LUA = os.environ.get('RANGER_LUA')
-PATH_ZLUA = os.environ.get('RANGER_ZLUA')
+# $RANGER_LUA and $RANGER_ZLUA variables are deprecated, do not use them.
+PATH_LUA = os.environ.get('RANGER_LUA') or os.environ.get('ZLUA_LUAEXE')
+PATH_ZLUA = os.environ.get('RANGER_ZLUA') or os.environ.get('ZLUA_SCRIPT')
 
 if not PATH_LUA:
     for path in os.environ.get('PATH', '').split(os.path.pathsep):
@@ -16,13 +17,15 @@ if not PATH_LUA:
                 PATH_LUA = test
                 break
 
+def _report_error(msg):
+    sys.stderr.write('ranger_zlua: ' + msg)
+    raise RuntimeError(msg)
+
 if not PATH_LUA:
-    sys.stderr.write('Please install lua or set $RANGER_LUA.\n')
-    sys.exit()
+    _report_error('Please install lua in $PATH or make sure $ZLUA_LUAEXE points to a lua executable.\n')
 
 if (not PATH_ZLUA) or (not os.path.exists(PATH_ZLUA)):
-    sys.stderr.write('Not find z.lua, please set $RANGER_ZLUA to absolute path of z.lua.\n')
-    sys.exit()
+    _report_error('Could not find z.lua, please make sure $ZLUA_SCRIPT is set to absolute path of z.lua.\n')
 
             
 def hook_init(fm):
