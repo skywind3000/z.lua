@@ -420,6 +420,14 @@ At last, press `<enter>` to accept or `<ESC>` to give up.
 Remember to enable the [enhanced matching](#enhanced-matching) algorithm, the current working directory can be skipped with it.
 
 
+## Ranger integration
+To add a `:z` command to the [`ranger` file manager], copy the `ranger_zlua.py` file to `~/.config/ranger/plugins/`.
+You can then use `:z foo`, `:z -b foo`, etc. from ranger. Use `:z -h` for help.
+
+[`ranger` file manager]: https://github.com/ranger/ranger
+
+To define additional commands (`:zb` for example) in ranger, you can put `alias zb z -b` into `~/.config/ranger/rc.conf`.
+
 
 ## Tips
 
