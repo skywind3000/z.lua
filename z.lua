@@ -50,7 +50,7 @@
 --
 -- Power Shell Install:
 --     * put something like this in your config file:
---         Invoke-Expression (& { 
+--         Invoke-Expression (& {
 --           (lua /path/to/z.lua --init powershell) -join "`n" })
 --
 -- Windows Install (with Clink):
@@ -405,7 +405,7 @@ if os.native.status then
 			return hr ~= nil and ffi.string(buffer) or nil
 		end
 	end
-	function os.native.tickcount() 
+	function os.native.tickcount()
 		if windows then
 			return os.native.GetTickCount()
 		else
@@ -931,8 +931,8 @@ function os.environ(name, default)
 		end
 	elseif type(default) == 'number' then
 		value = tonumber(value)
-		if value == nil then 
-			return default 
+		if value == nil then
+			return default
 		else
 			return value
 		end
@@ -1076,6 +1076,7 @@ function data_load(filename)
 		local item = {}
 		if part and part[1] and part[2] and part[3] then
 			local key = insensitive and part[1]:lower() or part[1]
+			part[2] = part[2]:gsub(",", ".")
 			item.name = part[1]
 			item.rank = tonumber(part[2])
 			item.time = tonumber(part[3]) + 0
@@ -2088,7 +2089,7 @@ function z_clink_init()
 	end
 	local z_parser = clink.arg.new_parser()
 	z_parser:set_arguments({ z_match_completion })
-	z_parser:set_flags("-c", "-r", "-i", "--cd", "-e", "-b", "--add", "-x", "--purge", 
+	z_parser:set_flags("-c", "-r", "-i", "--cd", "-e", "-b", "--add", "-x", "--purge",
 		"--init", "-l", "-s", "--complete", "--help", "-h")
 	clink.arg.register_parser("z", z_parser)
 end
@@ -2731,7 +2732,7 @@ if os.lfs.enable ~= nil then
 			end
 			os.path.isdir = function (name)
 				local mode = lfs.attributes(name)
-				if not mode then 
+				if not mode then
 					return false
 				end
 				return (mode.mode == 'directory') and true or false
