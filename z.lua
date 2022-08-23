@@ -12,17 +12,18 @@
 -- * compatible with lua 5.1, 5.2 and 5.3+
 --
 -- USE:
---     * z foo      # cd to most frecent dir matching foo
---     * z foo bar  # cd to most frecent dir matching foo and bar
---     * z -r foo   # cd to highest ranked dir matching foo
---     * z -t foo   # cd to most recently accessed dir matching foo
---     * z -l foo   # list matches instead of cd
---     * z -c foo   # restrict matches to subdirs of $PWD
---     * z -e foo   # echo the best match, don't cd
---     * z -x path  # remove path from history
---     * z -i foo   # cd with interactive selection
---     * z -I foo   # cd with interactive selection using fzf
---     * z -b foo   # cd to the parent directory starting with foo
+--     * z foo        # cd to most frecent dir matching foo
+--     * z foo bar    # cd to most frecent dir matching foo and bar
+--     * z -r foo     # cd to highest ranked dir matching foo
+--     * z -t foo     # cd to most recently accessed dir matching foo
+--     * z -l foo     # list matches instead of cd
+--     * z -c foo     # restrict matches to subdirs of $PWD
+--     * z -e foo     # echo the best match, don't cd
+--     * z -x path    # remove path from history
+--     * z -i foo     # cd with interactive selection
+--     * z -I foo     # cd with interactive selection using fzf
+--     * z -b foo     # cd to the parent directory starting with foo
+--     * z -b foo bar # replace foo with bar in cwd and cd there
 --
 -- Bash Install:
 --     * put something like this in your .bashrc:
@@ -46,7 +47,7 @@
 --
 -- Fish Shell Install:
 --     * put something like this in your config file:
---         source (lua /path/to/z.lua --init fish | psub)
+--         lua /path/to/z.lua --init fish | source
 --
 -- Power Shell Install:
 --     * put something like this in your config file:
@@ -2714,17 +2715,18 @@ end
 -----------------------------------------------------------------------
 function z_help()
 	local cmd = Z_CMD .. ' '
-	print(cmd .. 'foo       # cd to most frecent dir matching foo')
-	print(cmd .. 'foo bar   # cd to most frecent dir matching foo and bar')
-	print(cmd .. '-r foo    # cd to highest ranked dir matching foo')
-	print(cmd .. '-t foo    # cd to most recently accessed dir matching foo')
-	print(cmd .. '-l foo    # list matches instead of cd')
-	print(cmd .. '-c foo    # restrict matches to subdirs of $PWD')
-	print(cmd .. '-e foo    # echo the best match, don\'t cd')
-	print(cmd .. '-x path   # remove path from history')
-	print(cmd .. '-i foo    # cd with interactive selection')
-	print(cmd .. '-I foo    # cd with interactive selection using fzf')
-	print(cmd .. '-b foo    # cd to the parent directory starting with foo')
+	print(cmd .. 'foo        # cd to most frecent dir matching foo')
+	print(cmd .. 'foo bar    # cd to most frecent dir matching foo and bar')
+	print(cmd .. '-r foo     # cd to highest ranked dir matching foo')
+	print(cmd .. '-t foo     # cd to most recently accessed dir matching foo')
+	print(cmd .. '-l foo     # list matches instead of cd')
+	print(cmd .. '-c foo     # restrict matches to subdirs of $PWD')
+	print(cmd .. '-e foo     # echo the best match, don\'t cd')
+	print(cmd .. '-x path    # remove path from history')
+	print(cmd .. '-i foo     # cd with interactive selection')
+	print(cmd .. '-I foo     # cd with interactive selection using fzf')
+	print(cmd .. '-b foo     # cd to the parent directory starting with foo')
+	print(cmd .. '-b foo bar # replace foo with bar in cwd and cd there')
 end
 
 
