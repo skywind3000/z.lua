@@ -319,6 +319,7 @@ New option `"-b"` can quickly go back to a specific parent directory in bash ins
 - **(No argument)**: `cd` into the project root, the project root the nearest parent directory with `.git`/`.hg`/`.svn` in it.
 - **(One argument)**: `cd` into the closest parent starting with keyword, if not find, go to the parent containing keyword.
 - **(Two arguments)**: replace the first value with the second one (in the current path).
+  If simple substitution does not work, falls back to fuzzily replacing path components.
 
 Let's start by aliasing `z -b` to `zb`:
 
@@ -338,6 +339,11 @@ Let's start by aliasing `z -b` to `zb`:
 # substitute jekyll with ghost
 ~/github/jekyll/test$ zb jekyll ghost
   => cd ~/github/ghost/test
+
+# same as above, but fuzzy
+~/github/jekyll/test$ zb jek gh
+  => z ~/github/ gh /test
+    => cd ~/github/ghost/test  # Assuming that's the most frecent match
 ```
 
 Backward jumping can also be used with `$_ZL_ECHO` option (echo $PWD after cd), which makes it possible to combine them with other tools without actually changing the working directory (eg. ``ls `zb git` ``). 
