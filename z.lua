@@ -1719,46 +1719,44 @@ function cd_backward(args, options, pwd)
 	local pwd = (pwd ~= nil) and pwd or os.pwd()
 	if nargs == 0 then
 		return find_vcs_root(pwd)
-	elseif nargs == 1 then
-		if args[1]:sub(1, 2) == '..' then
-			local size = args[1]:len() - 1
-			if args[1]:match('^%.%.+$') then
-				size = args[1]:len() - 1
-			elseif args[1]:match('^%.%.%d+$') then
-				size = tonumber(args[1]:sub(3))
-			else
-				return nil
-			end
-			local path = pwd
-			for index = 1, size do
-				path = os.path.join(path, '..')
-			end
-			return os.path.normpath(path)
+	elseif nargs == 1 and args[1]:sub(1, 2) == '..' then
+		local size = args[1]:len() - 1
+		if args[1]:match('^%.%.+$') then
+			size = args[1]:len() - 1
+		elseif args[1]:match('^%.%.%d+$') then
+			size = tonumber(args[1]:sub(3))
 		else
-			pwd = os.path.split(pwd)
-			local test = windows and pwd:gsub('\\', '/') or pwd
-			local key = windows and args[1]:lower() or args[1]
-			if not key:match('%u') then
-				test = test:lower()
-			end
-			local pos, ends = test:rfind('/' .. key)
-			if pos then
-				ends = test:find('/', pos + key:len() + 1, true)
-				ends = ends and ends or test:len()
-				return os.path.normpath(pwd:sub(1, ends))
-			elseif windows and test:startswith(key) then
-				ends = test:find('/', key:len(), true)
-				ends = ends and ends or test:len()
-				return os.path.normpath(pwd:sub(1, ends))
-			end
-			pos = test:rfind(key)
-			if pos then
-				ends = test:find('/', pos + key:len(), true)
-				ends = ends and ends or test:len()
-				return os.path.normpath(pwd:sub(1, ends))
-			end
 			return nil
 		end
+		local path = pwd
+		for index = 1, size do
+			path = os.path.join(path, '..')
+		end
+		return os.path.normpath(path)
+	elseif nargs == 1 then
+		pwd = os.path.split(pwd)
+		local test = windows and pwd:gsub('\\', '/') or pwd
+		local key = windows and args[1]:lower() or args[1]
+		if not key:match('%u') then
+			test = test:lower()
+		end
+		local pos, ends = test:rfind('/' .. key)
+		if pos then
+			ends = test:find('/', pos + key:len() + 1, true)
+			ends = ends and ends or test:len()
+			return os.path.normpath(pwd:sub(1, ends))
+		elseif windows and test:startswith(key) then
+			ends = test:find('/', key:len(), true)
+			ends = ends and ends or test:len()
+			return os.path.normpath(pwd:sub(1, ends))
+		end
+		pos = test:rfind(key)
+		if pos then
+			ends = test:find('/', pos + key:len(), true)
+			ends = ends and ends or test:len()
+			return os.path.normpath(pwd:sub(1, ends))
+		end
+		return nil
 	elseif nargs == 2 then
 		local test = windows and pwd:gsub('\\', '/') or pwd
 		local src = args[1]
@@ -1778,9 +1776,13 @@ function cd_backward(args, options, pwd)
 			return newpath
 		end
 
+		-- Get rid of the entire path component that matched `src`.
 		lhs = lhs:gsub("[^/]*$", "")
 		rhs = rhs:gsub("^[^/]*", "")
 		return z_cd({lhs, dst, rhs})
+		-- In the future, it would make sense to have `z -b -c from to to2`
+		-- to z_cd({lhs, dst[1], dst[2]}). Without `-c`, we probably still
+		-- want to support only 2 argumets.
 	end
 
 	io.stderr:write("Error: " .. Z_CMD .. " -b takes at most 2 arguments.\n")
