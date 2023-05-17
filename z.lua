@@ -2101,10 +2101,28 @@ function z_clink_init()
 		end
 		return {}
 	end
+	local dirmatchfunc = function (word)
+		clink.matches_are_files(1)
+		return clink.match_files(word..'*', true, clink.find_dirs)
+	end
+	local dirmatchparser = clink.arg.new_parser():set_arguments({ dirmatchfunc })
 	local z_parser = clink.arg.new_parser()
 	z_parser:set_arguments({ z_match_completion })
-	z_parser:set_flags("-c", "-r", "-i", "--cd", "-e", "-b", "--add", "-x", "--purge",
-		"--init", "-l", "-s", "--complete", "--help", "-h")
+	z_parser:set_flags("-r", "-i", "-I", "-t", "-l", "-c", "-e", "-b", "-x"..dirmatchparser, "-h")
+	if z_parser.adddescriptions then
+		z_parser:adddescriptions({
+			['-r'] = "cd to highest ranked dir matching",
+			['-i'] = "cd with interactive selection",
+			['-I'] = "cd with interactive selection using fzf",
+			['-t'] = "cd to most recently accessed dir matching",
+			['-l'] = "list matches instead of cd",
+			['-c'] = "restrict matches to subdirs of cwd (or %PWD% if set)",
+			['-e'] = "echo the best match, don't cd",
+			['-b'] = "jump backwards to given dir or to project root",
+			['-x'] = { " dir", "remove path from history" },
+			['-h'] = "show help",
+		})
+	end
 	clink.arg.register_parser("z", z_parser)
 end
 
