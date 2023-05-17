@@ -2116,10 +2116,10 @@ function z_clink_init()
 			['-I'] = "cd with interactive selection using fzf",
 			['-t'] = "cd to most recently accessed dir matching",
 			['-l'] = "list matches instead of cd",
-			['-c'] = "restrict matches to subdirs of $PWD",
+			['-c'] = "restrict matches to subdirs of cwd (or %PWD% if set)",
 			['-e'] = "echo the best match, don't cd",
 			['-b'] = "jump backwards to given dir or to project root",
-			['-x'] = "remove path from history",
+			['-x'] = { " dir", "remove path from history" },
 			['-h'] = "show help",
 		})
 	end
