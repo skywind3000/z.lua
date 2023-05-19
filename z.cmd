@@ -1,10 +1,8 @@
 @echo off
 setlocal EnableDelayedExpansion
 
-set "HomeDir=%~dp0"
-set "PathSave=%PATH%"
 set "LuaExe=lua"
-set "LuaScript=%HomeDir%z.lua"
+set "LuaScript=%~dp0z.lua"
 set "MatchType=-n"
 set "StrictSub=-n"
 set "RunMode=-n"
