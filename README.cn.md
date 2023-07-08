@@ -325,7 +325,13 @@ zsh/fish 的补全系统是比较完善的，使用 `z foo<tab>` 就能触发补
 eval "$(lua /path/to/z.lua --init bash enhanced once echo fzf)"
 ```
 
-然后你在 bash 中，输入部分关键字后按 tab，就能把匹配的路径列出来：
+如果你想在 zsh 中使用 fzf 补全，初始化时在 `--init` 后追加 `fzf` 关键字：
+
+```zsh
+eval "$(lua /path/to/z.lua --init zsh enhanced once echo fzf)"
+```
+
+然后你在 bash/zsh 中，输入部分关键字后按 tab，就能把匹配的路径列出来：
 
 ![](images/complete-2.png)
 

@@ -90,7 +90,7 @@ z -b foo bar # replace foo with bar in cwd and cd there
 
       eval "$(lua /path/to/z.lua --init zsh)"
 
-  Options like "enhanced" and "once" can be used after `--init` too. It can also be initialized from "skywind3000/z.lua" with your zsh plugin managers (antigen / oh-my-zsh).
+  Options like "enhanced", "once" and "fzf" can be used after `--init` too. It can also be initialized from "skywind3000/z.lua" with your zsh plugin managers (antigen / oh-my-zsh).
 
   **NOTE**: for wsl-1 users, `lua-filesystem` must be installed.
 
@@ -378,6 +378,12 @@ Bash is not as powerful as zsh/fish, so we introduced fzf-completion for bash, i
 
 ```bash
 eval "$(lua /path/to/z.lua --init bash enhanced once echo fzf)"
+```
+
+If you want use fzf completion in zsh, initalize your z.lua and append `fzf` keyword after `--init`:
+
+```zsh
+eval "$(lua /path/to/z.lua --init zsh enhanced once echo fzf)"
 ```
 
 Then press `<tab>` after `z xxx`:
