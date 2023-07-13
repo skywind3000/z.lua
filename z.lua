@@ -2284,6 +2284,30 @@ if [ "${+functions[compdef]}" -ne 0 ]; then
 fi
 ]]
 
+local script_fzf_complete_zsh = [[
+if command -v fzf >/dev/null 2>&1; then
+	# To redraw line after fzf closes (printf '\e[5n')
+	bindkey '\e[0n' kill-whole-line
+	_zlua_zsh_fzf_complete() {
+		local list=$(_zlua -l ${words[2,-1]})
+
+		if [ -n "$list" ]; then
+			local selected=$(print $list | ${=zlua_fzf} | sed 's/^[0-9,.]* *//')
+
+			if [ -n "$selected" ]; then
+				cd ${selected}
+				printf '\e[5n'
+			fi
+		fi
+	}
+
+	if [ "${+functions[compdef]}" -ne 0 ]; then
+		compdef _zlua_zsh_fzf_complete _zlua > /dev/null 2>&1
+		compdef ${_ZL_CMD:-z}=_zlua
+	fi
+fi
+]]
+
 
 -----------------------------------------------------------------------
 -- initialize bash/zsh
@@ -2321,7 +2345,7 @@ function z_shell_init(opts)
 		end
 		print(script_complete_bash)
 		if opts.fzf ~= nil then
-			fzf_cmd = "fzf --nth 2.. --reverse --info=inline --tac "
+			local fzf_cmd = "fzf --nth 2.. --reverse --info=inline --tac "
 			local height = os.environ('_ZL_FZF_HEIGHT', '35%')
 			if height ~= nil and height ~= '' and height ~= '0' then
 				fzf_cmd = fzf_cmd .. ' --height ' .. height .. ' '
@@ -2337,6 +2361,18 @@ function z_shell_init(opts)
 			print(once and script_init_zsh_once or script_init_zsh)
 		end
 		print(script_complete_zsh)
+		if opts.fzf ~= nil then
+			local fzf_cmd = "fzf --nth 2.. --reverse --info=inline --tac "
+			local height = os.environ('_ZL_FZF_HEIGHT', '35%')
+			if height ~= nil and height ~= '' and height ~= '0' then
+				fzf_cmd = fzf_cmd .. ' --height ' .. height .. ' '
+			end
+			local flag = os.environ('_ZL_FZF_FLAG', '')
+			flag = (flag == '' or flag == nil) and '+s -e' or flag
+			fzf_cmd = fzf_cmd .. ' ' .. flag .. ' '
+			print('zlua_fzf="' .. fzf_cmd .. '"')
+			print(script_fzf_complete_zsh)
+		end
 	elseif opts.posix ~= nil then
 		if prompt_hook then
 			local script = script_init_posix
