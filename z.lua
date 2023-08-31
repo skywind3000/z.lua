@@ -128,6 +128,7 @@ Z_MATCHMODE = 0
 Z_MATCHNAME = false
 Z_SKIPPWD = false
 Z_HYPHEN = "auto"
+Z_DATA_SEPARATOR = "\0"
 
 os.LOG_NAME = os.getenv('_ZL_LOG_NAME')
 
@@ -1073,7 +1074,7 @@ function data_load(filename)
 		return {}
 	end
 	for line in fp:lines() do
-		local part = string.split(line, '|')
+		local part = string.split(line, Z_DATA_SEPARATOR)
 		local item = {}
 		if part and part[1] and part[2] and part[3] then
 			local key = insensitive and part[1]:lower() or part[1]
@@ -1135,7 +1136,7 @@ function data_save(filename, M)
 	end
 	for i = 1, #M do
 		local item = M[i]
-		local text = item.name .. '|' .. item.rank .. '|' .. item.time
+		local text = item.name .. Z_DATA_SEPARATOR .. item.rank .. Z_DATA_SEPARATOR .. item.time
 		fp:write(text .. '\n')
 	end
 	fp:close()
