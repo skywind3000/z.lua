@@ -127,7 +127,7 @@ Z_CMD = 'z'
 Z_MATCHMODE = 0
 Z_MATCHNAME = false
 Z_SKIPPWD = false
-Z_HYPHEN = false
+Z_HYPHEN = "auto"
 
 os.LOG_NAME = os.getenv('_ZL_LOG_NAME')
 
@@ -1292,13 +1292,16 @@ end
 -----------------------------------------------------------------------
 -- select matched pathnames
 -----------------------------------------------------------------------
-function data_select(M, patterns, matchlast)
+-- z_hyphen must be `true`, `false``, or `"auto"`.
+function data_select(M, patterns, matchlast, z_hyphen)
 	local N = {}
 	local i = 1
 	local pats = {}
+	local hyphens = false
 	for i = 1, #patterns do
 		local p = patterns[i]
-		if Z_HYPHEN then
+		hyphens = hyphens or string.match(p, "%-")
+		if z_hyphen == true then
 			p = p:gsub('-', '%%-')
 		end
 		table.insert(pats, case_insensitive_pattern(p))
@@ -1308,6 +1311,9 @@ function data_select(M, patterns, matchlast)
 		if path_match(item.name, pats, matchlast) then
 			table.insert(N, item)
 		end
+	end
+	if (hyphens and z_hyphen == "auto" and #N == 0) then
+		N = data_select(M, patterns, matchlast, true)
 	end
 	return N
 end
@@ -1458,10 +1464,10 @@ function z_match(patterns, method, subdir)
 	method = method ~= nil and method or 'frecent'
 	subdir = subdir ~= nil and subdir or false
 	local M = data_load(DATA_FILE)
-	M = data_select(M, patterns, false)
+	M = data_select(M, patterns, false, Z_HYPHEN)
 	M = data_filter(M)
 	if Z_MATCHNAME then
-		local N = data_select(M, patterns, true)
+		local N = data_select(M, patterns, true, Z_HYPHEN)
 		N = data_filter(N)
 		if #N > 0 then
 			M = N
@@ -2067,10 +2073,13 @@ function z_init()
 			Z_SKIPPWD = true
 		end
 	end
+    assert(Z_HYPHEN == "auto", "Z_HYPHEN initialized to an unexpected value")
 	if _zl_hyphen ~= nil then
 		local m = string.lower(_zl_hyphen)
 		if (m == '1' or m == 'yes' or m == 'true' or m == 't') then
 			Z_HYPHEN = true
+		elseif (m == '0' or m == 'no' or m == 'false' or m == 'f') then
+			Z_HYPHEN = false
 		end
 	end
 end
