@@ -160,7 +160,12 @@ z -b foo bar # replace foo with bar in cwd and cd there
 - set `$_ZL_ECHO` to 1 to display new directory name after cd.
 - set `$_ZL_MATCH_MODE` to 1 to enable enhanced matching.
 - set `$_ZL_NO_CHECK` to 1 to disable path validation, use `z --purge` to clean
-- set `$_ZL_HYPHEN` to 1 to treat hyphon (-) as a normal character not a lua regexp keyword.
+- set `$_ZL_HYPHEN` to 0 to treat a hyphen (`-`) as a
+  [lua regexp special character](https://www.lua.org/pil/20.2.html),
+  set `$_ZL_HYPHEN` to 1 to treat a hyphen as a normal character.
+  If `$_ZL_HYPHEN` is not set or if it is set to `auto`, z.lua tries to treat `-`
+  as a lua regexp special character first. If there are no matches, z.lua tries
+  again, this time treating `-` as a normal character.
 - set `$_ZL_CLINK_PROMPT_PRIORITY` change clink prompt register priority (default 99).
 
 ## Aging
