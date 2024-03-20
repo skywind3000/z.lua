@@ -58,6 +58,15 @@ z -b foo bar # replace foo with bar in cwd and cd there
 
 ## Install
 
+- Fig (works with all shells)
+
+  [Fig](https://fig.io) adds apps, shortcuts, and autocomplete to your existing terminal.
+
+
+    Install `z.lua` in just one click.
+
+  <a href="https://fig.io/plugins/other/z.lua" target="_blank"><img src="https://fig.io/badges/install-with-fig.svg" /></a>
+
 - Bash:
 
   put something like this in your `.bashrc`:
