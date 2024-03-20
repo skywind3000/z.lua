@@ -128,7 +128,7 @@ Z_MATCHMODE = 0
 Z_MATCHNAME = false
 Z_SKIPPWD = false
 Z_HYPHEN = "auto"
-Z_DATA_SEPARATOR = "\0"
+Z_DATA_SEPARATOR = "|"
 
 os.LOG_NAME = os.getenv('_ZL_LOG_NAME')
 
@@ -1063,6 +1063,26 @@ end
 
 
 -----------------------------------------------------------------------
+-- Read a line of the database and return a list of the 3 fields in it
+-----------------------------------------------------------------------
+function read_data_line(line)
+    local part = string.split(line, Z_DATA_SEPARATOR)
+    if #part <= 3 then
+        return part
+    end
+    -- If the part is made of more than 3 elements, it's probably because the
+    -- path element contains '|' that have been split. Thus, we want to
+    -- reconstruct it and keep the 2 last elements of part intact as the end
+    -- of the returned part.
+    local path = part[1]
+    for i=2,#part-2 do
+        path = path .. Z_DATA_SEPARATOR .. part[i]
+    end
+    return {path, part[#part-1], part[#part]}
+end
+ 
+
+-----------------------------------------------------------------------
 -- load and split data
 -----------------------------------------------------------------------
 function data_load(filename)
@@ -1074,7 +1094,7 @@ function data_load(filename)
 		return {}
 	end
 	for line in fp:lines() do
-		local part = string.split(line, Z_DATA_SEPARATOR)
+		local part = read_data_line(line)
 		local item = {}
 		if part and part[1] and part[2] and part[3] then
 			local key = insensitive and part[1]:lower() or part[1]
