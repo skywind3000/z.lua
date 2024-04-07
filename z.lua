@@ -4,7 +4,7 @@
 -- z.lua - a cd command that learns, by skywind 2018-2022
 -- Licensed under MIT license.
 --
--- Version 1.8.18, Last Modified: 2024/03/20 22:17
+-- Version 1.8.18, Last Modified: 2024/04/07 11:24
 --
 -- * 10x faster than fasd and autojump, 3x faster than z.sh
 -- * available for posix shells: bash, zsh, sh, ash, dash, busybox
@@ -883,6 +883,7 @@ function os.interpreter()
 	local lua = os.argv[-1]
 	if lua == nil then
 		io.stderr:write("cannot get executable name, recompiled your lua\n")
+		return nil
 	end
 	if os.path.single(lua) then
 		local path = os.path.which(lua)
