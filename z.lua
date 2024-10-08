@@ -2001,7 +2001,9 @@ function main(argv)
 		for _, key in ipairs(args) do
 			opts[key] = 1
 		end
-		if windows then
+		if opts.nushell then
+			z_nushell_init(opts)
+		elseif windows then
 			z_windows_init(opts)
 		elseif opts.fish then
 			z_fish_init(opts)
@@ -2798,6 +2800,126 @@ function z_windows_init(opts)
 	end
 end
 
+
+-----------------------------------------------------------------------
+-- nushell
+-----------------------------------------------------------------------
+local script_zlua_nushell = [[
+def _zlua --env --wrapped [...args: string] {
+    if ($args | length) != 0 and $args.0 == "--add" {
+        with-env { _ZL_RANDOM: (random int) } { ^$env.ZLUA_LUAEXE $env.ZLUA_SCRIPT --add ...($args | skip 1) }
+    } else if ($args | length) != 0 and $args.0 == "--complete" {
+        ^$env.ZLUA_LUAEXE $env.ZLUA_SCRIPT --complete ...($args | skip 1)
+    } else {
+        mut arg_mode = ''
+        mut arg_type = ''
+        mut arg_subdir = ''
+        mut arg_inter = ''
+        mut arg_strip = ''
+        mut count = 0
+        for arg in $args {
+            match $arg {
+                '-l' => { $arg_mode = '-l' },
+                '-e' => { $arg_mode = '-e' },
+                '-x' => { $arg_mode = '-x' },
+                '-t' => { $arg_type = '-t' },
+                '-r' => { $arg_type = '-r' },
+                '-c' => { $arg_subdir = '-c' },
+                '-s' => { $arg_strip = '-s' },
+                '-i' => { $arg_inter = '-i' },
+                '-I' => { $arg_inter = '-I' },
+                '-h' => { $arg_mode = '-h' },
+                '--help' => { $arg_mode = '-h' },
+                '--purge' => { $arg_mode = '--purge' },
+                _ => break
+            }
+            $count += 1
+        }
+        let args = $args | skip $count
+        if $arg_mode == '-h' or $arg_mode == '--purge' {
+            ^$env.ZLUA_LUAEXE $env.ZLUA_SCRIPT $arg_mode
+        } else if $arg_mode == '-l' or ($args | length) == 0 {
+            ^$env.ZLUA_LUAEXE $env.ZLUA_SCRIPT -l $arg_subdir $arg_type $arg_strip ...$args
+        } else if $arg_mode != '' {
+            ^$env.ZLUA_LUAEXE $env.ZLUA_SCRIPT $arg_mode $arg_subdir $arg_type $arg_inter ...$args
+        } else {
+            let zdest = (^$env.ZLUA_LUAEXE $env.ZLUA_SCRIPT --cd $arg_type $arg_subdir $arg_inter ...$args)
+            if $zdest != '' and ($zdest | path type) == dir {
+                cd $zdest
+                if _ZL_ECHO in $env and $env._ZL_ECHO != '' {
+                    pwd
+                }
+            }
+        }
+    }
+}
+]]
+
+local script_init_nushell = [[
+$env.config = ($env | default {} config).config
+$env.config = ($env.config | default {} hooks)
+$env.config = ($env.config | update hooks ($env.config.hooks | default {} env_change))
+$env.config = ($env.config | update hooks.env_change ($env.config.hooks.env_change | default [] PWD))
+$env.config = ($env.config | update hooks.env_change.PWD ($env.config.hooks.env_change.PWD | append {|_, dir| _zlua --add $dir }))
+]]
+
+local script_complete_nushell = [[
+let zlua_completer = {|spans| $spans | skip 1 | _zlua --complete ...$in | lines | where {|x| $x != $env.PWD}}
+
+$env.config = ($env.config | default {} completions)
+$env.config = ($env.config | update completions ($env.config.completions | default {} external))
+$env.config = ($env.config | update completions.external ($env.config.completions.external | default true enable))
+if completer in $env.config.completions.external {
+    let orig_completer = $env.config.completions.external.completer
+    $env.config = ($env.config | update completions.external.completer {
+        {|spans|
+            match $spans.0 {
+                z => $zlua_completer,
+                _zlua => $zlua_completer,
+                _ => $orig_completer
+            } | do $in $spans
+        }
+    })
+} else {
+    $env.config = ($env.config | update completions.external.completer {
+        {|spans|
+            match $spans.0 {
+                z => $zlua_completer,
+                _zlua => $zlua_completer,
+            } | do $in $spans
+        }
+    })
+}
+]]
+
+-----------------------------------------------------------------------
+-- initialize nushell
+-----------------------------------------------------------------------
+function z_nushell_init(opts)
+	print('$env.ZLUA_LUAEXE = \'' .. os.interpreter() .. '\'')
+	print('$env.ZLUA_SCRIPT = \'' .. os.scriptname() .. '\'')
+	local prompt_hook = (not os.environ("_ZL_NO_PROMPT_COMMAND", false))
+	if opts.clean ~= nil then
+		prompt_hook = false
+	end
+	print(script_zlua_nushell)
+	if prompt_hook then
+		print(script_init_nushell)
+	end
+	print(script_complete_nushell)
+	if opts.enhanced ~= nil then
+		print('$env._ZL_MATCH_MODE = 1')
+	end
+	if opts.once ~= nil then
+		print('$env._ZL_ADD_ONCE = 1')
+	end
+	if opts.echo ~= nil then
+		print('$env._ZL_ECHO = 1')
+	end
+	if opts.nc ~= nil then
+		print('$env._ZL_NO_CHECK = 1')
+	end
+end
 
 -----------------------------------------------------------------------
 -- help
