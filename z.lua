@@ -2844,7 +2844,7 @@ def _zlua --env --wrapped [...args: string] {
             ^$env.ZLUA_LUAEXE $env.ZLUA_SCRIPT $arg_mode $arg_subdir $arg_type $arg_inter ...$args
         } else {
             let zdest = (^$env.ZLUA_LUAEXE $env.ZLUA_SCRIPT --cd $arg_type $arg_subdir $arg_inter ...$args)
-            if $zdest != '' and ($zdest | path type) == dir {
+            if $zdest != '' and ($zdest | path exists) {
                 cd $zdest
                 if _ZL_ECHO in $env and $env._ZL_ECHO != '' {
                     pwd
