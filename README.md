@@ -131,7 +131,7 @@ z -b foo bar # replace foo with bar in cwd and cd there
 
   Put something like this in your `env.nu`:
 
-      luajit z.lua --init nushell | save -f ~/.cache/zlua.nu
+      lua /path/to/z.lua --init nushell | save -f ~/.cache/zlua.nu
 
   Then put something like this in your `config.nu`:
 

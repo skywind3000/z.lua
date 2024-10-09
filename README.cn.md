@@ -88,7 +88,7 @@ z -b foo    # 跳转到父目录中名称以 foo 开头的那一级
 
   在 `env.nu` 中加入如下代码：
 
-      luajit z.lua --init nushell | save -f ~/.cache/zlua.nu
+      lua /path/to/z.lua --init nushell | save -f ~/.cache/zlua.nu
 
   然后在 `config.nu` 中加入如下代码：
 
