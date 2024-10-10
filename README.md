@@ -127,6 +127,17 @@ z -b foo bar # replace foo with bar in cwd and cd there
 
   into the same file.
 
+- Nushell
+
+  Put something like this in your `env.nu`:
+
+      lua /path/to/z.lua --init nushell | save -f ~/.cache/zlua.nu
+
+  Then put something like this in your `config.nu`:
+
+      source ~/.cache/zlua.nu
+      alias z = _zlua
+
 - Power Shell:
 
   > ⚠️ **WARNING**: users of [Starship Prompt](https://starship.rs/) should add the following command *after* `starship init`.

@@ -84,6 +84,17 @@ z -b foo    # 跳转到父目录中名称以 foo 开头的那一级
 
   但是第二种方法需要记得在 z.lua 位置改变或者 lua 版本升级后需要重新生成。
 
+- Nushell:
+
+  在 `env.nu` 中加入如下代码：
+
+      lua /path/to/z.lua --init nushell | save -f ~/.cache/zlua.nu
+
+  然后在 `config.nu` 中加入如下代码：
+
+      source ~/.cache/zlua.nu
+      alias z = _zlua
+
 - Power Shell:
 
   在你 Power Shell 的配置文件 `profile.ps1` 中放入下面语句：
