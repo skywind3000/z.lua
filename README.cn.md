@@ -460,10 +460,10 @@ sys     0m0.030s
 
 ## Credit
 
-Releated projects:
+欢迎访问：
 
-- [rupa/z](https://github.com/rupa/z): origin z.sh implementation
-- [JannesMeyer/z.ps](https://github.com/JannesMeyer/z.ps): z for powershell
+- 我的推特：https://x.com/skywind3000
+- 个人博客: https://skywind.me/blog
 
 
 ## License

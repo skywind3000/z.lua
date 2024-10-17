@@ -607,6 +607,7 @@ This project needs help for the tasks below:
 - Thanks to [@manhong2112](https://github.com/manhong2112) for Power Shell porting.
 - Thanks to [@BarbUk](https://github.com/BarbUk) for fzf completion in Bash.
 - Thanks to [@barlik](https://github.com/barlik) for many improvements.
+- Thanks to [@brglng](https://github.com/brglng) for nushell porting.
 
 And many others.
 
