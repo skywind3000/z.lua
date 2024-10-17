@@ -460,10 +460,8 @@ sys     0m0.030s
 
 ## Credit
 
-欢迎访问：
-
-- 我的推特：https://x.com/skywind3000
-- 个人博客: https://skywind.me/blog
+我的推特：https://x.com/skywind3000
+个人博客: https://skywind.me/blog
 
 
 ## License
