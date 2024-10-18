@@ -2020,9 +2020,14 @@ function main(argv)
 			z_print(M, true, false)
 		end
 	elseif options['--complete'] then
-		local line = args[1] and args[1] or ''
-		local head = line:sub(Z_CMD:len()+1):gsub('^%s+', '')
-		local M = z_match({head}, Z_METHOD, Z_SUBDIR)
+		local M = {}
+		if options['-m1'] then
+			M = z_match(args and args or {}, Z_METHOD, Z_SUBDIR)
+		else
+			local line = args[1] and args[1] or ''
+			local head = line:sub(Z_CMD:len()+1):gsub('^%s+', '')
+			M = z_match({head}, Z_METHOD, Z_SUBDIR)
+		end
 		for _, item in pairs(M) do
 			print(item.name)
 		end
@@ -2864,7 +2869,7 @@ $env.config = ($env.config | update hooks.env_change.PWD ($env.config.hooks.env_
 ]]
 
 local script_complete_nushell = [[
-let zlua_completer = {|spans| $spans | skip 1 | _zlua --complete ...$in | lines | where {|x| $x != $env.PWD}}
+let zlua_completer = {|spans| $spans | skip 1 | _zlua --complete -m1 ...$in | lines | where {|x| $x != $env.PWD}}
 
 $env.config = ($env.config | default {} completions)
 $env.config = ($env.config | update completions ($env.config.completions | default {} external))
