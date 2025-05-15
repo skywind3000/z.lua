@@ -1676,7 +1676,7 @@ function z_cd(patterns)
 			end
 			cmd = cmd .. ' < "' .. tmpname .. '"'
 		else
-			tmpname = os.tmpname():gsub('\\', ''):gsub('%.', '')
+			tmpname = os.tmpname():gsub('[\\:]', ''):gsub('%.', '')
 			tmpname = os.environ('TMP', '') .. '\\zlua_' .. tmpname .. '.txt'
 			cmd = 'type "' .. tmpname .. '" | ' .. cmd
 		end
@@ -1873,7 +1873,7 @@ function cd_breadcrumbs(pwd, interactive)
 		if not windows then
 			tmpname = os.tmpname()
 		else
-			tmpname = os.tmpname():gsub('\\', ''):gsub('%.', '')
+			tmpname = os.tmpname():gsub('[\\:]', ''):gsub('%.', '')
 			tmpname = os.environ('TMP', '') .. '\\zlua_' .. tmpname .. '.txt'
 		end
 		fp = io.open(tmpname, 'w')
