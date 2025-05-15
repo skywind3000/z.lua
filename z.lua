@@ -1612,21 +1612,23 @@ function z_cd(patterns)
 	if patterns == nil then
 		return nil
 	end
-	if #patterns == 0 then
-		return nil
-	end
-	local last = patterns[#patterns]
-	if last == '~' or last == '~/' then
-		return os.path.expand('~')
-	elseif windows and last == '~\\' then
-		return os.path.expand('~')
-	end
-	if os.path.isabs(last) and os.path.isdir(last) then
-		local size = #patterns
-		if size <= 1 then
-			return os.path.norm(last)
-		elseif last ~= '/' and last ~= '\\' then
-			return os.path.norm(last)
+	if Z_INTERACTIVE == 0 then
+		if #patterns == 0 then
+			return nil
+		end
+		local last = patterns[#patterns]
+		if last == '~' or last == '~/' then
+			return os.path.expand('~')
+		elseif windows and last == '~\\' then
+			return os.path.expand('~')
+		end
+		if os.path.isabs(last) and os.path.isdir(last) then
+			local size = #patterns
+			if size <= 1 then
+				return os.path.norm(last)
+			elseif last ~= '/' and last ~= '\\' then
+				return os.path.norm(last)
+			end
 		end
 	end
 	local M = z_match(patterns, Z_METHOD, Z_SUBDIR)
@@ -1971,7 +1973,7 @@ function main(argv)
 			end
 		elseif options['-'] then
 			path = cd_minus(args, options)
-		elseif #args == 0 then
+		elseif #args == 0 and Z_INTERACTIVE == 0 then
 			path = nil
 		else
 			path = z_cd(args)
