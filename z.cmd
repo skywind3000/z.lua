@@ -89,7 +89,9 @@ if /i "%1"=="--purge" (
 :check
 
 if /i "%1"=="" (
-	set "RunMode=-l"
+	if /i "%InterMode%"=="" (
+		set "RunMode=-l"
+	)
 )
 
 for /f "delims=" %%i in ('cd') do set "PWD=%%i"
