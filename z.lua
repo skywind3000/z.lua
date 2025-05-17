@@ -1979,7 +1979,7 @@ function main(argv)
 			path = z_cd(args)
 			if path == nil and Z_MATCHMODE ~= 0 then
 				local last = args[#args]
-				if os.path.isdir(last) then
+				if last and os.path.isdir(last) then
 					path = os.path.abspath(last)
 					path = os.path.norm(path)
 				end
