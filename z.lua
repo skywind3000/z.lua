@@ -4,7 +4,7 @@
 -- z.lua - a cd command that learns, by skywind 2018-2022
 -- Licensed under MIT license.
 --
--- Version 1.8.18, Last Modified: 2024/04/30 17:11
+-- Version 1.8.22, Last Modified: 2025/05/17 13:54:38
 --
 -- * 10x faster than fasd and autojump, 3x faster than z.sh
 -- * available for posix shells: bash, zsh, sh, ash, dash, busybox
@@ -1670,12 +1670,12 @@ function z_cd(patterns)
 		local flag = os.environ('_ZL_FZF_FLAG', '')
 		flag = (flag == '' or flag == nil) and '+s -e' or flag
 		cmd = ((fzf == '') and 'fzf' or fzf)  .. ' ' .. cmd .. ' ' .. flag
+		local height = os.environ('_ZL_FZF_HEIGHT', '35%')
+		if height ~= nil and height ~= '' and height ~= '0' then
+			cmd = cmd .. ' --height ' .. height
+		end
 		if not windows then
 			tmpname = os.tmpname()
-			local height = os.environ('_ZL_FZF_HEIGHT', '35%')
-			if height ~= nil and height ~= '' and height ~= '0' then
-				cmd = cmd .. ' --height ' .. height
-			end
 			cmd = cmd .. ' < "' .. tmpname .. '"'
 		else
 			tmpname = os.tmpname():gsub('[\\:]', ''):gsub('%.', '')
@@ -2655,7 +2655,9 @@ if /i "%1"=="--purge" (
 )
 :check
 if /i "%1"=="" (
-	set "RunMode=-l"
+	if /i "%InterMode%"=="" (
+		set "RunMode=-l"
+	)
 )
 for /f "delims=" %%i in ('cd') do set "PWD=%%i"
 if /i "%RunMode%"=="-n" (
