@@ -2814,7 +2814,7 @@ end
 -- nushell
 -----------------------------------------------------------------------
 local script_zlua_nushell = [[
-def _zlua --env --wrapped [...args: string] {
+export def _zlua --env --wrapped [...args: string] {
     if ($args | length) != 0 and $args.0 == "--add" {
         with-env { _ZL_RANDOM: (random int) } { ^$env.ZLUA_LUAEXE $env.ZLUA_SCRIPT --add ...($args | skip 1) }
     } else if ($args | length) != 0 and $args.0 == "--complete" {
@@ -2899,6 +2899,9 @@ if completer in $env.config.completions.external {
         }
     })
 }
+
+export alias z = _zlua
+
 ]]
 
 -----------------------------------------------------------------------

@@ -122,12 +122,10 @@ z -b foo bar # replace foo with bar in cwd and cd there
 
   Put something like this in your `env.nu`:
 
-      lua /path/to/z.lua --init nushell | save -f ~/.cache/zlua.nu
+      mkdir ($nu.data-dir | path join "vendor/autoload")
+      lua /path/to/z.lua --init nushell | save -f ($nu.data-dir | path join "vendor/autoload/zlua.nu")
 
-  Then put something like this in your `config.nu`:
-
-      source ~/.cache/zlua.nu
-      alias z = _zlua
+  Note: Only Nushell v0.96+ is supported
 
 - Power Shell:
 
