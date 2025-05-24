@@ -4,7 +4,7 @@
 -- z.lua - a cd command that learns, by skywind 2018-2022
 -- Licensed under MIT license.
 --
--- Version 1.8.23, Last Modified: 2025/05/18 00:18:20
+-- Version 1.8.24, Last Modified: 2025/05/24 23:04:42
 --
 -- * 10x faster than fasd and autojump, 3x faster than z.sh
 -- * available for posix shells: bash, zsh, sh, ash, dash, busybox
@@ -2655,9 +2655,7 @@ if /i "%1"=="--purge" (
 )
 :check
 if /i "%1"=="" (
-	if /i "%InterMode%"=="" (
-		set "RunMode=-l"
-	)
+	set "RunMode=-l"
 )
 for /f "delims=" %%i in ('cd') do set "PWD=%%i"
 if /i "%RunMode%"=="-n" (
