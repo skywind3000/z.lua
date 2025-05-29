@@ -28,7 +28,7 @@ From people using z.lua:
 - **10x** times faster than **fasd** and **autojump**, **3x** times faster than **z.sh**.
 - Gain the ultimate speed with an optional [native module](https://github.com/skywind3000/czmod) written in C.
 - Available for **posix shells**: bash, zsh, dash, sh, ash, ksh, busybox and etc.
-- Available for Fish Shell, Power Shell and Windows cmd.
+- Available for Fish Shell, Nushell, Power Shell and Windows cmd.
 - [Enhanced matching algorithm](#enhanced-matching) takes you to where ever you want precisely.
 - Allow updating database only if `$PWD` changed with "$_ZL_ADD_ONCE" set to 1.
 - Interactive selection enables you to choose where to go before cd.
@@ -122,8 +122,11 @@ z -b foo bar # replace foo with bar in cwd and cd there
 
   Put something like this in your `env.nu`:
 
-      mkdir ($nu.data-dir | path join "vendor/autoload")
-      lua /path/to/z.lua --init nushell | save -f ($nu.data-dir | path join "vendor/autoload/zlua.nu")
+      lua /path/to/z.lua --init nushell | save -f ~/.cache/zlua.nu
+
+  Then put something like this in your `config.nu`:
+
+      source ~/.cache/zlua.nu
 
   Note: Only Nushell v0.96+ is supported
 
