@@ -14,7 +14,7 @@ z.lua 是一个快速路径切换工具，它会跟踪你在 shell 下访问过�
 
 - 性能比 **z.sh** 快三倍，比 **fasd** / **autojump** 快十倍以上。
 - 支持 Posix Shell：bash, zsh, dash, sh, ash, busybox 等等。
-- 支持 Fish Shell，Power Shell 和 Windows cmd。
+- 支持 Fish Shell，Nushell, Power Shell 和 Windows cmd。
 - 使用增强匹配算法，更准确的带你去到你想去的地方。
 - 低占用，能够仅在当前路径改变时才更新数据库（将 `$_ZL_ADD_ONCE` 设成 1）。
 - 交互选择模式，如果有多个匹配结果的话，跳转前允许你进行选择。
@@ -93,7 +93,6 @@ z -b foo    # 跳转到父目录中名称以 foo 开头的那一级
   然后在 `config.nu` 中加入如下代码：
 
       source ~/.cache/zlua.nu
-      alias z = _zlua
 
 - Power Shell:
 
