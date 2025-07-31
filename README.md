@@ -78,6 +78,12 @@ z -b foo bar # replace foo with bar in cwd and cd there
 
       eval "$(lua /path/to/z.lua --init bash enhanced once fzf)"
   
+  NixOS users using home-manager can add this to their user profile:
+
+      programs.z-lua.enable = true;
+      programs.z-lua.enableBashIntegration = true;
+      programs.z-lua.options = [ "enhanced" "once" "fzf" ];  # modify as needed
+
   **NOTE**: For wsl-1 users, `lua-filesystem` must be installed:
 
       sudo apt-get install lua-filesystem
@@ -91,6 +97,12 @@ z -b foo bar # replace foo with bar in cwd and cd there
       eval "$(lua /path/to/z.lua --init zsh)"
 
   Options like "enhanced", "once" and "fzf" can be used after `--init` too. It can also be initialized from "skywind3000/z.lua" with your zsh plugin managers (antigen / oh-my-zsh).
+
+  NixOS users using home-manager can add this to their user profile:
+
+      programs.z-lua.enable = true;
+      programs.z-lua.enableZshIntegration = true;
+      programs.z-lua.options = [ "enhanced" "once" "fzf" ];  # modify as needed
 
   **NOTE**: for wsl-1 users, `lua-filesystem` must be installed.
 
@@ -117,6 +129,12 @@ z -b foo bar # replace foo with bar in cwd and cd there
       set -gx _ZL_CD cd
 
   into the same file.
+
+  NixOS users using home-manager can add this to their user profile:
+
+      programs.z-lua.enable = true;
+      programs.z-lua.enableFishIntegration = true;
+      programs.z-lua.options = [ "enhanced" "once" "fzf" ];  # modify as needed
 
 - Nushell
 
