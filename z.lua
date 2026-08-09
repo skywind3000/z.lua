@@ -2873,8 +2873,9 @@ local script_complete_nushell = [[
 export def "nu-complete zlua" [context: string] {
     {
         options: {
-            completion_algorithm: "fuzzy",
+            completion_algorithm: "fuzzy"
             case_sensitive: false
+            sort: false
         }
         completions: (
             (^$env.ZLUA_LUAEXE $env.ZLUA_SCRIPT --complete $context | lines) | where {|x| $x != $env.PWD}
