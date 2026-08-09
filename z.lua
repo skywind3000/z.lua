@@ -2813,11 +2813,9 @@ end
 -- nushell
 -----------------------------------------------------------------------
 local script_zlua_nushell = [[
-export def _zlua --env --wrapped [...args: string] {
+export def z --env --wrapped [...args: string@"nu-complete zlua"] {
     if ($args | length) != 0 and $args.0 == "--add" {
         with-env { _ZL_RANDOM: (random int) } { ^$env.ZLUA_LUAEXE $env.ZLUA_SCRIPT --add ...($args | skip 1) }
-    } else if ($args | length) != 0 and $args.0 == "--complete" {
-        ^$env.ZLUA_LUAEXE $env.ZLUA_SCRIPT --complete ...($args | skip 1)
     } else {
         mut arg_mode = ''
         mut arg_type = ''
@@ -2868,39 +2866,22 @@ $env.config = ($env | default {} config).config
 $env.config = ($env.config | default {} hooks)
 $env.config = ($env.config | update hooks ($env.config.hooks | default {} env_change))
 $env.config = ($env.config | update hooks.env_change ($env.config.hooks.env_change | default [] PWD))
-$env.config = ($env.config | update hooks.env_change.PWD ($env.config.hooks.env_change.PWD | append {|_, dir| _zlua --add $dir }))
+$env.config = ($env.config | update hooks.env_change.PWD ($env.config.hooks.env_change.PWD | append {|_, dir| z --add $dir }))
 ]]
 
 local script_complete_nushell = [[
-let zlua_completer = {|spans| $spans | skip 1 | _zlua --complete -m1 ...$in | lines | where {|x| $x != $env.PWD}}
-
-$env.config = ($env.config | default {} completions)
-$env.config = ($env.config | update completions ($env.config.completions | default {} external))
-$env.config = ($env.config | update completions.external ($env.config.completions.external | default true enable))
-if completer in $env.config.completions.external {
-    let orig_completer = $env.config.completions.external.completer
-    $env.config = ($env.config | update completions.external.completer {
-        {|spans|
-            match $spans.0 {
-                z => $zlua_completer,
-                _zlua => $zlua_completer,
-                _ => $orig_completer
-            } | do $in $spans
+export def "nu-complete zlua" [context: string] {
+    {
+        options: {
+            completion_algorithm: "fuzzy"
+            case_sensitive: false
+            sort: false
         }
-    })
-} else {
-    $env.config = ($env.config | update completions.external.completer {
-        {|spans|
-            match $spans.0 {
-                z => $zlua_completer,
-                _zlua => $zlua_completer,
-            } | do $in $spans
-        }
-    })
+        completions: (
+            (^$env.ZLUA_LUAEXE $env.ZLUA_SCRIPT --complete $context | lines) | where {|x| $x != $env.PWD}
+        )
+    }
 }
-
-export alias z = _zlua
-
 ]]
 
 -----------------------------------------------------------------------
@@ -2913,11 +2894,11 @@ function z_nushell_init(opts)
 	if opts.clean ~= nil then
 		prompt_hook = false
 	end
+	print(script_complete_nushell)
 	print(script_zlua_nushell)
 	if prompt_hook then
 		print(script_init_nushell)
 	end
-	print(script_complete_nushell)
 	if opts.enhanced ~= nil then
 		print('$env._ZL_MATCH_MODE = 1')
 	end
