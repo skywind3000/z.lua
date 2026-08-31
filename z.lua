@@ -2938,7 +2938,6 @@ end
 -----------------------------------------------------------------------
 os.lfs = {}
 os.lfs.enable = os.getenv('_ZL_USE_LFS')
-os.lfs.enable = '1'
 if os.lfs.enable ~= nil then
 	local m = string.lower(os.lfs.enable)
 	if (m == '1' or m == 'yes' or m == 'true' or m == 't') then
