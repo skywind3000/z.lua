@@ -2219,7 +2219,7 @@ _zlua() {
 			else
 				$_ZL_CD "$zdest"
 			fi
-			if [ -n "$_ZL_ECHO" ]; then pwd; fi
+			if [ -n "$_ZL_ECHO" ]; then pwd 1>&2; fi
 		fi
 	fi
 }
