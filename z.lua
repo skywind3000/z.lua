@@ -2215,9 +2215,9 @@ _zlua() {
 		local zdest=$("$ZLUA_LUAEXE" "$ZLUA_SCRIPT" --cd $arg_type $arg_subdir $arg_inter "$@")
 		if [ -n "$zdest" ] && [ -d "$zdest" ]; then
 			if [ -z "$_ZL_CD" ]; then
-				builtin cd "$zdest"
+				builtin cd "$zdest" || return 1
 			else
-				$_ZL_CD "$zdest"
+				$_ZL_CD "$zdest" || return 1
 			fi
 			if [ -n "$_ZL_ECHO" ]; then pwd; fi
 		else
