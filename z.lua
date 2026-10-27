@@ -2220,6 +2220,8 @@ _zlua() {
 				$_ZL_CD "$zdest"
 			fi
 			if [ -n "$_ZL_ECHO" ]; then pwd; fi
+		else
+			return 1
 		fi
 	fi
 }
