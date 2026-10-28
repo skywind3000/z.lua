@@ -83,6 +83,16 @@ z -b foo bar # replace foo with bar in cwd and cd there
       programs.z-lua.enable = true;
       programs.z-lua.enableBashIntegration = true;
       programs.z-lua.options = [ "enhanced" "once" "fzf" ];  # modify as needed
+  
+  NixOS users can set this system-wide in configuration.nix:
+
+      # this example assumes using zsh
+      programs.zsh = {
+        enable = true;
+        interactiveShellInit = ''
+        eval "$(${pkgs.z-lua}/bin/z --init zsh enhanced once fzf)"
+        '';
+      };
 
   **NOTE**: For wsl-1 users, `lua-filesystem` must be installed:
 
